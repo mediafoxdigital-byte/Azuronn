@@ -191,7 +191,7 @@ if ($diamondId !== '' && $selectedDiamond === null) {
     redirect(diamond_builder_url($diamondJourneyParams));
 }
 
-$diamondProfile = catalog_attribute_profile((string) ($product['product_type'] ?? 'Ring'));
+$diamondProfile = catalog_attribute_profile(product_attribute_profile_type($product));
 $diamondIntroKicker = clean_string((string) ($product['diamond_intro_kicker'] ?? ''), 80);
 if ($diamondIntroKicker === '') {
     $diamondIntroKicker = clean_string((string) ($diamondProfile['diamond_intro_kicker'] ?? ''), 80);

@@ -403,6 +403,12 @@ img { max-width: 100%; display: block; }
 
 .admin-empty-note a { color: var(--green-2); font-weight: 600; }
 
+/* "Choose a Category" prompts show only while the product form has no category
+   selected. Driven by .has-no-category on the editor root so the prompt cannot
+   get stuck visible if a JS pass is missed. */
+[data-needs-category] { display: none; }
+.admin-product-editor.has-no-category [data-needs-category] { display: block; }
+
 .admin-muted { color: var(--muted); }
 
 .admin-subsection {

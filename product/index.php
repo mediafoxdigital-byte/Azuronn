@@ -562,8 +562,10 @@ foreach ((array) ($options['delivery_options'] ?? []) as $do) {
           <div><span>SKU</span><strong><?= h((string) ($options['sku'] ?? '')) ?></strong></div>
           <div><span>Metal Options</span><strong id="live-product-metals"><?= h(implode(', ', $metaMetalLabels)) ?></strong></div>
           <?php if (!empty($product['styles'])): ?>
-            <?php $styleNames = []; $allStyles = available_ring_styles(); foreach ($product['styles'] as $sKey) { if (isset($allStyles[$sKey])) $styleNames[] = $allStyles[$sKey]; } ?>
+            <?php $styleNames = []; $allStyles = available_ring_styles(product_ring_taxonomy($product)['category']); foreach ($product['styles'] as $sKey) { if (isset($allStyles[$sKey])) $styleNames[] = $allStyles[$sKey]; } ?>
+            <?php if ($styleNames !== []): ?>
             <div><span>Design Styles</span><strong><?= h(implode(', ', $styleNames)) ?></strong></div>
+            <?php endif; ?>
           <?php endif; ?>
           <?php if (!empty($product['subcategories'])): ?>
             <div><span>Subcategories</span><strong><?= h(implode(', ', (array) $product['subcategories'])) ?></strong></div>

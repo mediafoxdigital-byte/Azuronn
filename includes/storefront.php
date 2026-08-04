@@ -340,9 +340,12 @@ function wishlist_product_id(string $productId): string
 
 function product_option_data(array $product): array
 {
-    $type = (string) ($product['product_type'] ?? 'Ring');
-    $typeKey = strtolower($type);
-    $isRingProduct = str_starts_with($typeKey, 'ring');
+    // Ring products all store product_type='Ring' and carry their section in
+    // ring_category, so the profile must be resolved from the product's real
+    // category — otherwise every ring reads the Engagement Rings metals.
+    $type = product_attribute_profile_type($product);
+    $ringSection = product_ring_taxonomy($product)['category'];
+    $isRingProduct = $ringSection !== '';
     $profile = catalog_attribute_profile($type);
     
     $isMatrixProduct = false;
@@ -358,30 +361,22 @@ function product_option_data(array $product): array
         $isMatrixProduct = true;
     }
     
-    $primaryColor = (string) ($product['color'] ?? 'Yellow Gold');
+    // Options come from the category's attribute profile and the product's own
+    // saved fields (applied further down). The only pre-profile seed is the
+    // merchant's own colour list, so nothing invented ever reaches a customer.
+    $primaryColor = clean_string((string) ($product['color'] ?? ''), 80);
     $catalogColors = site_content()['catalog_meta']['colors'] ?? [];
 
-    $colors = [$primaryColor];
+    $colors = $primaryColor !== '' ? [$primaryColor] : [];
     foreach ($catalogColors as $color) {
-        if (!in_array($color, $colors, true) && count($colors) < 4) {
+        $color = clean_string((string) $color, 80);
+        if ($color !== '' && !in_array($color, $colors, true)) {
             $colors[] = $color;
         }
     }
 
-    $sizes = match ($typeKey) {
-        'ring', 'rings' => ['4', '5', '6', '7', '8', '9'],
-        'bracelet' => ['16 cm', '17 cm', '18 cm', '19 cm'],
-        'necklace', 'pendant' => ['16 in', '18 in', '20 in', '22 in'],
-        'earring', 'brooch' => ['Standard'],
-        'jewellery set' => ['S', 'M', 'L'],
-        default => ['Standard'],
-    };
-
-    $materials = match (strtolower($primaryColor)) {
-        'silver' => ['Sterling Silver', 'White Gold'],
-        'platinum' => ['Platinum', 'White Gold'],
-        default => ['18K Gold', '14K Gold', 'Platinum'],
-    };
+    $sizes = [];
+    $materials = $colors;
 
     $colorLabel = 'Color';
     $sizeLabel = 'Size';
@@ -391,74 +386,7 @@ function product_option_data(array $product): array
         'value' => $color,
         'label' => $color,
     ], $colors);
-    $sizeChoices = array_map(static fn (string $size): array => [
-        'value' => $size,
-        'label' => $size,
-    ], $sizes);
-
-    if ($typeKey === 'earring') {
-        $colorLabel = 'Metal';
-        $sizeLabel = 'Total Carat Weight';
-        $colorDisplay = 'jewellery-metals';
-        $sizeDisplay = 'stone-weights';
-        $colors = ['18K White Gold', '18K Yellow Gold', '18K Rose Gold', '9K White Gold', '9K Yellow Gold', '9K Rose Gold'];
-        $sizes = ['0.6 ctw', '0.8 ctw', '1 ctw', '2.4 ctw'];
-        $materials = $colors;
-        $colorChoices = [
-            ['value' => '18K White Gold', 'label' => 'White Gold', 'kicker' => '18K', 'tone' => 'white'],
-            ['value' => '18K Yellow Gold', 'label' => 'Yellow Gold', 'kicker' => '18K', 'tone' => 'yellow'],
-            ['value' => '18K Rose Gold', 'label' => 'Rose Gold', 'kicker' => '18K', 'tone' => 'rose'],
-            ['value' => '9K White Gold', 'label' => 'White Gold', 'kicker' => '9K', 'tone' => 'white'],
-            ['value' => '9K Yellow Gold', 'label' => 'Yellow Gold', 'kicker' => '9K', 'tone' => 'yellow'],
-            ['value' => '9K Rose Gold', 'label' => 'Rose Gold', 'kicker' => '9K', 'tone' => 'rose'],
-        ];
-        $sizeChoices = [
-            ['value' => '0.6 ctw', 'label' => '0.6 ctw', 'tone' => 'accent'],
-            ['value' => '0.8 ctw', 'label' => '0.8 ctw', 'tone' => 'neutral'],
-            ['value' => '1 ctw', 'label' => '1 ctw', 'tone' => 'neutral'],
-            ['value' => '2.4 ctw', 'label' => '2.4 ctw', 'tone' => 'neutral'],
-        ];
-    } elseif ($typeKey === 'bracelet') {
-        $colorLabel = 'Metal';
-        $sizeLabel = 'Diamond Weight & Length';
-        $colorDisplay = 'jewellery-metals';
-        $sizeDisplay = 'stone-weights';
-        $colors = ['18K White Gold', '18K Yellow Gold', '9K White Gold', '9K Yellow Gold'];
-        $sizes = ['3.6 ctw / 165mm', '3.8 ctw / 175mm'];
-        $materials = $colors;
-        $colorChoices = [
-            ['value' => '18K White Gold', 'label' => 'White Gold', 'kicker' => '18K', 'tone' => 'white'],
-            ['value' => '18K Yellow Gold', 'label' => 'Yellow Gold', 'kicker' => '18K', 'tone' => 'yellow'],
-            ['value' => '9K White Gold', 'label' => 'White Gold', 'kicker' => '9K', 'tone' => 'white'],
-            ['value' => '9K Yellow Gold', 'label' => 'Yellow Gold', 'kicker' => '9K', 'tone' => 'yellow'],
-        ];
-        $sizeChoices = [
-            ['value' => '3.6 ctw / 165mm', 'label' => '3.6 ctw', 'caption' => '165mm', 'tone' => 'accent'],
-            ['value' => '3.8 ctw / 175mm', 'label' => '3.8 ctw', 'caption' => '175mm', 'tone' => 'neutral'],
-        ];
-    } elseif (in_array($typeKey, ['necklace', 'pendant', 'brooch', 'jewellery set'], true)) {
-        $colorLabel = 'Metal';
-        $sizeLabel = 'Total Carat Weight';
-        $colorDisplay = 'jewellery-metals';
-        $sizeDisplay = 'stone-weights';
-        $colors = ['18K White Gold', '18K Yellow Gold', '18K Rose Gold'];
-        $sizes = ['0.5 ctw', '0.7 ctw', '1 ctw', '1.25 ctw', '1.5 ctw', '2 ctw', '3 ctw'];
-        $materials = $colors;
-        $colorChoices = [
-            ['value' => '18K White Gold', 'label' => 'White Gold', 'kicker' => '18K', 'tone' => 'white'],
-            ['value' => '18K Yellow Gold', 'label' => 'Yellow Gold', 'kicker' => '18K', 'tone' => 'yellow'],
-            ['value' => '18K Rose Gold', 'label' => 'Rose Gold', 'kicker' => '18K', 'tone' => 'rose'],
-        ];
-        $sizeChoices = [
-            ['value' => '0.5 ctw', 'label' => '0.5 ctw', 'tone' => 'neutral'],
-            ['value' => '0.7 ctw', 'label' => '0.7 ctw', 'tone' => 'neutral'],
-            ['value' => '1 ctw', 'label' => '1 ctw', 'tone' => 'accent'],
-            ['value' => '1.25 ctw', 'label' => '1.25 ctw', 'tone' => 'neutral'],
-            ['value' => '1.5 ctw', 'label' => '1.5 ctw', 'tone' => 'neutral'],
-            ['value' => '2 ctw', 'label' => '2 ctw', 'tone' => 'neutral'],
-            ['value' => '3 ctw', 'label' => '3 ctw', 'tone' => 'neutral'],
-        ];
-    }
+    $sizeChoices = [];
 
     $profileColors = array_values(array_filter(array_map(static fn (mixed $item): string => clean_string((string) $item, 80), (array) ($profile['option_colors'] ?? [])), static fn (string $item): bool => $item !== ''));
     $profileSizes = array_values(array_filter(array_map(static fn (mixed $item): string => clean_string((string) $item, 80), (array) ($profile['option_sizes'] ?? [])), static fn (string $item): bool => $item !== ''));
@@ -498,10 +426,9 @@ function product_option_data(array $product): array
         $sizeChoices = $profileSizeChoices;
         $sizes = array_values(array_unique(array_column($profileSizeChoices, 'value')));
     }
-    if ($isMatrixProduct && $profileMetalOptions !== []) {
-        $metalOptions = $profileMetalOptions;
-    }
-    if ($isMatrixProduct && $profileDeliveryOptions !== []) {
+    // Delivery options come only from this category's own profile.
+    $deliveryOptions = [];
+    if ($profileDeliveryOptions !== []) {
         $deliveryOptions = array_map(static function (array $option): array {
             if (($option['price_label'] ?? '') === '') {
                 $option['price_label'] = ((float) ($option['price'] ?? 0)) > 0 ? '+' . money_format((float) $option['price']) : 'Included';
@@ -716,8 +643,9 @@ function product_option_data(array $product): array
         if ($metalOptions === [] && $profileMetalOptions !== []) {
             // Band / claw options shared by every profile metal, so the live-price
             // engine can re-render them (an empty data-band-options would wipe the
-            // server-rendered band cards on load).
-            $fallbackBandSource = $profileBandClawOptions !== [] ? $profileBandClawOptions : [['value' => 'standard', 'label' => 'Standard', 'description' => '', 'surcharge' => 0]];
+            // server-rendered band cards on load). Only the merchant's own band
+            // options are offered — a category with none simply shows none.
+            $fallbackBandSource = $profileBandClawOptions;
             $fallbackBandOptions = [];
             $fallbackBandSlugs = [];
             foreach ($fallbackBandSource as $fb) {
@@ -764,19 +692,9 @@ function product_option_data(array $product): array
             }
         }
 
-        // Last-resort fallback only when neither product variations nor profile
-        // metals exist. Still do NOT force shapes — let the product decide.
-        if ($metalOptions === []) {
-            $metalOptions = [
-                ['value' => 'platinum', 'label' => 'Platinum', 'description' => 'Naturally white premium metal with a substantial feel.', 'base_price' => 0, 'shapes' => [], 'sizes' => [], 'bands' => [], 'band_options' => [], 'gallery' => $gallery, 'features' => []],
-                ['value' => '18k-yellow-gold', 'label' => '18K Yellow Gold', 'description' => 'Classic gold craftsmanship with a warm, refined finish.', 'base_price' => 0, 'shapes' => [], 'sizes' => [], 'bands' => [], 'band_options' => [], 'gallery' => $gallery, 'features' => []],
-            ];
-        }
-        if ($bandClawMetalOptions === []) {
-            $bandClawMetalOptions = [
-                ['value' => 'standard', 'label' => 'Standard', 'description' => '', 'surcharge' => 0],
-            ];
-        }
+        // No product variations and no profile metals means the merchant has not
+        // configured this category's metals yet. Show nothing rather than
+        // inventing metals or a band that the merchant never created.
     }
 
     $availableShapes = available_diamond_shapes();
@@ -793,14 +711,6 @@ function product_option_data(array $product): array
         }
     }
 
-    // Only inject default shapes for engagement rings that genuinely have none
-    // stored AND no matrix shapes — never for plain wedding bands.
-    if ($isRingProduct && $shapeKeys === [] && $matrixShapes === [] && !empty($product['diamondShapes'] ?? [])) {
-        // Product has diamondShapes but none matched availableShapes — skip injection.
-    } elseif ($isRingProduct && $shapeKeys === [] && $matrixShapes === [] && empty($product['diamondShapes'] ?? [])) {
-        // Plain band with no shapes at all: leave empty (no diamond picker).
-    }
-
     $diamondShapes = [];
     foreach ($shapeKeys as $shapeKey) {
         $diamondShapes[] = [
@@ -809,27 +719,9 @@ function product_option_data(array $product): array
         ];
     }
 
-    $deliveryOptions = $isMatrixProduct
-        ? [
-            [
-                'value' => 'standard',
-                'label' => '4-5 Weeks Delivery',
-                'description' => 'Included with your order and preselected for made-to-order craftsmanship.',
-                'price' => 0.0,
-                'price_label' => 'Included',
-                'badge' => 'Basic',
-            ],
-            [
-                'value' => 'priority',
-                'label' => '3-4 Weeks Delivery',
-                'description' => 'Priority production and dispatch for a faster delivery window.',
-                'price' => 100.0,
-                'price_label' => '+£100',
-                'badge' => 'Priority',
-            ],
-        ]
-        : [];
-
+    // Delivery options are whatever the merchant configured on this category's
+    // attribute profile (normalised further up). Nothing is invented here — a
+    // category with no delivery options simply shows no delivery picker.
     $customFeatures = array_values(array_filter(array_map(static fn (mixed $item): string => clean_string((string) $item, 160), (array) ($product['features'] ?? [])), static fn (string $item): bool => $item !== ''));
     if (!empty($metalFeatures)) {
         $features = $metalFeatures;
@@ -1077,22 +969,7 @@ function product_option_data(array $product): array
 function product_diamond_inventory(array $product, string $shape = ''): array
 {
     $shape = clean_string($shape, 40);
-    $productType = clean_string((string) ($product['product_type'] ?? 'Ring'), 80);
-    $profileTypes = [$productType];
-    if (strcasecmp($productType, 'Rings') === 0) {
-        $profileTypes[] = 'Ring';
-    } elseif (strcasecmp($productType, 'Ring') === 0) {
-        $profileTypes[] = 'Rings';
-    }
-
-    $profileInventory = [];
-    foreach ($profileTypes as $profileType) {
-        $candidateInventory = array_values((array) (catalog_attribute_profile($profileType)['diamond_inventory'] ?? []));
-        if ($candidateInventory !== []) {
-            $profileInventory = $candidateInventory;
-            break;
-        }
-    }
+    $profileInventory = array_values((array) (catalog_attribute_profile(product_attribute_profile_type($product))['diamond_inventory'] ?? []));
     $productInventory = array_values((array) ($product['diamond_inventory'] ?? []));
     $inventorySource = $profileInventory !== [] ? $profileInventory : $productInventory;
     $inventory = [];

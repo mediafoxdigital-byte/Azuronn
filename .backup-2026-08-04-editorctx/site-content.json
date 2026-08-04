@@ -172,13 +172,6 @@
                         "description": "",
                         "color_hex": "#c9a96e",
                         "image": ""
-                    },
-                    {
-                        "value": "silver",
-                        "label": "silver",
-                        "description": "",
-                        "color_hex": "#c9a96e",
-                        "image": ""
                     }
                 ],
                 "option_band_claw_metal_options": [],
@@ -205,8 +198,8 @@
                     "5",
                     "6",
                     "7",
-                    "S",
-                    "XL"
+                    "8",
+                    "9"
                 ],
                 "option_color_choices": [],
                 "option_size_choices": [
@@ -235,14 +228,14 @@
                         "tone": "classic"
                     },
                     {
-                        "value": "S",
-                        "label": "S",
+                        "value": "8",
+                        "label": "8",
                         "caption": "",
                         "tone": "classic"
                     },
                     {
-                        "value": "XL",
-                        "label": "XL",
+                        "value": "9",
+                        "label": "9",
                         "caption": "",
                         "tone": "classic"
                     }
@@ -251,22 +244,10 @@
                 "option_band_claw_metal_options": [],
                 "option_delivery_options": [],
                 "selector_cards": [],
-                "style_cards": [
-                    {
-                        "value": "eternity",
-                        "label": "Eternity",
-                        "image": ""
-                    }
-                ],
+                "style_cards": [],
                 "style_cards_sections": {
                     "engagement": [],
-                    "wedding": [
-                        {
-                            "value": "eternity",
-                            "label": "Eternity",
-                            "image": ""
-                        }
-                    ]
+                    "wedding": []
                 },
                 "diamond_intro_kicker": "",
                 "diamond_intro_text": "",

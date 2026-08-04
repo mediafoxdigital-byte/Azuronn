@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azuronn Super Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=1785768256">
+</head>
+<body class="admin-body">
+  <div class="admin-shell admin-shell-v2">
+    <aside class="admin-sidebar admin-sidebar-v2">
+      <div class="admin-brand-block">
+        <p class="admin-kicker">Azuronn</p>
+        <h1>Super Admin</h1>
+      </div>
+      <nav class="admin-side-nav">
+        <a href="/admin/index.php?view=dashboard" class=""><i class="fas fa-chart-line"></i><span>Dashboard</span></a>
+        <a href="/admin/index.php?view=categories" class=""><i class="fas fa-layer-group"></i><span>Categories</span></a>
+        <a href="/admin/index.php?view=catalog" class="is-active"><i class="fas fa-gem"></i><span>Catalog</span></a>
+        <a href="/admin/index.php?view=inventory" class=""><i class="fas fa-boxes"></i><span>Inventory</span></a>
+        <a href="/admin/index.php?view=attributes" class=""><i class="fas fa-sliders"></i><span>Attributes</span></a>
+        <a href="/admin/index.php?view=diamonds" class=""><i class="fas fa-diamond"></i><span>Diamonds</span></a>
+        <a href="/admin/index.php?view=news" class=""><i class="fas fa-newspaper"></i><span>News & Media</span></a>
+        <a href="/admin/index.php?view=newsletter" class=""><i class="fas fa-image"></i><span>Banner / Newsletter</span></a>
+        <a href="/admin/index.php?view=orders" class=""><i class="fas fa-bag-shopping"></i><span>Orders</span></a>
+        <a href="/admin/index.php?view=appointments" class=""><i class="fas fa-calendar-check"></i><span>Appointments</span></a>
+        <a href="/admin/index.php?view=customers" class=""><i class="fas fa-users"></i><span>Registered Users</span></a>
+                <a href="/admin/index.php?view=site" class=""><i class="fas fa-cogs"></i><span>Site Settings</span></a>
+        <a href="/admin/index.php?view=coupons" class=""><i class="fas fa-ticket"></i><span>Coupons</span></a>
+        <a href="/admin/index.php?view=requests" class=""><i class="fas fa-shield-halved"></i><span>Admin Requests</span></a>
+        <a href="/admin/index.php?view=employees" class=""><i class="fas fa-user-shield"></i><span>Employee Admins</span></a>      </nav>
+    </aside>
+
+    <main class="admin-main admin-main-v2">
+      <header class="admin-topbar admin-topbar-v2">
+        <div>
+          <p class="admin-kicker">Merchandising</p>
+          <h2>Catalog workflow</h2>
+          <p class="admin-topbar-summary">Manage the product library, refine taxonomies, and control which products feed the storefront sections.</p>
+        </div>
+        <div class="admin-top-actions">
+          <a href="../index.php" class="admin-ghost">View Site</a>
+          <a href="/admin/index.php?download=content" class="admin-ghost">Backup</a>          <form method="post" action="/admin/index.php?view=catalog">
+            <input type="hidden" name="csrf_token" value="a8b52203774b803611d6999b6a158f78d2fa7f40f2b0d96e81e8e0be27777137">            <input type="hidden" name="action" value="logout">
+            <button class="admin-ghost danger" type="submit">Log Out</button>
+          </form>
+        </div>
+      </header>
+
+            
+                      
+                            <section class="admin-panel admin-editor-panel" id="catalog-editor">
+            <div class="admin-panel-head"><div><p class="admin-kicker">Product Form</p><h3>Upload product</h3></div></div>
+                <form method="post" action="/admin/index.php?view=catalog" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="a8b52203774b803611d6999b6a158f78d2fa7f40f2b0d96e81e8e0be27777137">      <input type="hidden" name="action" value="create-product">
+      <input type="hidden" name="return_view" value="catalog">
+                            <div class="admin-product-editor" data-catalog-profile-editor>
+              <div class="admin-product-main">
+                <section class="admin-product-card">
+                  <div class="admin-product-card-head">
+                    <div>
+                      <p class="admin-kicker">Core Details</p>
+                      <h4>Product identity</h4>
+                    </div>
+                    <span class="status-pill">New Product</span>
+                  </div>
+                                    <div class="admin-grid two-up">
+                        <label class="admin-field">
+      <span>Product Name</span>
+      <input type="text" name="product[name]" value="" required>
+      <small>Use the exact storefront title.</small>    </label>
+                            <label class="admin-field">
+      <span>Category</span>
+      <select name="product[category_taxonomy]" required data-category-type-map="{&quot;engagement&quot;:&quot;Engagement Rings&quot;,&quot;wedding&quot;:&quot;Wedding Rings&quot;,&quot;custom-earring&quot;:&quot;Earring&quot;}" data-category-style-map="{&quot;engagement&quot;:&quot;engagement&quot;,&quot;wedding&quot;:&quot;wedding&quot;,&quot;custom-earring&quot;:&quot;&quot;}" data-category-flat-types="[&quot;Earring&quot;]">
+                  <option value="" selected>— Select a category —</option>
+                  <option value="engagement" >Engagement Rings</option>
+                  <option value="wedding" >Wedding Rings</option>
+                  <option value="custom-earring" >Earring</option>
+              </select>
+      <small>Where this product appears on the storefront. Choosing a category sets this product&#039;s type and shows the matching metal / size / band options from that category&#039;s attributes below.</small>    </label>
+                            <label class="admin-field">
+      <span>Collection Label (optional)</span>
+      <input type="text" name="product[category]" value="" >
+      <small>Optional merchandising tag, e.g. Bridal, Everyday, Statement.</small>    </label>
+                                            <div data-ring-section-scope="wedding" hidden style="display:none;">
+                          <label class="admin-field">
+      <span>Gender</span>
+      <select name="product[ring_gender]" >
+                  <option value="" selected>— Any —</option>
+                  <option value="womens" >Women&#039;s</option>
+                  <option value="mens" >Men&#039;s</option>
+              </select>
+      <small>Which wedding ring collection this band belongs to.</small>    </label>
+                        </div>
+                                        <div data-product-scope="wedding rings" hidden style="display:none;">
+                          <label class="admin-field">
+      <span>Base Color</span>
+      <select name="product[color]" >
+                  <option value="Yellow Gold" >Yellow Gold</option>
+                  <option value="Rose Gold" >Rose Gold</option>
+                  <option value="White Gold" >White Gold</option>
+                  <option value="Silver" >Silver</option>
+                  <option value="Platinum" >Platinum</option>
+                  <option value="Emerald Green" >Emerald Green</option>
+                  <option value="Ruby Red" >Ruby Red</option>
+                  <option value="Diamond White" >Diamond White</option>
+              </select>
+      <small>Default colour before customer selection.</small>    </label>
+                        </div>
+                        <label class="admin-field">
+      <span>Visibility</span>
+      <select name="product[status]" >
+                  <option value="active" selected>Active</option>
+                  <option value="hidden" >Hidden</option>
+              </select>
+      <small>Hidden products are in admin only.</small>    </label>
+                                            <select name="product[product_type]" data-driven-by-category hidden aria-hidden="true" tabindex="-1">
+                                              <option value="Engagement Rings" selected>Engagement Rings</option>
+                                              <option value="Wedding Rings" >Wedding Rings</option>
+                                              <option value="Earring" >Earring</option>
+                                          </select>
+                  </div>
+                </section>
+
+                <section class="admin-product-card" data-product-scope="wedding rings">
+                  <div class="admin-product-card-head">
+                    <div>
+                      <p class="admin-kicker">Merchandising</p>
+                      <h4>Pricing and media</h4>
+                    </div>
+                  </div>
+                  <div class="admin-grid three-up">
+                        <label class="admin-field">
+      <span>Current Selling Price</span>
+      <input type="text" name="product[new_price]" value="" >
+      <small>Example: £95.00</small>    </label>
+                            <label class="admin-field">
+      <span>Compare At Price</span>
+      <input type="text" name="product[old_price]" value="" >
+      <small>Optional struck-through price.</small>    </label>
+                            <label class="admin-field">
+      <span>Primary Image URL</span>
+      <input type="text" name="product_image_url" value="" >
+      <small>Primary storefront image.</small>    </label>
+                            <label class="admin-field">
+      <span>Secondary / Hover Image URL</span>
+      <input type="text" name="product_hover_url" value="" >
+      <small>Optional hover or gallery image.</small>    </label>
+                            <label class="admin-field">
+      <span>Upload Primary Image</span>
+      <input type="file" name="product_image_file" value="" accept="image/*">
+          </label>
+                            <label class="admin-field">
+      <span>Upload Hover Image</span>
+      <input type="file" name="product_hover_file" value="" accept="image/*">
+          </label>
+                      </div>
+                      <label class="admin-field admin-field-full">
+      <span>Description</span>
+      <textarea name="product[description]" rows="4"></textarea>
+      <small>Storefront product summary and selling copy.</small>    </label>
+                    </section>
+
+                <section class="admin-product-card" data-product-scope="wedding rings">
+                  <div class="admin-product-card-head">
+                    <div>
+                      <p class="admin-kicker">Merchandising Tags</p>
+                      <h4>Subcategories and highlights</h4>
+                    </div>
+                  </div>
+                  <div class="admin-grid two-up">
+                        <label class="admin-field admin-field-full">
+      <span>Subcategories / Tags</span>
+      <textarea name="product[subcategories_text]" rows="6"></textarea>
+      <small>One tag per line. Example: studs, hoops, tennis, bezel, solitaire, halo, vintage.</small>    </label>
+                            <label class="admin-field admin-field-full">
+      <span>Highlights / Features</span>
+      <textarea name="product[features_text]" rows="6"></textarea>
+      <small>One line per storefront highlight. Leave blank to use automatic defaults.</small>    </label>
+                      </div>
+                </section>
+
+
+                                <section class="admin-product-card" data-product-scope="wedding rings">
+                  <div class="admin-product-card-head">
+                    <div>
+                      <p class="admin-kicker">Customer Options</p>
+                      <h4>Select available choices for this product</h4>
+                    </div>
+                  </div>
+                                    <div data-matrix-profile-type="wedding rings" style="display: none;">
+                    <p class="admin-table-note">Tick the options from the <strong>Wedding Rings</strong> attribute profile that apply to this product. <a href="/admin/index.php?view=attributes&amp;type=Wedding+Rings">Manage the master list in Attributes →</a></p>
+                    <div class="admin-grid two-up" style="margin-bottom:18px">
+                          <label class="admin-field">
+      <span>Color Section Label</span>
+      <input type="text" name="product[option_color_label]" value="" >
+      <small>e.g. Metal, Color</small>    </label>
+                              <label class="admin-field">
+      <span>Size Section Label</span>
+      <input type="text" name="product[option_size_label]" value="" >
+      <small>e.g. Size, Carat Weight</small>    </label>
+                        </div>
+
+                    <div class="admin-grid">
+                      <div class="admin-profile-selector-col">
+                        <div class="admin-profile-selector-head">
+                          <span class="admin-profile-selector-label">Size Options</span>
+                          <small>6 available</small>
+                        </div>
+                                                <div class="admin-profile-chips">
+                                                    <label class="admin-prof-chip is-active">
+                            <input type="checkbox" name="product[selected_size_indices][]" value="0" checked>
+                            <span class="prof-chip-body">
+                              <strong>4</strong>
+                                                          </span>
+                            <i class="fas fa-check prof-chip-check"></i>
+                          </label>
+                                                    <label class="admin-prof-chip is-active">
+                            <input type="checkbox" name="product[selected_size_indices][]" value="1" checked>
+                            <span class="prof-chip-body">
+                              <strong>5</strong>
+                                                          </span>
+                            <i class="fas fa-check prof-chip-check"></i>
+                          </label>
+                                                    <label class="admin-prof-chip is-active">
+                            <input type="checkbox" name="product[selected_size_indices][]" value="2" checked>
+                            <span class="prof-chip-body">
+                              <strong>6</strong>
+                                                          </span>
+                            <i class="fas fa-check prof-chip-check"></i>
+                          </label>
+                                                    <label class="admin-prof-chip is-active">
+                            <input type="checkbox" name="product[selected_size_indices][]" value="3" checked>
+                            <span class="prof-chip-body">
+                              <strong>7</strong>
+                                                          </span>
+                            <i class="fas fa-check prof-chip-check"></i>
+                          </label>
+                                                    <label class="admin-prof-chip is-active">
+                            <input type="checkbox" name="product[selected_size_indices][]" value="4" checked>
+                            <span class="prof-chip-body">
+                              <strong>8</strong>
+                                                          </span>
+                            <i class="fas fa-check prof-chip-check"></i>
+                          </label>
+                                                    <label class="admin-prof-chip is-active">
+                            <input type="checkbox" name="product[selected_size_indices][]" value="5" checked>
+                            <span class="prof-chip-body">
+                              <strong>9</strong>
+                                                          </span>
+                            <i class="fas fa-check prof-chip-check"></i>
+                          </label>
+                                                  </div>
+                                              </div>
+                    </div>
+                  </div>
+                                  </section>
+
+                                <section class="admin-product-card" data-metal-matrix-card>
+                  <div class="admin-product-card-head">
+                    <div>
+                      <p class="admin-kicker">Metal Matrix</p>
+                      <h4>Metal-based Pricing & Options</h4>
+                    </div>
+                  </div>
+                  <p class="admin-table-note" style="margin-bottom:12px;">Enable the metals this product is cast in. For each metal, set its base price, sizes, and shape options.</p>
+
+                                    <div class="admin-field admin-field-full" data-style-picker-wrap style="margin-bottom:18px;">
+                    <span style="font-weight:600; font-size:0.95em; margin-bottom:4px; display:block;">Style</span>
+                    <p class="admin-table-note" style="margin:0 0 10px;">Select the style(s) this product belongs to. The options come from this category's Attributes and update when you change the Category above.</p>
+                                          <div class="admin-choice-grid" data-style-section="engagement" style="">
+                        <input type="hidden" name="product[styles][]" value="" >
+                                                                          <p class="admin-empty-note" style="margin:0;">No styles defined for Engagement Rings yet. <a href="/admin/index.php?view=attributes&amp;type=Engagement+Rings">Add in Attributes →</a></p>
+                                                                      </div>
+                                          <div class="admin-choice-grid" data-style-section="wedding" style="display:none;">
+                        <input type="hidden" name="product[styles][]" value="" disabled>
+                                                                          <p class="admin-empty-note" style="margin:0;">No styles defined for Wedding Rings yet. <a href="/admin/index.php?view=attributes&amp;type=Wedding+Rings">Add in Attributes →</a></p>
+                                                                      </div>
+                                                              <div class="admin-choice-grid" data-style-section="flat-Earring" style="display:none;">
+                        <input type="hidden" name="product[styles][]" value="" disabled>
+                                                  <p class="admin-empty-note" style="margin:0;">No styles defined for Earring yet. <a href="/admin/index.php?view=attributes&amp;type=Earring">Add in Attributes →</a></p>
+                                              </div>
+                                      </div>
+
+                  <div class="admin-metal-matrix">
+                                        <div data-matrix-profile-type="engagement rings" style="display: block;">
+                                                                  <div class="admin-metal-matrix-block" style="padding:16px; border:1px solid #e0e6eb; border-radius:8px; margin-bottom:20px;">
+                        <div class="admin-metal-matrix-head" style="display:flex; justify-content:space-between; align-items:center; border-bottom: none; padding-bottom: 0; background:transparent; transition: all 0.3s ease;">
+                          <label class="admin-checkbox" style="font-size:1.1em; font-weight:600; margin:0;">
+                            <input type="checkbox" name="product[metal_variations_engagement_rings][0][active]" value="1"  onchange="adminToggleMetalDetails(this)">
+                            <span>Gold</span>
+                          </label>
+                          <button type="button" class="admin-ghost admin-metal-apply-btn" style="padding:4px 10px; font-size:0.85em; display: none;" onclick="adminApplyMetalToAll(this, 0)">Apply Pricing & Media to All</button>
+                        </div>
+                        <input type="hidden" name="product[metal_variations_engagement_rings][0][metal]" value="Gold">
+                        
+                        <div class="admin-metal-details-wrap" style="display: none; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; padding-top: 16px;">
+                        <div class="admin-grid two-up" style="margin-bottom:16px;">
+                          <div class="admin-field">
+                            <span>Current Selling Price (£):</span>
+                            <input type="number" name="product[metal_variations_engagement_rings][0][price]" value="0" step="0.01" min="0">
+                          </div>
+                          <div class="admin-field">
+                            <span>Compare At Price (£):</span>
+                            <input type="number" name="product[metal_variations_engagement_rings][0][old_price]" value="" step="0.01" min="0">
+                          </div>
+                        </div>
+
+                        <div class="admin-grid two-up" style="margin-bottom:16px;">
+                            <div class="admin-field">
+                                <span>Description for Gold:</span>
+                                <textarea name="product[metal_variations_engagement_rings][0][description]" rows="4" placeholder="Enter product description..."></textarea>
+                            </div>
+                            <div class="admin-field">
+                                <span>Highlights / Features for Gold:</span>
+                                <textarea name="product[metal_variations_engagement_rings][0][features_text]" rows="4" placeholder="One line per storefront highlight."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="admin-field" style="margin-bottom:16px;">
+                            <span style="font-weight:600; display:block; margin-bottom:8px;">Gallery Images & Video (Up to 6)</span>
+                            <div class="admin-grid three-up">
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:600;">Primary Image (Mandatory)</span>
+                                    <input type="text" name="metal_gallery_0_0_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_0_file" accept="image/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:600;">Hover Image (Mandatory)</span>
+                                    <input type="text" name="metal_gallery_0_1_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_1_file" accept="image/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 3 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_0_2_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_2_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 4 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_0_3_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_3_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 5 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_0_4_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_4_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 6 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_0_5_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_5_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                        </div>
+                        </div>
+                        
+                        <div class="admin-grid two-up" style="margin-top:16px;">
+                                                    <div class="admin-field">
+                            <span style="font-weight:600; font-size:0.9em; margin-bottom:8px; display:block;">Supported Shapes</span>
+                            <div class="admin-choice-grid">
+                                                                                            <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="round" >
+                                  <span style="font-size:0.9em;">Classic Brilliance</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="oval" >
+                                  <span style="font-size:0.9em;">Elongated Elegance</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="cushion" >
+                                  <span style="font-size:0.9em;">Soft Vintage Glow</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="princess" >
+                                  <span style="font-size:0.9em;">Sharp Contemporary Fire</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="emerald" >
+                                  <span style="font-size:0.9em;">Hall Of Mirrors</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="pear" >
+                                  <span style="font-size:0.9em;">Statement Curve</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="marquise" >
+                                  <span style="font-size:0.9em;">Vintage Edge</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="radiant" >
+                                  <span style="font-size:0.9em;">Bright Geometry</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="heart" >
+                                  <span style="font-size:0.9em;">Romantic Signature</span>
+                                </label>
+                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                  <input type="checkbox" name="product[metal_variations_engagement_rings][0][shapes][]" value="asscher" >
+                                  <span style="font-size:0.9em;">Art Deco Precision</span>
+                                </label>
+                                                          </div>
+                          </div>
+                                                    
+                          <div class="admin-field">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
+                              <span style="font-weight:600; font-size:0.9em;">Supported Sizes</span>
+                              <button type="button" class="admin-ghost" style="padding:2px 8px; font-size:0.75em;" onclick="adminSelectAllSizes(this)">Select All</button>
+                            </div>
+                            <div class="admin-choice-grid" data-matrix-sizes="0">
+                                                                                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_engagement_rings][0][sizes][]" value="4" >
+                                    <span style="font-size:0.9em;">4</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_engagement_rings][0][sizes][]" value="5" >
+                                    <span style="font-size:0.9em;">5</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_engagement_rings][0][sizes][]" value="6" >
+                                    <span style="font-size:0.9em;">6</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_engagement_rings][0][sizes][]" value="7" >
+                                    <span style="font-size:0.9em;">7</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_engagement_rings][0][sizes][]" value="8" >
+                                    <span style="font-size:0.9em;">8</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_engagement_rings][0][sizes][]" value="9" >
+                                    <span style="font-size:0.9em;">9</span>
+                                  </label>
+                                                                                          </div>
+                          </div>
+                        </div>
+
+                                                <div class="admin-grid" style="margin-top:16px;">
+                          <div class="admin-field">
+                            <span style="font-weight:600; font-size:0.9em; margin-bottom:8px; display:block;">Band / Claw Add-ons</span>
+                                                          <span class="admin-empty-note">No band options defined.</span>
+                                                      </div>
+                        </div>
+                        
+                        </div> <!-- End admin-metal-details-wrap -->
+                      </div>
+                                                              </div> <!-- End data-matrix-profile-type -->
+                                        <div data-matrix-profile-type="wedding rings" style="display: none;">
+                                              <p class="admin-empty-note">No metal options defined in attributes. <a href="/admin/index.php?view=attributes&amp;type=Wedding+Rings">Add Metals →</a></p>
+                                          </div> <!-- End data-matrix-profile-type -->
+                                        <div data-matrix-profile-type="earring" style="display: none;">
+                                                                  <div class="admin-metal-matrix-block" style="padding:16px; border:1px solid #e0e6eb; border-radius:8px; margin-bottom:20px;">
+                        <div class="admin-metal-matrix-head" style="display:flex; justify-content:space-between; align-items:center; border-bottom: none; padding-bottom: 0; background:transparent; transition: all 0.3s ease;">
+                          <label class="admin-checkbox" style="font-size:1.1em; font-weight:600; margin:0;">
+                            <input type="checkbox" name="product[metal_variations_earring][0][active]" value="1"  onchange="adminToggleMetalDetails(this)">
+                            <span>pink</span>
+                          </label>
+                          <button type="button" class="admin-ghost admin-metal-apply-btn" style="padding:4px 10px; font-size:0.85em; display: none;" onclick="adminApplyMetalToAll(this, 0)">Apply Pricing & Media to All</button>
+                        </div>
+                        <input type="hidden" name="product[metal_variations_earring][0][metal]" value="pink">
+                        
+                        <div class="admin-metal-details-wrap" style="display: none; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; padding-top: 16px;">
+                        <div class="admin-grid two-up" style="margin-bottom:16px;">
+                          <div class="admin-field">
+                            <span>Current Selling Price (£):</span>
+                            <input type="number" name="product[metal_variations_earring][0][price]" value="0" step="0.01" min="0">
+                          </div>
+                          <div class="admin-field">
+                            <span>Compare At Price (£):</span>
+                            <input type="number" name="product[metal_variations_earring][0][old_price]" value="" step="0.01" min="0">
+                          </div>
+                        </div>
+
+                        <div class="admin-grid two-up" style="margin-bottom:16px;">
+                            <div class="admin-field">
+                                <span>Description for pink:</span>
+                                <textarea name="product[metal_variations_earring][0][description]" rows="4" placeholder="Enter product description..."></textarea>
+                            </div>
+                            <div class="admin-field">
+                                <span>Highlights / Features for pink:</span>
+                                <textarea name="product[metal_variations_earring][0][features_text]" rows="4" placeholder="One line per storefront highlight."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="admin-field" style="margin-bottom:16px;">
+                            <span style="font-weight:600; display:block; margin-bottom:8px;">Gallery Images & Video (Up to 6)</span>
+                            <div class="admin-grid three-up">
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:600;">Primary Image (Mandatory)</span>
+                                    <input type="text" name="metal_gallery_0_0_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_0_file" accept="image/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:600;">Hover Image (Mandatory)</span>
+                                    <input type="text" name="metal_gallery_0_1_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_1_file" accept="image/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 3 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_0_2_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_2_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 4 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_0_3_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_3_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 5 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_0_4_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_4_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 6 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_0_5_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_0_5_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                        </div>
+                        </div>
+                        
+                        <div class="admin-grid two-up" style="margin-top:16px;">
+                                                    
+                          <div class="admin-field">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
+                              <span style="font-weight:600; font-size:0.9em;">Supported Sizes</span>
+                              <button type="button" class="admin-ghost" style="padding:2px 8px; font-size:0.75em;" onclick="adminSelectAllSizes(this)">Select All</button>
+                            </div>
+                            <div class="admin-choice-grid" data-matrix-sizes="0">
+                                                                                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_earring][0][sizes][]" value="0.6 ctw" >
+                                    <span style="font-size:0.9em;">0.6 ctw</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_earring][0][sizes][]" value="0.8 ctw" >
+                                    <span style="font-size:0.9em;">0.8 ctw</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_earring][0][sizes][]" value="1 ctw" >
+                                    <span style="font-size:0.9em;">1 ctw</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_earring][0][sizes][]" value="2.4 ctw" >
+                                    <span style="font-size:0.9em;">2.4 ctw</span>
+                                  </label>
+                                                                                          </div>
+                          </div>
+                        </div>
+
+                        
+                        </div> <!-- End admin-metal-details-wrap -->
+                      </div>
+                                            <div class="admin-metal-matrix-block" style="padding:16px; border:1px solid #e0e6eb; border-radius:8px; margin-bottom:20px;">
+                        <div class="admin-metal-matrix-head" style="display:flex; justify-content:space-between; align-items:center; border-bottom: none; padding-bottom: 0; background:transparent; transition: all 0.3s ease;">
+                          <label class="admin-checkbox" style="font-size:1.1em; font-weight:600; margin:0;">
+                            <input type="checkbox" name="product[metal_variations_earring][1][active]" value="1"  onchange="adminToggleMetalDetails(this)">
+                            <span>blue</span>
+                          </label>
+                          <button type="button" class="admin-ghost admin-metal-apply-btn" style="padding:4px 10px; font-size:0.85em; display: none;" onclick="adminApplyMetalToAll(this, 1)">Apply Pricing & Media to All</button>
+                        </div>
+                        <input type="hidden" name="product[metal_variations_earring][1][metal]" value="blue">
+                        
+                        <div class="admin-metal-details-wrap" style="display: none; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; padding-top: 16px;">
+                        <div class="admin-grid two-up" style="margin-bottom:16px;">
+                          <div class="admin-field">
+                            <span>Current Selling Price (£):</span>
+                            <input type="number" name="product[metal_variations_earring][1][price]" value="0" step="0.01" min="0">
+                          </div>
+                          <div class="admin-field">
+                            <span>Compare At Price (£):</span>
+                            <input type="number" name="product[metal_variations_earring][1][old_price]" value="" step="0.01" min="0">
+                          </div>
+                        </div>
+
+                        <div class="admin-grid two-up" style="margin-bottom:16px;">
+                            <div class="admin-field">
+                                <span>Description for blue:</span>
+                                <textarea name="product[metal_variations_earring][1][description]" rows="4" placeholder="Enter product description..."></textarea>
+                            </div>
+                            <div class="admin-field">
+                                <span>Highlights / Features for blue:</span>
+                                <textarea name="product[metal_variations_earring][1][features_text]" rows="4" placeholder="One line per storefront highlight."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="admin-field" style="margin-bottom:16px;">
+                            <span style="font-weight:600; display:block; margin-bottom:8px;">Gallery Images & Video (Up to 6)</span>
+                            <div class="admin-grid three-up">
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:600;">Primary Image (Mandatory)</span>
+                                    <input type="text" name="metal_gallery_1_0_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_1_0_file" accept="image/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:600;">Hover Image (Mandatory)</span>
+                                    <input type="text" name="metal_gallery_1_1_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_1_1_file" accept="image/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 3 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_1_2_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_1_2_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 4 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_1_3_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_1_3_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 5 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_1_4_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_1_4_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                            <div style="padding:10px; border:1px solid #edf0ed; border-radius:6px; background:#f9fbfd;">
+                                    <span style="font-size:0.8em; color:#6a7c73; display:block; margin-bottom:4px; font-weight:normal;">Gallery 6 (Image/Video)</span>
+                                    <input type="text" name="metal_gallery_1_5_url" value="" placeholder="https://..." style="width:100%; margin-bottom:6px; font-size:0.85em; padding:4px;">
+                                    <input type="file" name="metal_gallery_1_5_file" accept="image/*,video/*" style="width:100%; font-size:0.8em;">
+                                </div>
+                                                        </div>
+                        </div>
+                        
+                        <div class="admin-grid two-up" style="margin-top:16px;">
+                                                    
+                          <div class="admin-field">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
+                              <span style="font-weight:600; font-size:0.9em;">Supported Sizes</span>
+                              <button type="button" class="admin-ghost" style="padding:2px 8px; font-size:0.75em;" onclick="adminSelectAllSizes(this)">Select All</button>
+                            </div>
+                            <div class="admin-choice-grid" data-matrix-sizes="1">
+                                                                                                                              <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_earring][1][sizes][]" value="0.6 ctw" >
+                                    <span style="font-size:0.9em;">0.6 ctw</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_earring][1][sizes][]" value="0.8 ctw" >
+                                    <span style="font-size:0.9em;">0.8 ctw</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_earring][1][sizes][]" value="1 ctw" >
+                                    <span style="font-size:0.9em;">1 ctw</span>
+                                  </label>
+                                                                  <label class="admin-choice-chip" style="padding:6px 10px;">
+                                    <input type="checkbox" name="product[metal_variations_earring][1][sizes][]" value="2.4 ctw" >
+                                    <span style="font-size:0.9em;">2.4 ctw</span>
+                                  </label>
+                                                                                          </div>
+                          </div>
+                        </div>
+
+                        
+                        </div> <!-- End admin-metal-details-wrap -->
+                      </div>
+                                                              </div> <!-- End data-matrix-profile-type -->
+                                      </div>
+                </section>
+                  </div>
+                </section>
+
+              </div>
+            </div>
+
+            <div class="admin-actions admin-actions-sticky">
+              <button class="admin-primary" type="submit">Upload Product</button>
+              <a class="admin-ghost" href="/admin/index.php?view=catalog">Close</a>
+            </div>
+            </form>          </section>
+        
+        <script type="application/json" id="catalog-attribute-profiles">{"Engagement Rings":{"type":"Engagement Rings","option_color_label":"","option_size_label":"","option_color_display":"","option_size_display":"","option_colors":[],"option_sizes":["4","5","6","7","8","9"],"option_color_choices":[],"option_size_choices":[{"value":"4","label":"4","caption":"","tone":"classic"},{"value":"5","label":"5","caption":"","tone":"classic"},{"value":"6","label":"6","caption":"","tone":"classic"},{"value":"7","label":"7","caption":"","tone":"classic"},{"value":"8","label":"8","caption":"","tone":"classic"},{"value":"9","label":"9","caption":"","tone":"classic"}],"option_metal_options":[{"value":"gold","label":"Gold","description":"","color_hex":"#c9a96e","image":""}],"option_band_claw_metal_options":[],"option_delivery_options":[],"selector_cards":[],"style_cards":[],"style_cards_sections":{"engagement":[],"wedding":[]},"diamond_inventory":[]},"Wedding Rings":{"type":"Wedding Rings","option_color_label":"","option_size_label":"","option_color_display":"","option_size_display":"","option_colors":[],"option_sizes":["4","5","6","7","8","9"],"option_color_choices":[],"option_size_choices":[{"value":"4","label":"4","caption":"","tone":"classic"},{"value":"5","label":"5","caption":"","tone":"classic"},{"value":"6","label":"6","caption":"","tone":"classic"},{"value":"7","label":"7","caption":"","tone":"classic"},{"value":"8","label":"8","caption":"","tone":"classic"},{"value":"9","label":"9","caption":"","tone":"classic"}],"option_metal_options":[],"option_band_claw_metal_options":[],"option_delivery_options":[],"selector_cards":[],"style_cards":[],"style_cards_sections":{"engagement":[],"wedding":[]},"diamond_inventory":[]},"Earring":{"type":"Earring","option_color_label":"","option_size_label":"","option_color_display":"","option_size_display":"","option_colors":[],"option_sizes":["0.6 ctw","0.8 ctw","1 ctw","2.4 ctw"],"option_color_choices":[],"option_size_choices":[{"value":"0.6 ctw","label":"0.6 ctw","caption":"","tone":"classic"},{"value":"0.8 ctw","label":"0.8 ctw","caption":"","tone":"classic"},{"value":"1 ctw","label":"1 ctw","caption":"","tone":"classic"},{"value":"2.4 ctw","label":"2.4 ctw","caption":"","tone":"classic"}],"option_metal_options":[{"value":"gold","label":"pink","description":"","color_hex":"#c9a96e","image":""},{"value":"blue","label":"blue","description":"","color_hex":"#c9a96e","image":""}],"option_band_claw_metal_options":[],"option_delivery_options":[],"selector_cards":[],"style_cards":[],"style_cards_sections":{"engagement":[],"wedding":[]},"diamond_inventory":[]}}</script>
+
+                  </main>
+  </div>
+
+  <template id="tpl-product-size-choice">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>Size Choice</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Label</span>
+      <input type="text" name="product[option_size_choices][__PRODUCT_SIZE_INDEX__][label]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Caption</span>
+      <input type="text" name="product[option_size_choices][__PRODUCT_SIZE_INDEX__][caption]" value="" >
+          </label>
+          </div>
+    </div>
+  </template>
+
+  <template id="tpl-product-detail-option">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>Metal Option</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Label</span>
+      <input type="text" name="product[option_metal_options][__PRODUCT_METAL_INDEX__][label]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Metal Color *</span>
+      <input type="color" name="product[option_metal_options][__PRODUCT_METAL_INDEX__][color_hex]" value="#c9a96e" required>
+      <small>Pick the display color for this metal.</small>    </label>
+          </div>
+          <label class="admin-field admin-field-full">
+      <span>Description</span>
+      <textarea name="product[option_metal_options][__PRODUCT_METAL_INDEX__][description]" rows="3"></textarea>
+          </label>
+        </div>
+  </template>
+
+  <template id="tpl-product-band-option">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>Band / Claw Option</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid one-up">
+            <label class="admin-field">
+      <span>Label</span>
+      <input type="text" name="product[option_band_claw_metal_options][__PRODUCT_BAND_INDEX__][label]" value="" >
+          </label>
+          </div>
+      <input type="hidden" name="product[option_band_claw_metal_options][__PRODUCT_BAND_INDEX__][current_image]" value="">
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Image URL</span>
+      <input type="text" name="band_image_url___PRODUCT_BAND_INDEX__" value="" >
+      <small>Paste an image URL or upload one below.</small>    </label>
+            <label class="admin-field">
+          <span>Upload Image</span>
+          <input type="file" name="band_image_file___PRODUCT_BAND_INDEX__" accept="image/*">
+        </label>
+      </div>
+          <label class="admin-field admin-field-full">
+      <span>Description</span>
+      <textarea name="product[option_band_claw_metal_options][__PRODUCT_BAND_INDEX__][description]" rows="3"></textarea>
+          </label>
+        </div>
+  </template>
+
+  <template id="tpl-product-style-card">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>New Style</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <input type="hidden" name="product[style_cards][__PRODUCT_STYLE_INDEX__][current_image]" value="">
+      <div class="admin-grid one-up">
+            <label class="admin-field">
+      <span>Style Name</span>
+      <input type="text" name="product[style_cards][__PRODUCT_STYLE_INDEX__][label]" value="" >
+      <small>Used for display, and the URL/filter value is created from this name automatically.</small>    </label>
+          </div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Image URL</span>
+      <input type="text" name="style_card_image_url___PRODUCT_STYLE_INDEX__" value="" >
+      <small>Paste an image URL or upload one below.</small>    </label>
+            <label class="admin-field">
+          <span>Upload Image</span>
+          <input type="file" name="style_card_image_file___PRODUCT_STYLE_INDEX__" accept="image/*">
+        </label>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-product-style-card-engagement">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>New Style</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <input type="hidden" name="product[style_cards_sections][engagement][__ENG_STYLE_INDEX__][current_image]" value="">
+      <div class="admin-grid one-up">
+            <label class="admin-field">
+      <span>Style Name</span>
+      <input type="text" name="product[style_cards_sections][engagement][__ENG_STYLE_INDEX__][label]" value="" >
+      <small>Used for display, and the URL/filter value is created from this name automatically.</small>    </label>
+          </div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Image URL</span>
+      <input type="text" name="style_card_engagement_image_url___ENG_STYLE_INDEX__" value="" >
+      <small>Paste an image URL or upload one below.</small>    </label>
+            <label class="admin-field">
+          <span>Upload Image</span>
+          <input type="file" name="style_card_engagement_image_file___ENG_STYLE_INDEX__" accept="image/*">
+        </label>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-product-style-card-wedding">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>New Style</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <input type="hidden" name="product[style_cards_sections][wedding][__WED_STYLE_INDEX__][current_image]" value="">
+      <div class="admin-grid one-up">
+            <label class="admin-field">
+      <span>Style Name</span>
+      <input type="text" name="product[style_cards_sections][wedding][__WED_STYLE_INDEX__][label]" value="" >
+      <small>Used for display, and the URL/filter value is created from this name automatically.</small>    </label>
+          </div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Image URL</span>
+      <input type="text" name="style_card_wedding_image_url___WED_STYLE_INDEX__" value="" >
+      <small>Paste an image URL or upload one below.</small>    </label>
+            <label class="admin-field">
+          <span>Upload Image</span>
+          <input type="file" name="style_card_wedding_image_file___WED_STYLE_INDEX__" accept="image/*">
+        </label>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-product-selector-card">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>New Style</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <input type="hidden" name="product[selector_cards][__PRODUCT_SELECTOR_INDEX__][current_image]" value="">
+      <div class="admin-grid one-up">
+            <label class="admin-field">
+      <span>Style Name</span>
+      <input type="text" name="product[selector_cards][__PRODUCT_SELECTOR_INDEX__][label]" value="" >
+      <small>Used for display, and the URL/filter value is created from this name automatically.</small>    </label>
+          </div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Image URL</span>
+      <input type="text" name="selector_card_image_url___PRODUCT_SELECTOR_INDEX__" value="" >
+      <small>Paste an image URL or upload one below.</small>    </label>
+            <label class="admin-field">
+          <span>Upload Image</span>
+          <input type="file" name="selector_card_image_file___PRODUCT_SELECTOR_INDEX__" accept="image/*">
+        </label>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-product-setting-variation">
+    <div class="admin-repeater-item">
+      <div class="admin-item-head"><h4>Setting Variation</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid three-up">
+            <label class="admin-field">
+      <span>Supported Shape</span>
+      <select name="product[setting_variations][__PRODUCT_VAR_INDEX__][shape]" >
+                  <option value="all" selected>Any Supported Shape</option>
+                  <option value="round" >Classic Brilliance</option>
+                  <option value="oval" >Elongated Elegance</option>
+                  <option value="cushion" >Soft Vintage Glow</option>
+                  <option value="princess" >Sharp Contemporary Fire</option>
+                  <option value="emerald" >Hall Of Mirrors</option>
+                  <option value="pear" >Statement Curve</option>
+                  <option value="marquise" >Vintage Edge</option>
+                  <option value="radiant" >Bright Geometry</option>
+                  <option value="heart" >Romantic Signature</option>
+                  <option value="asscher" >Art Deco Precision</option>
+              </select>
+          </label>
+                <label class="admin-field">
+      <span>Metal Option</span>
+      <select name="product[setting_variations][__PRODUCT_VAR_INDEX__][metal]" >
+                  <option value="Gold" >Gold</option>
+              </select>
+          </label>
+                <label class="admin-field">
+      <span>Band / Claw Option</span>
+      <select name="product[setting_variations][__PRODUCT_VAR_INDEX__][band]" >
+              </select>
+          </label>
+          </div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Setting Price</span>
+      <input type="number" name="product[setting_variations][__PRODUCT_VAR_INDEX__][price]" value="0" step="0.01" min="0">
+          </label>
+                <label class="admin-field">
+      <span>Stock Status</span>
+      <select name="product[setting_variations][__PRODUCT_VAR_INDEX__][status]" >
+                  <option value="active" selected>Available</option>
+                  <option value="sold-out" >Sold Out</option>
+              </select>
+          </label>
+          </div>
+    </div>
+  </template>
+
+  <template id="tpl-product-delivery-option">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>Delivery Option</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid three-up">
+            <label class="admin-field">
+      <span>Label</span>
+      <input type="text" name="product[option_delivery_options][__PRODUCT_DELIVERY_INDEX__][label]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Surcharge</span>
+      <input type="number" name="product[option_delivery_options][__PRODUCT_DELIVERY_INDEX__][price]" value="0" step="0.01" min="0">
+          </label>
+                <label class="admin-field">
+      <span>Badge</span>
+      <input type="text" name="product[option_delivery_options][__PRODUCT_DELIVERY_INDEX__][badge]" value="" >
+          </label>
+          </div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Price Label</span>
+      <input type="text" name="product[option_delivery_options][__PRODUCT_DELIVERY_INDEX__][price_label]" value="" >
+          </label>
+          </div>
+          <label class="admin-field admin-field-full">
+      <span>Description</span>
+      <textarea name="product[option_delivery_options][__PRODUCT_DELIVERY_INDEX__][description]" rows="3"></textarea>
+          </label>
+        </div>
+  </template>
+
+  <template id="tpl-product-diamond-row">
+    <div class="admin-repeater-item">
+      <div class="admin-item-head"><h4>Diamond Row</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <input type="hidden" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][id]" value="">
+      <div class="admin-grid four-up">
+            <label class="admin-field">
+      <span>Applies To Shape</span>
+      <select name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][shape]" >
+                  <option value="all" selected>Any Supported Shape</option>
+                  <option value="round" >Classic Brilliance</option>
+                  <option value="oval" >Elongated Elegance</option>
+                  <option value="cushion" >Soft Vintage Glow</option>
+                  <option value="princess" >Sharp Contemporary Fire</option>
+                  <option value="emerald" >Hall Of Mirrors</option>
+                  <option value="pear" >Statement Curve</option>
+                  <option value="marquise" >Vintage Edge</option>
+                  <option value="radiant" >Bright Geometry</option>
+                  <option value="heart" >Romantic Signature</option>
+                  <option value="asscher" >Art Deco Precision</option>
+              </select>
+          </label>
+                <label class="admin-field">
+      <span>Card Title</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][title]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Carat</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][carat]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Diamond Price</span>
+      <input type="number" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][price]" value="0" step="0.01" min="0">
+          </label>
+          </div>
+      <div class="admin-grid four-up">
+            <label class="admin-field">
+      <span>Color Grade</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][color]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Clarity</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][clarity]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Cut</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][cut]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Badge</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][badge]" value="Lab Selected" >
+          </label>
+          </div>
+      <div class="admin-grid four-up">
+            <label class="admin-field">
+      <span>Ratio</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][ratio]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Measurement</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][measurement]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>REF</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][ref]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>IGI Certificate</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][igi_certificate]" value="" >
+          </label>
+          </div>
+      <div class="admin-grid three-up">
+            <label class="admin-field">
+      <span>Diamond Image URL</span>
+      <input type="text" name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][image]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Upload Image</span>
+      <input type="file" name="product_diamond_image_file___PRODUCT_DIAMOND_INDEX__" value="" accept="image/*">
+          </label>
+                <label class="admin-field">
+      <span>Stock Status</span>
+      <select name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][status]" >
+                  <option value="active" selected>Available</option>
+                  <option value="sold-out" >Sold Out</option>
+              </select>
+          </label>
+          </div>
+          <label class="admin-field admin-field-full">
+      <span>Diamond Description</span>
+      <textarea name="product[diamond_inventory][__PRODUCT_DIAMOND_INDEX__][description]" rows="4"></textarea>
+          </label>
+        </div>
+  </template>
+
+  <template id="tpl-admin-diamond-row">
+    <div class="admin-repeater-item">
+      <div class="admin-item-head"><h4>Diamond Row</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <input type="hidden" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][id]" value="">
+      <div class="admin-grid four-up">
+            <label class="admin-field">
+      <span>Applies To Shape</span>
+      <select name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][shape]" >
+                  <option value="round" selected>Classic Brilliance</option>
+                  <option value="oval" >Elongated Elegance</option>
+                  <option value="cushion" >Soft Vintage Glow</option>
+                  <option value="princess" >Sharp Contemporary Fire</option>
+                  <option value="emerald" >Hall Of Mirrors</option>
+                  <option value="pear" >Statement Curve</option>
+                  <option value="marquise" >Vintage Edge</option>
+                  <option value="radiant" >Bright Geometry</option>
+                  <option value="heart" >Romantic Signature</option>
+                  <option value="asscher" >Art Deco Precision</option>
+              </select>
+          </label>
+                <label class="admin-field">
+      <span>Card Title</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][title]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Carat</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][carat]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Diamond Price</span>
+      <input type="number" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][price]" value="0" step="0.01" min="0">
+          </label>
+          </div>
+      <div class="admin-grid four-up">
+            <label class="admin-field">
+      <span>Color Grade</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][color]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Clarity</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][clarity]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Cut</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][cut]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Badge</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][badge]" value="Lab Selected" >
+          </label>
+          </div>
+      <div class="admin-grid four-up">
+            <label class="admin-field">
+      <span>Ratio</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][ratio]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Measurement</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][measurement]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>REF</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][ref]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>IGI Certificate</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][igi_certificate]" value="" >
+          </label>
+          </div>
+      <div class="admin-grid three-up">
+            <label class="admin-field">
+      <span>Diamond Image URL</span>
+      <input type="text" name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][image]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Upload Image</span>
+      <input type="file" name="diamond_image_file___PRODUCT_DIAMOND_INDEX__" value="" accept="image/*">
+          </label>
+                <label class="admin-field">
+      <span>Stock Status</span>
+      <select name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][status]" >
+                  <option value="active" selected>Available</option>
+                  <option value="sold-out" >Sold Out</option>
+              </select>
+          </label>
+          </div>
+          <label class="admin-field admin-field-full">
+      <span>Diamond Description</span>
+      <textarea name="diamond_inventory[__PRODUCT_DIAMOND_INDEX__][description]" rows="4"></textarea>
+          </label>
+        </div>
+  </template>
+
+  <template id="tpl-category-card">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>Card</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid three-up">
+            <label class="admin-field">
+      <span>Icon Classes</span>
+      <input type="text" name="category_cards[__CARD_INDEX__][header_icon]" value="fas fa-gem" >
+          </label>
+                <label class="admin-field">
+      <span>Other Text</span>
+      <input type="text" name="category_cards[__CARD_INDEX__][sub]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Category Name (Title)</span>
+      <input type="text" name="category_cards[__CARD_INDEX__][title]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Image URL</span>
+      <input type="text" name="category_cards[__CARD_INDEX__][image]" value="" >
+      <small>Paste URL or upload below</small>    </label>
+                <label class="admin-field">
+      <span>Upload Image</span>
+      <input type="file" name="category_image_file___CARD_INDEX__" value="" accept="image/*">
+          </label>
+                <label class="admin-field">
+      <span>Image Alt</span>
+      <input type="text" name="category_cards[__CARD_INDEX__][alt]" value="" >
+          </label>
+          </div>
+    </div>
+  </template>
+
+  <template id="tpl-celeb-item">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>Celeb</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid two-up">
+            <label class="admin-field">
+      <span>Name</span>
+      <input type="text" name="celebs[items][__CELEB_INDEX__][name]" value="" >
+          </label>
+                <label class="admin-field">
+      <span>Image URL</span>
+      <input type="text" name="celebs[items][__CELEB_INDEX__][image]" value="" >
+          </label>
+          </div>
+    </div>
+  </template>
+
+  <template id="tpl-social-gallery-item">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>Image</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid three-up">
+        <label class="admin-field"><span>Username</span><input type="text" name="social_gallery[items][__GALLERY_INDEX__][username]"></label>
+        <label class="admin-field"><span>Alt Text</span><input type="text" name="social_gallery[items][__GALLERY_INDEX__][alt]"></label>
+        <label class="admin-field"><span>Image File</span><input type="file" name="social_gallery_image_file___GALLERY_INDEX__" accept="image/*"></label>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-faq-item">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4>Question</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid one-up">
+        <label class="admin-field"><span>Question</span><input type="text" name="faq[items][__FAQ_INDEX__][question]"></label>
+        <label class="admin-field"><span>Answer</span><textarea name="faq[items][__FAQ_INDEX__][answer]" rows="3"></textarea></label>
+      </div>
+    </div>
+  </template>
+
+  <script src="../assets/js/admin.js?v=1785850648"></script>
+  <script>
+    function adminSyncMetalMatrix() {
+        // Sync Sizes
+        const sizeLabels = Array.from(document.querySelectorAll('input[name^="product[option_size_choices]"][name$="[label]"]')).map(el => el.value.trim()).filter(v => v);
+        document.querySelectorAll('[data-matrix-sizes]').forEach(grid => {
+            const mIdx = grid.getAttribute('data-matrix-sizes');
+            const currentChecked = Array.from(grid.querySelectorAll('input:checked')).map(el => el.value);
+            if (sizeLabels.length === 0) {
+                grid.innerHTML = '<span class="admin-empty-note" style="font-size:0.8em;">No sizes defined.</span>';
+            } else {
+                grid.innerHTML = sizeLabels.map(sz => `
+                    <label class="admin-choice-chip" style="padding:6px 10px;">
+                        <input type="checkbox" name="product[metal_variations][${mIdx}][sizes][]" value="${sz}" ${currentChecked.includes(sz) ? 'checked' : ''}>
+                        <span style="font-size:0.9em;">${sz}</span>
+                    </label>
+                `).join('');
+            }
+        });
+
+        // Sync Bands
+        const bandLabels = Array.from(document.querySelectorAll('input[name^="product[option_band_claw_metal_options]"][name$="[label]"]')).map(el => el.value.trim()).filter(v => v);
+        document.querySelectorAll('[data-matrix-bands]').forEach(list => {
+            const mIdx = list.getAttribute('data-matrix-bands');
+            // Save state
+            const state = {};
+            list.querySelectorAll('.admin-band-addon-row').forEach(row => {
+                const label = row.querySelector('input[type="hidden"]').value;
+                const checked = row.querySelector('input[type="checkbox"]').checked;
+                const surcharge = row.querySelector('input[type="number"]').value;
+                state[label] = { checked, surcharge };
+            });
+
+            if (bandLabels.length === 0) {
+                list.innerHTML = '<span class="admin-empty-note">No band options defined.</span>';
+                const parent = list.closest('.admin-field');
+                if (parent) {
+                    const emptyNote = parent.querySelector('> span.admin-empty-note');
+                    if (emptyNote) emptyNote.style.display = 'block';
+                    list.style.display = 'none';
+                }
+            } else {
+                const parent = list.closest('.admin-field');
+                if (parent) {
+                    const emptyNote = parent.querySelector('> span.admin-empty-note');
+                    if (emptyNote) emptyNote.style.display = 'none';
+                    list.style.display = 'flex';
+                }
+                list.innerHTML = bandLabels.map((lbl, bIdx) => {
+                    const saved = state[lbl] || { checked: false, surcharge: '0' };
+                    return `
+                        <div class="admin-band-addon-row" style="display:flex; align-items:center; justify-content:space-between; background:#f9fafb; padding:8px 12px; border-radius:6px; border:1px solid #e5e7eb;">
+                            <label class="admin-checkbox" style="margin:0;">
+                                <input type="checkbox" name="product[metal_variations][${mIdx}][band_options][${bIdx}][active]" value="1" ${saved.checked ? 'checked' : ''}>
+                                <span style="font-size:0.9em;">${lbl}</span>
+                                <input type="hidden" name="product[metal_variations][${mIdx}][band_options][${bIdx}][label]" value="${lbl}">
+                            </label>
+                            <div class="admin-field-inline" style="margin:0;">
+                                <span style="font-size:0.85em; color:#6b7280; margin-right:6px;">Add-on:</span>
+                                <div class="admin-input-wrap">
+                                    <span class="admin-input-prefix">£</span>
+                                    <input type="number" name="product[metal_variations][${mIdx}][band_options][${bIdx}][surcharge]" value="${saved.surcharge}" step="0.01" min="0" style="width:80px; padding:4px 8px 4px 28px;">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        });
+    }
+
+    document.addEventListener('input', (e) => {
+        if (e.target.matches('input[name^="product[option_size_choices]"], input[name^="product[option_band_claw_metal_options]"]')) {
+            adminSyncMetalMatrix();
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.matches('.admin-add, .admin-remove')) {
+            setTimeout(adminSyncMetalMatrix, 50); // wait for DOM update
+        }
+    });
+    function adminToggleMetalDetails(checkbox) {
+        const block = checkbox.closest('.admin-metal-matrix-block');
+        const head = block.querySelector('.admin-metal-matrix-head');
+        const details = block.querySelector('.admin-metal-details-wrap');
+        const applyBtn = block.querySelector('.admin-metal-apply-btn');
+        
+        if (checkbox.checked) {
+            head.style.borderBottom = '1px solid #e0e6eb';
+            head.style.paddingBottom = '12px';
+            applyBtn.style.display = 'block';
+            details.style.display = 'block';
+            // Trigger reflow
+            details.offsetHeight;
+            details.style.opacity = '1';
+            details.style.transform = 'translateY(0)';
+        } else {
+            head.style.borderBottom = 'none';
+            head.style.paddingBottom = '0';
+            applyBtn.style.display = 'none';
+            details.style.opacity = '0';
+            details.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                if (!checkbox.checked) details.style.display = 'none';
+            }, 300);
+        }
+    }
+
+    function adminSelectAllSizes(btn) {
+        const grid = btn.closest('.admin-field').querySelector('.admin-choice-grid');
+        if (grid) {
+            const boxes = grid.querySelectorAll('input[type="checkbox"]');
+            const allChecked = Array.from(boxes).every(b => b.checked);
+            boxes.forEach(b => b.checked = !allChecked);
+        }
+    }
+
+    function adminApplyMetalToAll(btn, srcIdx) {
+        if (!confirm('This will copy the pricing, description, sizes, and gallery from this metal to ALL other metals. Are you sure?')) return;
+        
+        const blocks = document.querySelectorAll('.admin-metal-matrix-block');
+        const srcPrice = document.querySelector(`input[name="product[metal_variations][${srcIdx}][price]"]`)?.value || '';
+        const srcOldPrice = document.querySelector(`input[name="product[metal_variations][${srcIdx}][old_price]"]`)?.value || '';
+        const srcDesc = document.querySelector(`textarea[name="product[metal_variations][${srcIdx}][description]"]`)?.value || '';
+        const srcFeat = document.querySelector(`textarea[name="product[metal_variations][${srcIdx}][features_text]"]`)?.value || '';
+        
+        // Collect checked sizes
+        const srcSizesBoxes = document.querySelectorAll(`input[name="product[metal_variations][${srcIdx}][sizes][]"]`);
+        const srcSizes = Array.from(srcSizesBoxes).map(b => ({ val: b.value, checked: b.checked }));
+        
+        let srcGallery = [];
+        for (let i = 0; i < 6; i++) {
+            srcGallery.push(document.querySelector(`input[name="metal_gallery_${srcIdx}_${i}_url"]`)?.value || '');
+        }
+        
+        blocks.forEach((block, idx) => {
+            if (idx === srcIdx) return;
+            
+            const trgPrice = document.querySelector(`input[name="product[metal_variations][${idx}][price]"]`);
+            if (trgPrice) trgPrice.value = srcPrice;
+            
+            const trgOld = document.querySelector(`input[name="product[metal_variations][${idx}][old_price]"]`);
+            if (trgOld) trgOld.value = srcOldPrice;
+            
+            const trgDesc = document.querySelector(`textarea[name="product[metal_variations][${idx}][description]"]`);
+            if (trgDesc) trgDesc.value = srcDesc;
+            
+            const trgFeat = document.querySelector(`textarea[name="product[metal_variations][${idx}][features_text]"]`);
+            if (trgFeat) trgFeat.value = srcFeat;
+            
+            const trgSizesBoxes = document.querySelectorAll(`input[name="product[metal_variations][${idx}][sizes][]"]`);
+            trgSizesBoxes.forEach(b => {
+                const match = srcSizes.find(s => s.val === b.value);
+                if (match) b.checked = match.checked;
+            });
+            
+            for (let j = 0; j < 6; j++) {
+                const trgGal = document.querySelector(`input[name="metal_gallery_${idx}_${j}_url"]`);
+                if (trgGal) trgGal.value = srcGallery[j];
+            }
+        });
+        
+        alert('Copied to all metals successfully.');
+    }
+  </script>
+</body>
+</html>

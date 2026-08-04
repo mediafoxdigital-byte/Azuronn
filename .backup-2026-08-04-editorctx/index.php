@@ -469,12 +469,8 @@ function admin_richtext(string $name, string $label, mixed $value, string $hint 
 
 function admin_form_open(string $view, string $action, bool $multipart = false): void
 {
-    // autocomplete="off" stops the browser restoring stale <select> values on a
-    // soft reload / back-navigation. Restoration happens AFTER scripts run, so a
-    // restored Category left the product form rendering its "choose a category"
-    // state while a category was visibly selected.
     ?>
-    <form method="post" action="<?= admin_html(admin_url($view)) ?>" autocomplete="off" <?= $multipart ? 'enctype="multipart/form-data"' : '' ?>>
+    <form method="post" action="<?= admin_html(admin_url($view)) ?>" <?= $multipart ? 'enctype="multipart/form-data"' : '' ?>>
       <?php csrf_field(); ?>
       <input type="hidden" name="action" value="<?= admin_html($action) ?>">
       <input type="hidden" name="return_view" value="<?= admin_html($view) ?>">
@@ -3333,15 +3329,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             break;
 
         case 'create-product':
-            // A product must be filed under a real category. Without this a POST
-            // with no category_taxonomy fell through to a guessed type, which is
-            // how products silently landed under Engagement Rings.
-            $newProductTaxonomy = clean_string((string) (($_POST['product']['category_taxonomy'] ?? '')), 80);
-            if ($newProductTaxonomy === '' || !isset(product_category_taxonomy_options()[$newProductTaxonomy])) {
-                admin_set_flash('error', 'Choose a category before uploading the product.');
-                admin_redirect('catalog', ['product_form' => 'create']);
-                break;
-            }
             $content['products']['items'][] = admin_ensure_unique_item_id(
                 $content['products']['items'],
                 admin_build_product_from_post([], count($content['products']['items']))
@@ -4484,19 +4471,16 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
           // Engagement Rings metals. The Category dropdown maps to the same values,
           // so the editor context, the visible matrix block, and the
           // metal_variations_<type> POST key all agree.
-          //
-          // A NEW product deliberately starts with NO editor category. Falling back
-          // to the first/ring type here is what made every category show Engagement
-          // Rings' metals: the Category dropdown rendered blank while the server had
-          // already picked a type and marked its matrix block visible.
           if ($editingProduct !== null) {
               $catalogEditorType = product_attribute_profile_type($editingProduct);
           } else {
               $catalogEditorType = admin_canonical_attribute_type(
-                  clean_string((string) ($_GET['type'] ?? ''), 80)
+                  clean_string((string) ($defaultAttributeType ?? ($productTypes[0] ?? '')), 80)
               );
           }
-          $catalogEditorHasType = $catalogEditorType !== '';
+          if ($catalogEditorType === '') {
+              $catalogEditorType = ring_section_profile_type('engagement');
+          }
           $catalogEditorProfile = catalog_attribute_profile($catalogEditorType, $content);
           $catalogEditorSource = is_array($editingProduct) ? $editingProduct : [];
           $catalogEditorColorLabel = admin_editor_scalar($catalogEditorSource, $catalogEditorProfile, 'option_color_label');
@@ -4508,7 +4492,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
             <div class="admin-panel-head"><div><p class="admin-kicker">Product Form</p><h3><?= $editingProduct ? 'Edit product' : 'Upload product' ?></h3></div></div>
             <?php admin_form_open('catalog', $editingProduct ? 'update-product' : 'create-product', true); ?>
             <?php if ($editingProduct): ?><input type="hidden" name="product_id" value="<?= admin_html($editingProduct['id']) ?>"><?php endif; ?>
-            <div class="admin-product-editor<?= $catalogEditorHasType ? '' : ' has-no-category' ?>" data-catalog-profile-editor data-category-state-root>
+            <div class="admin-product-editor" data-catalog-profile-editor>
               <div class="admin-product-main">
                 <section class="admin-product-card">
                   <div class="admin-product-card-head">
@@ -4587,7 +4571,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                     <?php // Base Color applies to non-matrix categories only. Rendered
                           // always and scoped client-side so switching Category reveals it
                           // without a reload (server-side hiding froze it to the initial type). ?>
-                    <div data-product-scope="<?= admin_html($nonMatrixScope !== '' ? $nonMatrixScope : '__none__') ?>"<?= (!$catalogEditorHasType || admin_product_type_is_matrix($catalogEditorType)) ? ' hidden style="display:none;"' : '' ?>>
+                    <div data-product-scope="<?= admin_html($nonMatrixScope !== '' ? $nonMatrixScope : '__none__') ?>"<?= admin_product_type_is_matrix($catalogEditorType) ? ' hidden style="display:none;"' : '' ?>>
                       <?php admin_select('product[color]', 'Base Color', $editingProduct['color'] ?? '', admin_options_from_list((array) ($content['catalog_meta']['colors'] ?? [])), '', 'Default colour before customer selection.'); ?>
                     </div>
                     <?php admin_select('product[status]', 'Visibility', $editingProduct['status'] ?? 'active', ['active' => 'Active', 'hidden' => 'Hidden'], '', 'Hidden products are in admin only.'); ?>
@@ -4600,10 +4584,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                       // existing matrix-scope sync (which queries select[name=product_type])
                       // keeps working. Canonical values (Ring, not Rings) make the matrix
                       // POST key and the save handler key agree.
-                      // Blank for a new product until a Category is chosen — the JS
-                      // reads this select as its fallback, so pre-selecting a type
-                      // here is what pinned every category to Engagement Rings.
-                      $initialProductType = $catalogEditorHasType ? $catalogEditorType : '';
+                      $initialProductType = $catalogEditorType;
                       // Options = every canonical type the Category dropdown can map to
                       // (so a category with no products yet still switches the matrix),
                       // unioned with any canonical types already present as products.
@@ -4613,10 +4594,6 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                       )));
                     ?>
                     <select name="product[product_type]" data-driven-by-category hidden aria-hidden="true" tabindex="-1">
-                      <?php // Empty first option so a new product really has no type until a
-                            // Category is chosen — without it the browser auto-selects the
-                            // first real option and the old leak comes straight back. ?>
-                      <option value="" <?= $initialProductType === '' ? 'selected' : '' ?>></option>
                       <?php foreach ($productTypeOptions as $ptOption): ?>
                         <option value="<?= admin_html($ptOption) ?>" <?= $ptOption === $initialProductType ? 'selected' : '' ?>><?= admin_html($ptOption) ?></option>
                       <?php endforeach; ?>
@@ -4676,8 +4653,6 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                       <h4>Select available choices for this product</h4>
                     </div>
                   </div>
-                  <?php // Visibility driven by .has-no-category on the editor root. ?>
-                  <p class="admin-empty-note" data-needs-category>Choose a <strong>Category</strong> above to load its colour and size choices.</p>
                   <?php foreach ($catalogAttributeProfilesForJs as $optType => $optProfile):
                       if (admin_product_type_is_matrix((string) $optType)) { continue; }
                       $optIsCurrent = strtolower((string) $optType) === strtolower($catalogEditorType);
@@ -4735,10 +4710,6 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                     </div>
                   </div>
                   <p class="admin-table-note" style="margin-bottom:12px;">Enable the metals this product is cast in. For each metal, set its base price, sizes, and shape options.</p>
-                  <?php // Visibility is driven purely by the .has-no-category class on the
-                        // editor root (see the CSS below), so the placeholder can never get
-                        // stuck visible if a JS pass is missed. ?>
-                  <p class="admin-empty-note" data-needs-category>Choose a <strong>Category</strong> above to load its metals and options.</p>
 
                   <?php
                     // ── Style picker (all categories) ─────────────────────────
@@ -4748,9 +4719,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                     // JS syncProductStyleSection() shows only the matching grid and
                     // disables the rest so hidden grids never submit.
                     $editingTaxonomy = $editingProduct !== null ? product_ring_taxonomy($editingProduct) : ['category' => '', 'gender' => ''];
-                    // No category chosen yet ⇒ no style grid is pre-visible. Defaulting
-                    // to 'engagement' here showed engagement styles under every category.
-                    $initialStyleSection = $editingTaxonomy['category'];
+                    $initialStyleSection = $editingTaxonomy['category'] !== '' ? $editingTaxonomy['category'] : 'engagement';
                     $savedProductStyles = array_values((array) ($editingProduct['styles'] ?? []));
                     $styleSectionsForPicker = ['engagement', 'wedding'];
                     $initialFlatType = '';

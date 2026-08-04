@@ -245,19 +245,11 @@ function syncCouponFields(scope = document) {
 }
 
 function syncProductEditorScopes(scope = document) {
-  // The caller may pass a <form> element directly (e.g. from a change-event
-  // handler) or document. A form does NOT contain itself, so
-  // form.querySelectorAll('form') returns nothing. Normalise so the logic
-  // below always operates on the correct set of target forms.
-  const forms = (scope instanceof HTMLFormElement)
-    ? [scope]
-    : Array.from(scope.querySelectorAll('form'));
-  forms.forEach(function (form) {
-    // The Category dropdown is the ONLY source of truth for the editor context.
-    // It deliberately has no fallback: reading the hidden product[product_type]
-    // select here is what pinned a blank-category form to whatever type the
-    // server happened to render, so every category showed Engagement Rings'
-    // metals until the dropdown was touched.
+  scope.querySelectorAll('form').forEach((form) => {
+    // The Category dropdown is the single source of truth — resolve the
+    // canonical product type via its data-category-type-map and feed every
+    // scope-driven card the same value. Falls back to the legacy hidden
+    // product[product_type] select if a form doesn't have the map yet.
     const categorySelect = form.querySelector('select[name="product[category_taxonomy]"][data-category-type-map]');
     let type = '';
     if (categorySelect) {
@@ -265,15 +257,15 @@ function syncProductEditorScopes(scope = document) {
         const map = JSON.parse(categorySelect.getAttribute('data-category-type-map') || '{}');
         type = (map[categorySelect.value] || '').toLowerCase();
       } catch (_e) { type = ''; }
-    } else {
-      // Forms without the Category dropdown (the Attributes editor) still key
-      // off the type select.
+    }
+    if (!type) {
       const hiddenType = form.querySelector('select[name="product[product_type]"]');
       if (hiddenType) type = (hiddenType.value || '').toLowerCase();
     }
 
     // Gender applies to wedding rings only — reveal it when the chosen Category
-    // is that ring section, and disable it otherwise so it can't submit.
+    // is that ring section, and disable it otherwise so it can't submit. Runs
+    // before the type guard below so clearing the Category also hides it.
     if (categorySelect) {
       let sectionMap = {};
       try { sectionMap = JSON.parse(categorySelect.dataset.categoryStyleMap || '{}'); } catch (_e) { sectionMap = {}; }
@@ -288,15 +280,7 @@ function syncProductEditorScopes(scope = document) {
       });
     }
 
-    // "Choose a Category" prompts are CSS-driven off this one class, so a single
-    // toggle governs every prompt in the form and none can get stuck visible.
-    form.querySelectorAll('[data-category-state-root]').forEach((root) => {
-      root.classList.toggle('has-no-category', type === '');
-    });
-
-    // NOTE: no `if (!type) return` here. An empty type must fall through so the
-    // loops below hide and disable EVERY category block — that is what makes a
-    // blank Category show nothing instead of another category's data.
+    if (!type) return;
 
     form.querySelectorAll('[data-product-scope]').forEach((node) => {
       const allowed = (node.dataset.productScope || '')
@@ -798,9 +782,10 @@ function syncCategoryToProductType(scope = document) {
       map = {};
     }
 
-    // Clearing the Category must clear the type too, and still re-sync — the old
-    // early return left the previously chosen category's metals on screen.
     const mapped = map[categorySelect.value || ''] || '';
+    if (mapped === '') {
+      return; // no category chosen yet; keep the server-set type
+    }
     if (typeSelect.value !== mapped) {
       typeSelect.value = mapped;
     }
@@ -864,12 +849,6 @@ document.addEventListener('change', (event) => {
 });
 
 document.addEventListener('input', (event) => {
-  // Some browsers fire `input` (not `change`) when a select value is restored or
-  // set programmatically, so mirror the category handler here too.
-  if (event.target.matches && event.target.matches('select[name="product[category_taxonomy]"]')) {
-    syncCategoryToProductType(event.target.closest('form') || document);
-  }
-
   if (event.target.closest('#attribute-profile form, #attribute-editor form')) {
     scheduleAttributeDraftSave(event.target.closest('form'));
   }
@@ -918,27 +897,14 @@ document.addEventListener('selectionchange', () => {
   updateRichTextToolbar(field);
 });
 
-// Initial sync. This must run again after DOMContentLoaded and after pageshow:
-// browsers restore <select> values (soft reload, back/forward, bfcache) AFTER
-// the parse-time pass, so a restored Category would otherwise leave the form
-// showing the "choose a category" state while a category is visibly selected.
-function syncAdminProductEditors() {
-  syncCouponFields();
-  syncCategoryToProductType();
-  syncProductEditorScopes();
-  syncCatalogProductEditors();
-}
-
-syncAdminProductEditors();
+syncCouponFields();
+syncCategoryToProductType();
+syncProductEditorScopes();
+syncCatalogProductEditors();
 clearOldAttributeDrafts();
 restoreAttributeDrafts();
 removeRetiredAttributeControls();
 initRichTextFields();
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', syncAdminProductEditors);
-}
-window.addEventListener('pageshow', syncAdminProductEditors);
 
 function syncAdminAnchorNav() {
   const nav = document.querySelector('.admin-anchor-nav');
