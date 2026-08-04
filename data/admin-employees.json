@@ -1,0 +1,20 @@
+[
+    {
+        "id": "emp-admin-20260520060237-bcc83c",
+        "name": "Abdul",
+        "username": "abdul@",
+        "password_hash": "$2y$10$0/oHRokfxlTUyvkpTp9BkOOX9gIdt9reb4V5GN/6HRCq0iQby/mUS",
+        "status": "active",
+        "created_at": "2026-05-20 06:02",
+        "updated_at": "2026-07-15 15:26"
+    },
+    {
+        "id": "emp-admin-20260531073404-f6db90",
+        "name": "Abdul",
+        "username": "abdul",
+        "password_hash": "$2y$10$flTajD0k4A45.a50IRrtduXfiWIGvU/lYyJ4edorMN0H0qcCJSLW6",
+        "status": "active",
+        "created_at": "2026-05-31 07:34",
+        "updated_at": "2026-07-29 20:09"
+    }
+]

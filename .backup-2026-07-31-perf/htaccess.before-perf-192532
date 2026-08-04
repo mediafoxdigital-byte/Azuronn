@@ -1,0 +1,56 @@
+# ─────────────────────────────────────────────
+#  MONSTA – Apache Security Configuration
+# ─────────────────────────────────────────────
+
+# Disable directory listing
+Options -Indexes
+
+# Block direct browser access to the includes folder
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Legacy ring collection routes
+    RewriteRule ^engagement-rings/shape/([a-zA-Z0-9-]+)/?$ shop/index.php?type=Ring&ring_category=engagement&shape=$1 [L,QSA]
+    RewriteRule ^engagement-rings/style/([a-zA-Z0-9-]+)/?$ shop/index.php?type=Ring&ring_category=engagement&style=$1 [L,QSA]
+
+    # Wedding ring section routes
+    RewriteRule ^wedding-rings/mens/?$ shop/index.php?type=Ring&ring_category=wedding&gender=mens [L,QSA]
+    RewriteRule ^wedding-rings/womens/?$ shop/index.php?type=Ring&ring_category=wedding&gender=womens [L,QSA]
+    RewriteRule ^wedding-rings/?$ shop/index.php?type=Ring&ring_category=wedding [L,QSA]
+    RewriteRule ^wedding-rings/style/([a-zA-Z0-9-]+)/?$ shop/index.php?type=Ring&ring_category=wedding&style=$1 [L,QSA]
+
+    # Engagement ring section route
+    RewriteRule ^engagement-rings/?$ shop/index.php?type=Ring&ring_category=engagement [L,QSA]
+
+    # Deny access to includes/ directly
+    RewriteRule ^includes/ - [F,L]
+    RewriteRule ^data/ - [F,L]
+</IfModule>
+
+# Alternatively, deny via FilesMatch for .php in includes/
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Force UTF-8
+AddDefaultCharset UTF-8
+
+# Security Headers (mod_headers)
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self';"
+</IfModule>
+
+# Prevent access to sensitive files
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|json)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable server signature
+ServerSignature Off

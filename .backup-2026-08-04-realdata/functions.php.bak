@@ -1,0 +1,1371 @@
+<?php
+/**
+ * functions.php
+ * Shared utility helpers for safe output, CSRF tokens, content rendering, etc.
+ */
+declare(strict_types=1);
+
+function e(string $value): void
+{
+    echo htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function h(string $value): string
+{
+    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function app_root_path(): string
+{
+    $script = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
+    $directory = rtrim(str_replace('\\', '/', dirname($script)), '/');
+    $directory = ($directory === '.' || $directory === '/') ? '' : $directory;
+
+    $scriptFile = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_FILENAME'] ?? ''));
+    $basePath = defined('BASE_PATH') ? str_replace('\\', '/', BASE_PATH) : '';
+
+    if ($scriptFile !== '' && $basePath !== '' && str_starts_with($scriptFile, $basePath)) {
+        $relativeDir = trim(substr(str_replace('\\', '/', dirname($scriptFile)), strlen($basePath)), '/');
+        if ($relativeDir !== '') {
+            $suffix = '/' . $relativeDir;
+            if ($directory !== '' && str_ends_with($directory, $suffix)) {
+                $directory = substr($directory, 0, -strlen($suffix));
+            } else {
+                $segments = explode('/', trim($directory, '/'));
+                $relativeSegments = explode('/', $relativeDir);
+                while ($relativeSegments !== [] && $segments !== [] && end($segments) === end($relativeSegments)) {
+                    array_pop($segments);
+                    array_pop($relativeSegments);
+                }
+                $directory = $segments === [] ? '' : '/' . implode('/', $segments);
+            }
+        }
+    }
+
+    return $directory === '/' ? '' : $directory;
+}
+
+function app_path_url(string $path): string
+{
+    $root = app_root_path();
+    $cleanPath = ltrim($path, '/');
+
+    if ($cleanPath === '') {
+        return $root === '' ? '/' : $root . '/';
+    }
+
+    return ($root === '' ? '' : $root) . '/' . $cleanPath;
+}
+
+function url(string $path): string
+{
+    return app_path_url($path);
+}
+
+function asset_url(string $path): string
+{
+    $url = app_path_url($path);
+    $cleanPath = ltrim($path, '/');
+    $absolutePath = defined('BASE_PATH') ? BASE_PATH . '/' . $cleanPath : '';
+
+    if ($absolutePath !== '' && is_file($absolutePath)) {
+        $version = (string) filemtime($absolutePath);
+        $separator = str_contains($url, '?') ? '&' : '?';
+        return $url . $separator . 'v=' . rawurlencode($version);
+    }
+
+    return $url;
+}
+
+function media_asset_type(string $path): string
+{
+    $cleanPath = strtolower(parse_url(trim($path), PHP_URL_PATH) ?? trim($path));
+    $extension = pathinfo($cleanPath, PATHINFO_EXTENSION);
+
+    return in_array($extension, ['mp4', 'webm', 'ogv', 'mov', 'm4v'], true) ? 'video' : 'image';
+}
+
+function media_asset_mime(string $path): string
+{
+    $cleanPath = strtolower(parse_url(trim($path), PHP_URL_PATH) ?? trim($path));
+    $extension = pathinfo($cleanPath, PATHINFO_EXTENSION);
+
+    return match ($extension) {
+        'webm' => 'video/webm',
+        'ogv' => 'video/ogg',
+        'mov' => 'video/quicktime',
+        'm4v' => 'video/x-m4v',
+        default => 'video/mp4',
+    };
+}
+
+function store_media_markup(string $path, string $alt, string $className = '', bool $controls = false): string
+{
+    $resolvedPath = clean_image($path);
+    if ($resolvedPath === '') {
+        return '';
+    }
+
+    $classAttr = $className !== '' ? ' class="' . h($className) . '"' : '';
+    if (media_asset_type($resolvedPath) === 'video') {
+        $videoAttrs = $controls ? ' controls' : ' muted autoplay loop aria-hidden="true"';
+        return '<video' . $classAttr . $videoAttrs . ' playsinline preload="metadata"><source src="' . h($resolvedPath) . '" type="' . h(media_asset_mime($resolvedPath)) . '"></video>';
+    }
+
+    return '<img' . $classAttr . ' src="' . h($resolvedPath) . '" alt="' . h($alt) . '">';
+}
+
+function resolve_link(string $path): string
+{
+    if ($path === '' || $path === '#') {
+        return '#';
+    }
+
+    if (preg_match('~^(?:https?:)?//~i', $path) || preg_match('~^(mailto:|tel:)~i', $path)) {
+        return $path;
+    }
+
+    return app_path_url($path);
+}
+
+function news_items(): array
+{
+    return array_values(array_filter(site_content()['news']['items'] ?? [], 'is_array'));
+}
+
+function news_article_url(array $story): string
+{
+    $id = clean_string((string) ($story['id'] ?? ''), 80);
+    if ($id === '') {
+        $id = content_id('news', $story, 0, 'title');
+    }
+
+    return resolve_link('/news/?article=' . rawurlencode($id));
+}
+
+function find_news_article(string $articleId): ?array
+{
+    $articleId = clean_string($articleId, 80);
+    if ($articleId === '') {
+        return null;
+    }
+
+    foreach (news_items() as $story) {
+        if ((string) ($story['id'] ?? '') === $articleId) {
+            return $story;
+        }
+    }
+
+    return null;
+}
+
+function news_article_body(array $story): string
+{
+    $body = trim((string) ($story['body'] ?? ''));
+    if ($body !== '') {
+        return $body;
+    }
+
+    $excerpt = clean_string((string) ($story['excerpt'] ?? ''), 12000);
+    return $excerpt !== '' ? clean_rich_text($excerpt, 12000) : '';
+}
+
+function news_article_text(array $story): string
+{
+    return rich_text_plain_text(news_article_body($story));
+}
+
+function news_article_read_time(array $story): int
+{
+    $body = trim((string) ($story['title'] ?? '') . ' ' . news_article_text($story));
+    if ($body === '') {
+        return 2;
+    }
+
+    $wordCount = str_word_count(strip_tags($body));
+    return max(2, (int) ceil($wordCount / 180));
+}
+
+function csrf_token(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function csrf_field(): void
+{
+    echo '<input type="hidden" name="csrf_token" value="' . h(csrf_token()) . '">';
+}
+
+function csrf_verify(): bool
+{
+    $submitted = $_POST['csrf_token'] ?? '';
+    return isset($_SESSION['csrf_token'])
+        && is_string($submitted)
+        && hash_equals($_SESSION['csrf_token'], $submitted);
+}
+
+function sanitize_text(string $input): string
+{
+    return trim(strip_tags($input));
+}
+
+function sanitize_email(string $email): string
+{
+    return filter_var(trim($email), FILTER_SANITIZE_EMAIL);
+}
+
+function redirect(string $url): void
+{
+    header('Location: ' . $url);
+    exit;
+}
+
+function catalog_product_map(): array
+{
+    $items = site_content()['products']['items'] ?? [];
+    $map = [];
+    foreach ($items as $item) {
+        if (!is_array($item) || empty($item['id'])) {
+            continue;
+        }
+        $map[(string) $item['id']] = $item;
+    }
+    return $map;
+}
+
+function catalog_expand_array(array $products): array
+{
+    $expanded = [];
+    foreach ($products as $p) {
+        $hasVariations = false;
+        if (!empty($p['metal_variations'])) {
+            foreach ($p['metal_variations'] as $mv) {
+                if ($mv['active'] ?? false) {
+                    $hasVariations = true;
+                    break;
+                }
+            }
+        }
+
+        if ($hasVariations) {
+            $hasActiveMetal = false;
+            foreach ($p['metal_variations'] as $idx => $mv) {
+                if ($mv['active'] ?? false) {
+                    $hasActiveMetal = true;
+                    $clone = $p;
+                    $clone['original_id'] = $p['id'];
+                    $clone['id'] = $p['id'] . '__metal_' . content_slug($mv['metal'], 'm'.$idx);
+                    $clone['name'] = $p['name'] . ' - ' . $mv['metal'];
+                    $clone['new_price'] = money_format((float)($mv['price'] ?? 0));
+                    $clone['old_price'] = $mv['old_price'] ?? '';
+                    if (!empty($mv['description'])) {
+                        $clone['description'] = $mv['description'];
+                    }
+                    if (!empty($mv['features']) && is_array($mv['features'])) {
+                        $clone['features'] = $mv['features'];
+                    }
+                    if (!empty($mv['gallery']) && is_array($mv['gallery'])) {
+                        $clone['default_image'] = $mv['gallery'][0];
+                        $clone['popup_image'] = $mv['gallery'][0];
+                        $clone['gallery'] = $mv['gallery'];
+                        if (isset($mv['gallery'][1]) && $mv['gallery'][1] !== '') {
+                            $clone['hover_image'] = $mv['gallery'][1];
+                        }
+                    } elseif (!empty($mv['image'])) {
+                        $clone['default_image'] = $mv['image'];
+                        $clone['popup_image'] = $mv['image'];
+                        $clone['gallery'] = [$mv['image']];
+                    } else {
+                        // Fallback to base product images if metal has no specific images
+                        $clone['default_image'] = $p['default_image'] ?? '';
+                        $clone['popup_image'] = $p['popup_image'] ?? ($p['default_image'] ?? '');
+                        $clone['hover_image'] = $p['hover_image'] ?? ($p['default_image'] ?? '');
+                        $clone['gallery'] = $p['gallery'] ?? [];
+                    }
+
+                    $clone['url_metal_param'] = content_slug($mv['metal'], 'metal');
+                    $clone['color'] = $mv['metal'];
+                    $expanded[] = $clone;
+                }
+            }
+            if (!$hasActiveMetal) {
+                $expanded[] = $p;
+            }
+        } else {
+            $expanded[] = $p;
+        }
+    }
+    return $expanded;
+}
+
+function products_by_ids(array $ids): array
+{
+    $map = catalog_product_map();
+    $products = [];
+    foreach ($ids as $id) {
+        $key = (string) $id;
+        if (isset($map[$key])) {
+            $products[] = $map[$key];
+        }
+    }
+    return catalog_sort_by_inventory(catalog_expand_array($products));
+}
+
+function catalog_sort_by_inventory(array $products): array
+{
+    $decorated = [];
+    foreach (array_values($products) as $index => $product) {
+        if (!is_array($product)) {
+            continue;
+        }
+
+        $status = function_exists('product_inventory_status')
+            ? product_inventory_status($product, ['metal' => (string) ($product['color'] ?? '')])
+            : ['out_of_stock' => false];
+
+        $decorated[] = [
+            'index' => $index,
+            'priority' => !empty($status['out_of_stock']) ? 1 : 0,
+            'product' => $product,
+        ];
+    }
+
+    usort($decorated, static function (array $left, array $right): int {
+        if ($left['priority'] !== $right['priority']) {
+            return $left['priority'] <=> $right['priority'];
+        }
+
+        return $left['index'] <=> $right['index'];
+    });
+
+    return array_values(array_map(static fn (array $item): array => $item['product'], $decorated));
+}
+
+function catalog_products(bool $activeOnly = true): array
+{
+    $items = site_content()['products']['items'] ?? [];
+    if (!$activeOnly) {
+        return catalog_sort_by_inventory(array_values(array_filter($items, 'is_array')));
+    }
+
+    return catalog_sort_by_inventory(array_values(array_filter($items, static function (mixed $item): bool {
+        return is_array($item) && strtolower((string) ($item['status'] ?? 'active')) === 'active';
+    })));
+}
+
+function catalog_expanded_products(bool $activeOnly = true): array
+{
+    return catalog_expand_array(catalog_products($activeOnly));
+}
+
+function default_ring_style_cards(): array
+{
+    return [
+        'solitaire' => ['value' => 'solitaire', 'label' => 'Solitaire', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg'],
+        'halo' => ['value' => 'halo', 'label' => 'Halo', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg'],
+        'hidden-halo' => ['value' => 'hidden-halo', 'label' => 'Hidden Halo', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg'],
+        'three-stone' => ['value' => 'three-stone', 'label' => 'Three Stone', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg'],
+        'vintage' => ['value' => 'vintage', 'label' => 'Vintage', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg'],
+        'toi-et-moi' => ['value' => 'toi-et-moi', 'label' => 'Toi et Moi', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg'],
+        'sidestones' => ['value' => 'sidestones', 'label' => 'Sidestones', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg'],
+    ];
+}
+
+function available_ring_style_cards(string $ringCategory = ''): array
+{
+    $defaults = default_ring_style_cards();
+    $profile = catalog_attribute_profile('Ring');
+    $ringCategory = strtolower(trim($ringCategory));
+
+    // Section-specific cards (engagement / wedding) win when present, then the
+    // shared profile list, then the hard-coded engagement defaults.
+    $profileCards = [];
+    if ($ringCategory !== '' && isset($profile['style_cards_sections'][$ringCategory]) && is_array($profile['style_cards_sections'][$ringCategory])) {
+        $profileCards = array_values($profile['style_cards_sections'][$ringCategory]);
+    }
+    if ($profileCards === []) {
+        $profileCards = array_values((array) ($profile['style_cards'] ?? []));
+    }
+    if ($profileCards === []) {
+        $ringsProfile = catalog_attribute_profile('Rings');
+        if ($ringCategory !== '' && isset($ringsProfile['style_cards_sections'][$ringCategory]) && is_array($ringsProfile['style_cards_sections'][$ringCategory])) {
+            $profileCards = array_values($ringsProfile['style_cards_sections'][$ringCategory]);
+        } else {
+            $profileCards = array_values((array) ($ringsProfile['style_cards'] ?? []));
+        }
+    }
+
+    $cards = [];
+    foreach ($profileCards as $card) {
+        if (!is_array($card)) {
+            continue;
+        }
+
+        $value = clean_string((string) ($card['value'] ?? ''), 80);
+        if ($value === '') {
+            continue;
+        }
+
+        $cards[$value] = [
+            'value' => $value,
+            'label' => clean_string((string) ($card['label'] ?? ($defaults[$value]['label'] ?? $value)), 120),
+            'image' => clean_image((string) ($card['image'] ?? ($defaults[$value]['image'] ?? ''))),
+        ];
+    }
+
+    // The shared engagement defaults only backfill the engagement/all-rings view;
+    // wedding keeps exactly the cards configured for its section.
+    if ($ringCategory !== 'wedding') {
+        foreach ($defaults as $styleKey => $defaultCard) {
+            if (isset($cards[$styleKey])) {
+                continue;
+            }
+            $cards[$styleKey] = [
+                'value' => $styleKey,
+                'label' => clean_string((string) ($defaultCard['label'] ?? $styleKey), 120),
+                'image' => clean_image((string) ($defaultCard['image'] ?? '')),
+            ];
+        }
+    }
+
+    return $cards;
+}
+
+function available_ring_styles(string $ringCategory = ''): array
+{
+    $styles = [];
+    foreach (available_ring_style_cards($ringCategory) as $styleKey => $card) {
+        $label = clean_string((string) ($card['label'] ?? ''), 120);
+        if ($label === '') {
+            $label = ucwords(str_replace('-', ' ', $styleKey));
+        }
+        $styles[$styleKey] = $label;
+    }
+    return $styles;
+}
+
+/**
+ * Ring taxonomy for a product: which ring section it belongs to and who it is for.
+ * Legacy products without explicit fields are inferred so un-migrated data still
+ * sorts sensibly: rings with diamond shapes read as engagement; plain rings read
+ * as wedding (the classic band case). Non-ring products return empty values.
+ */
+function product_ring_taxonomy(array $product): array
+{
+    $typeKey = strtolower((string) ($product['product_type'] ?? ''));
+    if (!str_starts_with($typeKey, 'ring')) {
+        return ['category' => '', 'gender' => ''];
+    }
+
+    $category = strtolower(clean_string((string) ($product['ring_category'] ?? ''), 40));
+    if (!in_array($category, ['engagement', 'wedding'], true)) {
+        $category = (array) ($product['diamondShapes'] ?? []) !== [] ? 'engagement' : 'wedding';
+    }
+
+    $gender = strtolower(clean_string((string) ($product['ring_gender'] ?? ''), 40));
+    if (!in_array($gender, ['mens', 'womens'], true)) {
+        $gender = '';
+    }
+
+    return ['category' => $category, 'gender' => $gender];
+}
+
+function ring_section_label(string $ringCategory, string $gender = ''): string
+{
+    $ringCategory = strtolower($ringCategory);
+    $gender = strtolower($gender);
+
+    if ($ringCategory === 'engagement') {
+        return 'Engagement Rings';
+    }
+    if ($ringCategory === 'wedding') {
+        if ($gender === 'mens') {
+            return "Men's Wedding Rings";
+        }
+        if ($gender === 'womens') {
+            return "Women's Wedding Rings";
+        }
+        return 'Wedding Rings';
+    }
+
+    return 'Rings';
+}
+
+/**
+ * The two gender entry cards ("Men's Wedding Rings" / "Women's Wedding Rings")
+ * rendered as jewellery-style image boxes in the Wedding Rings mega-menu and as
+ * the filter box row on the wedding listing. Single source of truth so the nav
+ * and the shop page stay in lockstep; callers build the URLs (nav uses its
+ * section query, the shop page its $buildShopUrl) and the active state.
+ */
+function ring_gender_box_cards(): array
+{
+    return [
+        'womens' => ['key' => 'womens', 'label' => "Women's Wedding Rings", 'image' => '/assets/uploads/ring_collection_bg.png'],
+        'mens' => ['key' => 'mens', 'label' => "Men's Wedding Rings", 'image' => '/assets/uploads/proposal-3.webp'],
+    ];
+}
+
+/**
+ * Storefront category label for a product: "Engagement Rings",
+ * "Wedding Rings — Men's", "Earrings", etc. Used across the admin UI so every
+ * product list shows a clean category instead of raw type strings.
+ */
+function product_category_label(array $product): string
+{
+    $taxonomy = product_ring_taxonomy($product);
+    if ($taxonomy['category'] !== '') {
+        $label = ring_section_label($taxonomy['category']);
+        if ($taxonomy['category'] === 'wedding' && $taxonomy['gender'] !== '') {
+            $label .= ' — ' . ($taxonomy['gender'] === 'mens' ? "Men's" : "Women's");
+        }
+        return $label;
+    }
+
+    $type = clean_string((string) ($product['product_type'] ?? ''), 80);
+    return $type !== '' ? homepage_style_type_label($type) : 'Uncategorized';
+}
+
+/**
+ * The unified category choices offered on the product form. Each choice maps
+ * to the exact product_type + ring_category + ring_gender combination, so one
+ * dropdown decides where the product lives on the storefront.
+ */
+function product_category_taxonomy_options(): array
+{
+    return [
+        'engagement' => ['label' => 'Engagement Rings', 'product_type' => 'Rings', 'ring_category' => 'engagement', 'ring_gender' => ''],
+        'wedding-womens' => ['label' => "Wedding Rings — Women's", 'product_type' => 'Rings', 'ring_category' => 'wedding', 'ring_gender' => 'womens'],
+        'wedding-mens' => ['label' => "Wedding Rings — Men's", 'product_type' => 'Rings', 'ring_category' => 'wedding', 'ring_gender' => 'mens'],
+        'Earring' => ['label' => 'Earrings', 'product_type' => 'Earring', 'ring_category' => '', 'ring_gender' => ''],
+        'Pendant' => ['label' => 'Pendants', 'product_type' => 'Pendant', 'ring_category' => '', 'ring_gender' => ''],
+        'Bracelet' => ['label' => 'Bangles & Bracelets', 'product_type' => 'Bracelet', 'ring_category' => '', 'ring_gender' => ''],
+        'Necklace' => ['label' => 'Necklaces', 'product_type' => 'Necklace', 'ring_category' => '', 'ring_gender' => ''],
+        'Brooch' => ['label' => 'Brooches', 'product_type' => 'Brooch', 'ring_category' => '', 'ring_gender' => ''],
+        'Jewellery Set' => ['label' => 'Jewellery Sets', 'product_type' => 'Jewellery Set', 'ring_category' => '', 'ring_gender' => ''],
+        'Mangalsutra' => ['label' => 'Mangalsutra', 'product_type' => 'Mangalsutra', 'ring_category' => '', 'ring_gender' => ''],
+    ];
+}
+
+/**
+ * The taxonomy option key a product currently maps to (for preselecting the
+ * Category dropdown). Unknown/custom types fall back to their product_type.
+ */
+function product_category_taxonomy_key(array $product): string
+{
+    $taxonomy = product_ring_taxonomy($product);
+    if ($taxonomy['category'] === 'engagement') {
+        return 'engagement';
+    }
+    if ($taxonomy['category'] === 'wedding') {
+        // Untagged wedding rings preselect Women's (the common band case); there
+        // is no unisex choice — every wedding ring is filed under Men's or Women's.
+        return 'wedding-' . ($taxonomy['gender'] !== '' ? $taxonomy['gender'] : 'womens');
+    }
+
+    return clean_string((string) ($product['product_type'] ?? ''), 80);
+}
+
+function default_collection_selector_cards(string $type): array
+{
+    $type = strtolower(clean_string($type, 80));
+
+    return match ($type) {
+        'earring', 'earrings' => [
+            'studs' => ['value' => 'studs', 'label' => 'Studs', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg', 'product_ids' => ['prd-crystal-drops', 'prd-earl-teardrop']],
+            'hoops' => ['value' => 'hoops', 'label' => 'Hoops', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg', 'product_ids' => ['prd-crystal-drops']],
+            'drops' => ['value' => 'drops', 'label' => 'Drops', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg', 'product_ids' => ['prd-crystal-drops']],
+            'white-gold' => ['value' => 'white-gold', 'label' => 'White Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg', 'product_ids' => ['prd-earl-teardrop']],
+            'yellow-gold' => ['value' => 'yellow-gold', 'label' => 'Yellow Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg', 'product_ids' => ['prd-crystal-drops']],
+            'huggies' => ['value' => 'huggies', 'label' => 'Huggies', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg', 'product_ids' => ['prd-crystal-drops']],
+            'essentials' => ['value' => 'essentials', 'label' => 'Essentials', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg', 'product_ids' => ['prd-crystal-drops', 'prd-earl-teardrop']],
+            'rose-gold' => ['value' => 'rose-gold', 'label' => 'Rose Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg', 'product_ids' => ['prd-earl-teardrop']],
+            'fancy-studs' => ['value' => 'fancy-studs', 'label' => 'Fancy Studs', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg', 'product_ids' => ['prd-crystal-drops']],
+            'halo' => ['value' => 'halo', 'label' => 'Halo', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg', 'product_ids' => ['prd-earl-teardrop']],
+            'single-stud' => ['value' => 'single-stud', 'label' => 'Single Stud', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg', 'product_ids' => ['prd-earl-teardrop']],
+            'statement' => ['value' => 'statement', 'label' => 'Statement', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg', 'product_ids' => ['prd-crystal-drops']],
+            'bezel' => ['value' => 'bezel', 'label' => 'Bezel', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg', 'product_ids' => ['prd-earl-teardrop']],
+        ],
+        'bracelet', 'bangles-bracelets', 'bangles-&-bracelets' => [
+            'tennis-bracelet' => ['value' => 'tennis-bracelet', 'label' => 'Tennis Bracelet', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            'light-weight' => ['value' => 'light-weight', 'label' => 'Light Weight', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            'white-gold' => ['value' => 'white-gold', 'label' => 'White Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            'yellow-gold' => ['value' => 'yellow-gold', 'label' => 'Yellow Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            '17-5-length' => ['value' => '17-5-length', 'label' => '17.5cm Length', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            '16-5-length' => ['value' => '16-5-length', 'label' => '16.5cm Length', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            'diamond-bangle' => ['value' => 'diamond-bangle', 'label' => 'Diamond Bangle', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            'trinity' => ['value' => 'trinity', 'label' => 'Trinity', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            'emerald' => ['value' => 'emerald', 'label' => 'Emerald', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            'oval' => ['value' => 'oval', 'label' => 'Oval', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+            'bezel-bracelets' => ['value' => 'bezel-bracelets', 'label' => 'Bezel Bracelets', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg', 'product_ids' => ['prd-silver-cuff-band']],
+        ],
+        'pendant', 'pendants' => [
+            'solitaire' => ['value' => 'solitaire', 'label' => 'Solitaire', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg', 'product_ids' => ['prd-iamond-wedding-set']],
+            'slider' => ['value' => 'slider', 'label' => 'Slider', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg', 'product_ids' => ['prd-floral-brooch']],
+            'dress' => ['value' => 'dress', 'label' => 'Dress', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg', 'product_ids' => ['prd-iamond-wedding-set']],
+            'white-gold' => ['value' => 'white-gold', 'label' => 'White Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg', 'product_ids' => ['prd-iamond-wedding-set']],
+            'tennis' => ['value' => 'tennis', 'label' => 'Tennis', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg', 'product_ids' => ['prd-letraset-animal']],
+            'bezel' => ['value' => 'bezel', 'label' => 'Bezel', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg', 'product_ids' => ['prd-floral-brooch']],
+            'initial' => ['value' => 'initial', 'label' => 'Initial', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg', 'product_ids' => ['prd-letraset-animal']],
+            'yellow-gold' => ['value' => 'yellow-gold', 'label' => 'Yellow Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg', 'product_ids' => ['prd-letraset-animal']],
+        ],
+        'necklace', 'necklaces' => [
+            'solitaire' => ['value' => 'solitaire', 'label' => 'Solitaire', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg', 'product_ids' => ['prd-iamond-wedding-set']],
+            'slider' => ['value' => 'slider', 'label' => 'Slider', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg', 'product_ids' => ['prd-floral-brooch']],
+            'dress' => ['value' => 'dress', 'label' => 'Dress', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg', 'product_ids' => ['prd-iamond-wedding-set']],
+            'white-gold' => ['value' => 'white-gold', 'label' => 'White Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg', 'product_ids' => ['prd-iamond-wedding-set']],
+            'tennis' => ['value' => 'tennis', 'label' => 'Tennis', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg', 'product_ids' => ['prd-letraset-animal']],
+            'bezel' => ['value' => 'bezel', 'label' => 'Bezel', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg', 'product_ids' => ['prd-floral-brooch']],
+            'initial' => ['value' => 'initial', 'label' => 'Initial', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg', 'product_ids' => ['prd-letraset-animal']],
+            'yellow-gold' => ['value' => 'yellow-gold', 'label' => 'Yellow Gold', 'image' => 'https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg', 'product_ids' => ['prd-letraset-animal']],
+        ],
+        default => [],
+    };
+}
+
+function available_collection_selector_cards(string $type): array
+{
+    $defaults = default_collection_selector_cards($type);
+    $profile = catalog_attribute_profile($type);
+    $profileCards = array_values((array) ($profile['selector_cards'] ?? []));
+
+    $cards = [];
+    foreach ($profileCards as $card) {
+        if (!is_array($card)) {
+            continue;
+        }
+        $value = clean_string((string) ($card['value'] ?? ''), 80);
+        if ($value === '') {
+            continue;
+        }
+        $cards[$value] = [
+            'value' => $value,
+            'label' => clean_string((string) ($card['label'] ?? ($defaults[$value]['label'] ?? $value)), 120),
+            'image' => clean_image((string) ($card['image'] ?? ($defaults[$value]['image'] ?? ''))),
+            'product_ids' => array_values((array) ($defaults[$value]['product_ids'] ?? [])),
+        ];
+    }
+
+    foreach ($defaults as $value => $defaultCard) {
+        if (isset($cards[$value])) {
+            continue;
+        }
+        $cards[$value] = $defaultCard;
+    }
+
+    return $cards;
+}
+
+function homepage_style_type_label(string $type): string
+{
+    return match (strtolower(trim($type))) {
+        'ring', 'rings' => 'Rings',
+        'earring', 'earrings' => 'Earrings',
+        'bracelet', 'bracelets', 'bangles', 'bangles & bracelets' => 'Bangles & Bracelets',
+        'necklace', 'necklaces' => 'Necklaces',
+        'pendant', 'pendants' => 'Pendants',
+        'brooch', 'brooches' => 'Brooches',
+        'jewellery set', 'jewellery sets' => 'Jewellery Sets',
+        default => $type,
+    };
+}
+
+function homepage_style_showcase_options(): array
+{
+    $content = site_content();
+    $types = array_values(array_filter(array_unique(array_merge(
+        array_keys(default_attribute_profiles()),
+        array_map(static fn (mixed $value): string => clean_string((string) $value, 80), (array) ($content['catalog_meta']['product_types'] ?? []))
+    ))));
+
+    $options = [];
+    foreach ($types as $type) {
+        if ($type === '') {
+            continue;
+        }
+
+        $normalizedType = strtolower(trim($type));
+        $isRingType = in_array($normalizedType, ['ring', 'rings'], true);
+
+        if ($isRingType) {
+            // Emit each ring style once per section (engagement / wedding) so the
+            // homepage Shop-by-Style assignment can point at either collection.
+            // Key format '<type>::<section>::<style>' — one entry per style, no
+            // duplicates. Legacy 'ring::<style>' ids saved before the split are
+            // migrated to engagement keys on assignment save.
+            foreach (['engagement', 'wedding'] as $ringSection) {
+                foreach (available_ring_style_cards($ringSection) as $styleValue => $card) {
+                    $label = clean_string((string) ($card['label'] ?? $styleValue), 120);
+                    if ($label === '') {
+                        continue;
+                    }
+                    $sectionLabel = $ringSection === 'wedding' ? 'Wedding' : 'Engagement';
+                    $key = strtolower($type) . '::' . $ringSection . '::' . clean_string((string) $styleValue, 80);
+                    $options[$key] = [
+                        'id' => $key,
+                        'type' => $type,
+                        'type_label' => $sectionLabel . ' ' . homepage_style_type_label($type),
+                        'value' => clean_string((string) $styleValue, 80),
+                        'label' => $label,
+                        'image' => clean_image((string) ($card['image'] ?? '')),
+                        'url' => resolve_link('/shop/?' . http_build_query(['type' => 'Ring', 'ring_category' => $ringSection, 'style' => $styleValue])),
+                    ];
+                }
+            }
+            continue;
+        }
+
+        foreach (available_collection_selector_cards($type) as $styleValue => $card) {
+            $label = clean_string((string) ($card['label'] ?? $styleValue), 120);
+            if ($label === '') {
+                continue;
+            }
+            $key = strtolower($type) . '::' . clean_string((string) $styleValue, 80);
+            $options[$key] = [
+                'id' => $key,
+                'type' => $type,
+                'type_label' => homepage_style_type_label($type),
+                'value' => clean_string((string) $styleValue, 80),
+                'label' => $label,
+                'image' => clean_image((string) ($card['image'] ?? '')),
+                'url' => resolve_link('/shop/?' . http_build_query(['type' => $type, 'facet' => $styleValue])),
+            ];
+        }
+    }
+
+    return $options;
+}
+
+function homepage_style_showcase_cards(): array
+{
+    $options = homepage_style_showcase_options();
+    $selectedIds = array_values(array_filter(array_map(
+        static fn (mixed $value): string => clean_string((string) $value, 120),
+        (array) (site_content()['shop_by_style']['style_ids'] ?? [])
+    ), static fn (string $value): bool => $value !== ''));
+
+    $cards = [];
+    foreach ($selectedIds as $id) {
+        if (isset($options[$id])) {
+            $cards[] = $options[$id];
+        }
+    }
+
+    return $cards;
+}
+
+function available_diamond_shapes(): array
+{
+    return [
+        'round' => 'Round',
+        'oval' => 'Oval',
+        'cushion' => 'Cushion',
+        'princess' => 'Princess',
+        'emerald' => 'Emerald',
+        'pear' => 'Pear',
+        'marquise' => 'Marquise',
+        'radiant' => 'Radiant',
+        'asscher' => 'Asscher',
+        'heart' => 'Heart'
+    ];
+}
+
+function header_search_normalize_term(string $value): string
+{
+    $normalized = strtolower(trim($value));
+    $normalized = preg_replace('/[^a-z0-9]+/i', ' ', $normalized) ?? '';
+    return trim(preg_replace('/\s+/', ' ', $normalized) ?? '');
+}
+
+function header_search_normalize_catalog_type(string $type): string
+{
+    return match (header_search_normalize_term($type)) {
+        'ring', 'rings' => 'Ring',
+        'earring', 'earrings' => 'Earring',
+        'bracelet', 'bracelets', 'bangles', 'bangles bracelets', 'bangles bracelet' => 'Bracelet',
+        'necklace', 'necklaces', 'neckless', 'necklesses' => 'Necklace',
+        'pendant', 'pendants' => 'Pendant',
+        'mangalsutra', 'mangalsutras' => 'Mangalsutra',
+        default => clean_string($type, 80),
+    };
+}
+
+function header_search_collection_meta(): array
+{
+    return [
+        'Ring' => [
+            'label' => 'Rings',
+            'subtitle' => 'Shop Collection',
+            'aliases' => ['ring', 'rings', 'engagement ring', 'engagement rings'],
+        ],
+        'Earring' => [
+            'label' => 'Earrings',
+            'subtitle' => 'Shop Collection',
+            'aliases' => ['earring', 'earrings', 'stud', 'studs', 'hoop', 'hoops', 'drop earring', 'drop earrings'],
+        ],
+        'Pendant' => [
+            'label' => 'Pendants',
+            'subtitle' => 'Shop Collection',
+            'aliases' => ['pendant', 'pendants'],
+        ],
+        'Bracelet' => [
+            'label' => 'Bangles & Bracelets',
+            'subtitle' => 'Shop Collection',
+            'aliases' => ['bracelet', 'bracelets', 'bangle', 'bangles'],
+        ],
+        'Necklace' => [
+            'label' => 'Necklaces',
+            'subtitle' => 'Shop Collection',
+            'aliases' => ['necklace', 'necklaces'],
+        ],
+        'Mangalsutra' => [
+            'label' => 'Mangalsutra',
+            'subtitle' => 'Shop Collection',
+            'aliases' => ['mangalsutra', 'mangalsutras'],
+        ],
+    ];
+}
+
+function header_search_index(): array
+{
+    static $index = null;
+    if (is_array($index)) {
+        return $index;
+    }
+
+    $content = site_content();
+    $collectionMeta = header_search_collection_meta();
+    $products = catalog_products();
+    $categoryImages = [];
+    foreach ((array) ($content['category_cards'] ?? []) as $card) {
+        if (!is_array($card)) {
+            continue;
+        }
+
+        $title = clean_string((string) ($card['title'] ?? ''), 80);
+        if ($title === '') {
+            continue;
+        }
+
+        $categoryImages[header_search_normalize_term($title)] = clean_image((string) ($card['image'] ?? ''));
+    }
+
+    $diamondShapeImages = [];
+    foreach ((array) ($content['diamond_shapes']['items'] ?? []) as $shapeItem) {
+        if (!is_array($shapeItem)) {
+            continue;
+        }
+
+        $shapeName = clean_string((string) ($shapeItem['name'] ?? ''), 80);
+        if ($shapeName === '') {
+            continue;
+        }
+
+        $diamondShapeImages[header_search_normalize_term($shapeName)] = clean_image((string) ($shapeItem['icon_image'] ?? $shapeItem['image'] ?? ''));
+    }
+
+    $index = [];
+    $seen = [];
+    $addSuggestion = static function (array $suggestion) use (&$index, &$seen): void {
+        $label = clean_string((string) ($suggestion['label'] ?? ''), 140);
+        $url = clean_string((string) ($suggestion['url'] ?? ''), 500);
+        if ($label === '' || $url === '') {
+            return;
+        }
+
+        $key = header_search_normalize_term($label) . '|' . $url;
+        if (isset($seen[$key])) {
+            return;
+        }
+        $seen[$key] = true;
+
+        $searchTextParts = [];
+        foreach ((array) ($suggestion['search_text'] ?? []) as $part) {
+            $cleanPart = clean_string((string) $part, 240);
+            if ($cleanPart !== '') {
+                $searchTextParts[] = $cleanPart;
+            }
+        }
+
+        $index[] = [
+            'label' => $label,
+            'subtitle' => clean_string((string) ($suggestion['subtitle'] ?? ''), 120),
+            'url' => $url,
+            'kind' => clean_string((string) ($suggestion['kind'] ?? 'search'), 40),
+            'image' => clean_image((string) ($suggestion['image'] ?? '')),
+            'search_text' => header_search_normalize_term(implode(' ', array_merge([$label], $searchTextParts))),
+        ];
+    };
+
+    $firstProductImageByType = [];
+    $productColorsByType = [];
+    foreach ($products as $product) {
+        $normalizedType = header_search_normalize_catalog_type((string) ($product['product_type'] ?? ''));
+        if (!isset($collectionMeta[$normalizedType])) {
+            continue;
+        }
+
+        $image = clean_image((string) ($product['default_image'] ?? $product['hover_image'] ?? $product['popup_image'] ?? ''));
+        if ($image !== '' && !isset($firstProductImageByType[$normalizedType])) {
+            $firstProductImageByType[$normalizedType] = $image;
+        }
+
+        $color = clean_string((string) ($product['color'] ?? ''), 80);
+        if ($color !== '') {
+            $productColorsByType[$normalizedType][] = $color;
+        }
+    }
+
+    foreach ($collectionMeta as $typeKey => $meta) {
+        $label = $meta['label'];
+        $image = $categoryImages[header_search_normalize_term($label)] ?? ($firstProductImageByType[$typeKey] ?? '');
+        $addSuggestion([
+            'label' => $label,
+            'subtitle' => $meta['subtitle'],
+            'url' => resolve_link('/shop/?type=' . rawurlencode($typeKey)),
+            'kind' => 'collection',
+            'image' => $image,
+            'search_text' => array_merge([$label], $meta['aliases']),
+        ]);
+    }
+
+    foreach (available_ring_styles() as $styleKey => $styleLabel) {
+        $card = available_ring_style_cards()[$styleKey] ?? [];
+        $addSuggestion([
+            'label' => $styleLabel . ' Rings',
+            'subtitle' => 'Ring Style',
+            'url' => resolve_link('/shop/?' . http_build_query(['type' => 'Ring', 'style' => $styleKey])),
+            'kind' => 'style',
+            'image' => clean_image((string) ($card['image'] ?? '')),
+            'search_text' => [$styleLabel, $styleKey, 'ring', 'rings', 'diamond ring'],
+        ]);
+    }
+
+    foreach (['Earring', 'Pendant', 'Bracelet', 'Necklace'] as $typeKey) {
+        $meta = $collectionMeta[$typeKey] ?? null;
+        if ($meta === null) {
+            continue;
+        }
+
+        foreach (available_collection_selector_cards($typeKey) as $facetKey => $card) {
+            $facetLabel = clean_string((string) ($card['label'] ?? $facetKey), 120);
+            if ($facetLabel === '') {
+                continue;
+            }
+
+            $addSuggestion([
+                'label' => $facetLabel,
+                'subtitle' => $meta['label'] . ' Category',
+                'url' => resolve_link('/shop/?' . http_build_query(['type' => $typeKey, 'facet' => $facetKey])),
+                'kind' => 'facet',
+                'image' => clean_image((string) ($card['image'] ?? '')),
+                'search_text' => array_merge([$facetLabel, $facetKey, $meta['label']], $meta['aliases']),
+            ]);
+        }
+    }
+
+    foreach (available_diamond_shapes() as $shapeKey => $shapeLabel) {
+        $shapeImage = $diamondShapeImages[header_search_normalize_term($shapeLabel)] ?? ($firstProductImageByType['Ring'] ?? '');
+        $addSuggestion([
+            'label' => $shapeLabel . ' Diamond Rings',
+            'subtitle' => 'Diamond Shape',
+            'url' => resolve_link('/shop/?' . http_build_query(['type' => 'Ring', 'shape' => $shapeKey])),
+            'kind' => 'shape',
+            'image' => $shapeImage,
+            'search_text' => [$shapeLabel, $shapeKey, $shapeLabel . ' diamond', $shapeLabel . ' diamonds', 'diamond ring', 'diamond rings', 'ring', 'rings'],
+        ]);
+    }
+
+    $metalFamilies = [
+        'gold' => 'Gold',
+        'yellow gold' => 'Yellow Gold',
+        'white gold' => 'White Gold',
+        'rose gold' => 'Rose Gold',
+        'silver' => 'Silver',
+        'platinum' => 'Platinum',
+    ];
+    foreach ($collectionMeta as $typeKey => $meta) {
+        $typeColors = array_map('header_search_normalize_term', array_values(array_unique($productColorsByType[$typeKey] ?? [])));
+        $typeFacetCards = available_collection_selector_cards($typeKey);
+
+        foreach ($metalFamilies as $queryValue => $displayLabel) {
+            $matchFound = false;
+            foreach ($typeColors as $colorValue) {
+                if (($queryValue === 'gold' && str_contains($colorValue, 'gold')) || str_contains($colorValue, $queryValue)) {
+                    $matchFound = true;
+                    break;
+                }
+            }
+
+            $matchedFacetKey = null;
+            foreach ($typeFacetCards as $facetKey => $facetCard) {
+                $facetLabel = header_search_normalize_term((string) ($facetCard['label'] ?? $facetKey));
+                if ($facetLabel === '') {
+                    continue;
+                }
+
+                if (($queryValue === 'gold' && str_contains($facetLabel, 'gold')) || str_contains($facetLabel, $queryValue)) {
+                    if ($queryValue === 'gold' && $facetKey === 'yellow-gold') {
+                        $matchedFacetKey = $facetKey;
+                        break;
+                    }
+                    $matchedFacetKey ??= $facetKey;
+                }
+            }
+
+            if (!$matchFound) {
+                if ($matchedFacetKey === null) {
+                    continue;
+                }
+            }
+
+            $metalUrl = $matchFound
+                ? resolve_link('/shop/?' . http_build_query(['type' => $typeKey, 'q' => $queryValue]))
+                : resolve_link('/shop/?' . http_build_query(['type' => $typeKey, 'facet' => $matchedFacetKey]));
+
+            $metalImage = $firstProductImageByType[$typeKey] ?? '';
+            if ($metalImage === '' && $matchedFacetKey !== null) {
+                $metalImage = clean_image((string) ($typeFacetCards[$matchedFacetKey]['image'] ?? ''));
+            }
+
+            $addSuggestion([
+                'label' => $displayLabel . ' ' . $meta['label'],
+                'subtitle' => 'Metal Match',
+                'url' => $metalUrl,
+                'kind' => 'metal',
+                'image' => $metalImage,
+                'search_text' => [$displayLabel, $queryValue, $meta['label'], $displayLabel . ' ' . $meta['label'], 'metal'],
+            ]);
+        }
+    }
+
+    foreach ($products as $product) {
+        $productName = clean_string((string) ($product['name'] ?? ''), 140);
+        if ($productName === '') {
+            continue;
+        }
+
+        $normalizedType = header_search_normalize_catalog_type((string) ($product['product_type'] ?? ''));
+        $productTypeLabel = $collectionMeta[$normalizedType]['label'] ?? clean_string((string) ($product['product_type'] ?? 'Jewellery'), 80);
+        $keywords = [
+            $productName,
+            $productTypeLabel,
+            (string) ($product['product_type'] ?? ''),
+            (string) ($product['color'] ?? ''),
+            (string) ($product['category'] ?? ''),
+            (string) ($product['description'] ?? ''),
+        ];
+
+        foreach ((array) ($product['diamondShapes'] ?? []) as $shapeKey) {
+            $shapeKey = clean_string((string) $shapeKey, 80);
+            if ($shapeKey === '') {
+                continue;
+            }
+            $keywords[] = $shapeKey;
+            $keywords[] = available_diamond_shapes()[$shapeKey] ?? $shapeKey;
+        }
+
+        foreach ((array) ($product['styles'] ?? []) as $styleKey) {
+            $styleKey = clean_string((string) $styleKey, 80);
+            if ($styleKey === '') {
+                continue;
+            }
+            $keywords[] = $styleKey;
+            $keywords[] = available_ring_styles()[$styleKey] ?? $styleKey;
+        }
+
+        $addSuggestion([
+            'label' => $productName,
+            'subtitle' => $productTypeLabel . ' Product',
+            'url' => product_url($product),
+            'kind' => 'product',
+            'image' => clean_image((string) ($product['default_image'] ?? $product['hover_image'] ?? $product['popup_image'] ?? '')),
+            'search_text' => $keywords,
+        ]);
+    }
+
+    return $index;
+}
+
+function product_price_value(array $product): float
+{
+    $raw = (string) ($product['new_price'] ?? $product['old_price'] ?? '0');
+    $normalized = preg_replace('/[^0-9.]/', '', $raw) ?? '0';
+    return (float) $normalized;
+}
+
+function filter_catalog_products(array $products, array $filters): array
+{
+    $type = sanitize_text((string) ($filters['type'] ?? ''));
+    $color = sanitize_text((string) ($filters['color'] ?? ''));
+    $category = sanitize_text((string) ($filters['category'] ?? ''));
+    $query = sanitize_text((string) ($filters['q'] ?? ''));
+    $shape = sanitize_text((string) ($filters['shape'] ?? ''));
+    $sort = sanitize_text((string) ($filters['sort'] ?? 'featured'));
+    $availableShapes = available_diamond_shapes();
+
+    $filtered = array_values(array_filter($products, static function (array $product) use ($type, $color, $category, $query, $shape, $availableShapes): bool {
+        if ($type !== '' && strcasecmp((string) ($product['product_type'] ?? ''), $type) !== 0) {
+            return false;
+        }
+        if ($color !== '' && strcasecmp((string) ($product['color'] ?? ''), $color) !== 0) {
+            return false;
+        }
+        if ($category !== '' && strcasecmp((string) ($product['category'] ?? ''), $category) !== 0) {
+            return false;
+        }
+
+        $styleNames = [];
+        foreach ((array) ($product['styles'] ?? []) as $styleKey) {
+            $styleKey = (string) $styleKey;
+            $styleNames[] = available_ring_styles()[$styleKey] ?? $styleKey;
+        }
+
+        $shapeNames = [];
+        foreach ((array) ($product['diamondShapes'] ?? []) as $shapeKey) {
+            $shapeKey = (string) $shapeKey;
+            $shapeNames[] = available_diamond_shapes()[$shapeKey] ?? $shapeKey;
+        }
+
+        $haystack = strtolower(trim(implode(' ', [
+            (string) ($product['name'] ?? ''),
+            (string) ($product['category'] ?? ''),
+            (string) ($product['description'] ?? ''),
+            (string) ($product['product_type'] ?? ''),
+            (string) ($product['color'] ?? ''),
+            implode(' ', (array) ($product['subcategories'] ?? [])),
+            implode(' ', (array) ($product['features'] ?? [])),
+            implode(' ', $styleNames),
+            implode(' ', $shapeNames),
+        ])));
+
+        if ($query !== '' && !str_contains($haystack, strtolower($query))) {
+            return false;
+        }
+
+        if ($shape !== '') {
+            $requestedShape = strtolower(trim($shape));
+            $shapeValues = [];
+
+            foreach ((array) ($product['diamondShapes'] ?? []) as $shapeKey) {
+                $normalizedShape = strtolower(trim((string) $shapeKey));
+                if ($normalizedShape === '') {
+                    continue;
+                }
+
+                $shapeValues[] = $normalizedShape;
+                if (isset($availableShapes[$normalizedShape])) {
+                    $shapeValues[] = strtolower($availableShapes[$normalizedShape]);
+                }
+            }
+
+            // Shape matching uses ONLY the product's stored diamond shapes (the
+            // shapes chosen at upload / in the Attributes override). The option-data
+            // fallback is intentionally NOT consulted here: it injects default shapes
+            // that would make every ring match every shape filter.
+
+            $shapeValues = array_values(array_unique(array_filter($shapeValues, static fn (string $value): bool => $value !== '')));
+            if (!in_array($requestedShape, $shapeValues, true)) {
+                return false;
+            }
+        }
+
+        return true;
+    }));
+
+    usort($filtered, static function (array $left, array $right) use ($sort): int {
+        return match ($sort) {
+            'price-low' => product_price_value($left) <=> product_price_value($right),
+            'price-high' => product_price_value($right) <=> product_price_value($left),
+            'name-asc' => strcasecmp((string) ($left['name'] ?? ''), (string) ($right['name'] ?? '')),
+            'name-desc' => strcasecmp((string) ($right['name'] ?? ''), (string) ($left['name'] ?? '')),
+            default => 0,
+        };
+    });
+
+    return catalog_sort_by_inventory($filtered);
+}
+
+function render_product_card(array $product, array $extraParams = []): void
+{
+    $defaultImage = $product['default_image'] ?? '';
+    $hoverImage = $product['hover_image'] ?? $defaultImage;
+    $popupImage = $product['popup_image'] ?? $defaultImage;
+    $productUrl = product_url($product, $extraParams);
+    $customer = current_customer();
+    $isWishlisted = customer_has_wishlist_product($customer, (string) ($product['id'] ?? ''));
+    $returnTo = current_internal_url($productUrl);
+    $cardVideoMime = static function (string $path): string {
+        $extension = strtolower(pathinfo((string) (parse_url($path, PHP_URL_PATH) ?? $path), PATHINFO_EXTENSION));
+
+        return match ($extension) {
+            'webm' => 'video/webm',
+            'ogv' => 'video/ogg',
+            'mov' => 'video/quicktime',
+            'm4v' => 'video/x-m4v',
+            default => 'video/mp4',
+        };
+    };
+    $renderCardMedia = static function (string $path, string $className, string $alt) use ($cardVideoMime): string {
+        $resolvedPath = clean_image($path);
+        if ($resolvedPath === '') {
+            return '';
+        }
+
+        if (media_asset_type($resolvedPath) === 'video') {
+            return '<video class="' . h($className) . '" muted autoplay loop playsinline preload="metadata"><source src="' . h($resolvedPath) . '" type="' . h($cardVideoMime($resolvedPath)) . '"></video>';
+        }
+
+        return '<img class="' . h($className) . '" src="' . h($resolvedPath) . '" alt="' . h($alt) . '">';
+    };
+    $inventoryStatus = function_exists('product_inventory_status')
+        ? product_inventory_status($product, ['metal' => (string) ($product['color'] ?? '')])
+        : ['out_of_stock' => false, 'low_stock' => false];
+    $cardIsOutOfStock = !empty($inventoryStatus['out_of_stock']);
+    ?>
+    <div class="prod-card">
+      <div class="prod-img-box">
+        <?php if ($cardIsOutOfStock): ?>
+          <span class="prod-stock-badge">OUT OF STOCK</span>
+        <?php endif; ?>
+        
+        <a href="<?= h($productUrl) ?>" class="prod-img-link" aria-label="<?= h('View ' . ($product['name'] ?? 'product')) ?>">
+          <?= $renderCardMedia($defaultImage, 'img-default blend-darken', (string) ($product['name'] ?? 'Product image')) ?>
+          <?= $renderCardMedia($hoverImage, 'img-hover blend-darken', (string) (($product['name'] ?? 'Product image') . ' alternate view')) ?>
+        </a>
+      </div>
+      
+      <div class="prod-card-body">
+        <div class="prod-name"><a href="<?= h($productUrl) ?>"><?= h($product['name'] ?? '') ?></a></div>
+        <div class="prod-desc"><?= h($product['description'] ?? '') ?></div>
+        
+        <div class="prod-prices-premium">
+          <span class="price-prefix">FROM</span>
+          <span class="price-value"><?= h($product['new_price'] ?? $product['old_price'] ?? '') ?></span>
+        </div>
+        <a href="<?= h($productUrl) ?>" class="prod-hover-btn">Shop Now</a>
+      </div>
+    </div>
+    <?php
+}
+
+/**
+ * Premium listing card used ONLY by the category/shop grid (shop/index.php).
+ * Kept separate from render_product_card() so the homepage rails, cart, product
+ * "related" and collection grids are never affected. Adds the reference look:
+ * a hover wishlist heart (real toggle that returns to the listing), metal swatch
+ * dots, a hover image swap, and a "from £X" line.
+ */
+function render_shop_listing_card(array $product): void
+{
+    $defaultImage = clean_image((string) ($product['default_image'] ?? ''));
+    $hoverImage = clean_image((string) ($product['hover_image'] ?? $product['default_image'] ?? ''));
+    $productUrl = product_url($product);
+    $customer = current_customer();
+    $isWishlisted = customer_has_wishlist_product($customer, (string) ($product['id'] ?? ''));
+    $listingReturn = current_internal_url('/shop/');
+    $inventoryStatus = function_exists('product_inventory_status')
+        ? product_inventory_status($product, ['metal' => (string) ($product['color'] ?? '')])
+        : ['out_of_stock' => false];
+    $cardIsOutOfStock = !empty($inventoryStatus['out_of_stock']);
+
+    // Hover swatches mirror the purchase page exactly: the same set of metals /
+    // colours that product renders, and the same colour each shows there. For a
+    // matrix product that is the per-metal color_hex picked in Attributes (the orb
+    // colour on the product page); for jewellery it is the colour choices shown in
+    // the selector. When a metal has no picked hex the ball falls back to a metallic
+    // tone gradient — precisely what the product-page orb does with an empty
+    // color_hex — so the card never disagrees with the page it links to.
+    $cardToneFor = static function (string $label, string $tone = ''): string {
+        $byTone = ['rose' => 'rose', 'yellow' => 'gold', 'gold' => 'gold', 'white' => 'white', 'platinum' => 'platinum', 'silver' => 'silver', 'classic' => 'white'];
+        $normalizedTone = strtolower($tone);
+        if ($normalizedTone !== '' && isset($byTone[$normalizedTone])) {
+            return $byTone[$normalizedTone];
+        }
+        $needle = strtolower($label);
+        if (str_contains($needle, 'rose')) {
+            return 'rose';
+        }
+        if (str_contains($needle, 'white') || str_contains($needle, 'diamond')) {
+            return 'white';
+        }
+        if (str_contains($needle, 'platinum') || str_contains($needle, 'plat')) {
+            return 'platinum';
+        }
+        if (str_contains($needle, 'silver')) {
+            return 'silver';
+        }
+        if (str_contains($needle, 'gold') || str_contains($needle, 'yellow')) {
+            return 'gold';
+        }
+        return 'white';
+    };
+
+    $cardOptions = function_exists('product_option_data') ? product_option_data($product) : [];
+    $swatchItems = [];
+    $pushSwatch = static function (string $label, string $hex, string $tone) use (&$swatchItems, $cardToneFor): void {
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $hex)) {
+            $hex = '';
+        }
+        $swatchItems[] = ['tone' => $cardToneFor($label, $tone), 'hex' => $hex];
+    };
+
+    if (!empty($cardOptions['is_matrix_product']) && !empty($cardOptions['metal_options'])) {
+        foreach ((array) $cardOptions['metal_options'] as $metalOption) {
+            $pushSwatch((string) ($metalOption['label'] ?? ''), (string) ($metalOption['color_hex'] ?? ''), '');
+            if (count($swatchItems) >= 6) {
+                break;
+            }
+        }
+    } elseif (!empty($cardOptions['color_choices'])) {
+        foreach ((array) $cardOptions['color_choices'] as $colorChoice) {
+            $pushSwatch((string) ($colorChoice['label'] ?? ''), '', (string) ($colorChoice['tone'] ?? ''));
+            if (count($swatchItems) >= 6) {
+                break;
+            }
+        }
+    }
+
+    // Last resort: a product with neither metals nor colour choices still gets the
+    // single ball it had before, coloured by its base colour.
+    if ($swatchItems === [] && (string) ($product['color'] ?? '') !== '') {
+        $pushSwatch((string) $product['color'], '', '');
+    }
+
+    $cardPrice = (string) ($product['new_price'] ?? $product['old_price'] ?? '');
+    ?>
+    <div class="sl-card">
+      <div class="sl-card-media">
+        <?php if ($cardIsOutOfStock): ?><span class="sl-card-badge">Out of Stock</span><?php endif; ?>
+        <form method="post" action="<?= h($listingReturn) ?>" class="sl-card-wish">
+          <?php csrf_field(); ?>
+          <input type="hidden" name="action" value="toggle-wishlist">
+          <input type="hidden" name="product_id" value="<?= h((string) ($product['id'] ?? '')) ?>">
+          <button type="submit" class="sl-card-wish-btn <?= $isWishlisted ? 'is-active' : '' ?>" aria-label="<?= h($isWishlisted ? 'Remove from wishlist' : 'Save to wishlist') ?>">
+            <i class="<?= $isWishlisted ? 'fas' : 'far' ?> fa-heart"></i>
+          </button>
+        </form>
+        <a href="<?= h($productUrl) ?>" class="sl-card-link" aria-label="<?= h('View ' . ($product['name'] ?? 'product')) ?>">
+          <?php if ($defaultImage !== ''): ?><img class="sl-card-img" src="<?= h($defaultImage) ?>" alt="<?= h((string) ($product['name'] ?? 'Product')) ?>" loading="lazy"><?php endif; ?>
+          <?php if ($hoverImage !== '' && $hoverImage !== $defaultImage): ?><img class="sl-card-img sl-card-img--hover" src="<?= h($hoverImage) ?>" alt="" loading="lazy" aria-hidden="true"><?php endif; ?>
+        </a>
+        <?php if ($swatchItems !== []): ?>
+        <div class="sl-card-swatches" aria-hidden="true">
+          <?php foreach ($swatchItems as $swatchItem): ?>
+            <span class="sl-swatch sl-swatch--<?= h($swatchItem['tone']) ?>"<?= $swatchItem['hex'] !== '' ? ' style="background:' . h($swatchItem['hex']) . ';"' : '' ?>></span>
+          <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+      </div>
+      <div class="sl-card-info">
+        <a href="<?= h($productUrl) ?>" class="sl-card-name"><?= h((string) ($product['name'] ?? '')) ?></a>
+        <div class="sl-card-price">from <strong><?= h($cardPrice) ?></strong></div>
+      </div>
+    </div>
+    <?php
+}
+
+require_once __DIR__ . '/storefront.php';

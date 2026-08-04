@@ -1,0 +1,2549 @@
+[
+    {
+        "id": "admin-request-20260803160005-48ea96",
+        "action": "save-categories",
+        "view": "categories",
+        "summary": "Update Homepage Categories • Homepage category cards",
+        "status": "approved",
+        "actor_portal": "employee",
+        "actor_name": "Abdul",
+        "actor_username": "abdul",
+        "created_at": "2026-08-03 16:00",
+        "resolved_at": "2026-08-03 16:00",
+        "resolved_by": "admin",
+        "note": "Categories updated.",
+        "payload_hash": "b490ab42be1531367cfd33353b58e0f0144e0466e1d9a8f0f174371650bb44df",
+        "details": [
+            "Area: Categories",
+            "Change: Update Homepage Categories",
+            "Item: Homepage category cards"
+        ],
+        "payload": {
+            "area": "Categories",
+            "kind": "update",
+            "entity": "Homepage Categories",
+            "label": "Homepage category cards",
+            "after": [
+                {
+                    "Title": "new"
+                }
+            ],
+            "raw_after": [
+                {
+                    "header_icon": "fas fa-gem",
+                    "title": "new"
+                },
+                {
+                    "header_icon": "fas fa-gem"
+                }
+            ]
+        }
+    },
+    {
+        "id": "admin-request-20260715172843-c36c68",
+        "action": "save-settings",
+        "view": "site",
+        "summary": "Update Site Settings • Global site settings",
+        "status": "approved",
+        "actor_portal": "employee",
+        "actor_name": "Abdul",
+        "actor_username": "abdul@",
+        "created_at": "2026-07-15 17:28",
+        "resolved_at": "2026-07-15 17:32",
+        "resolved_by": "admin",
+        "note": "Site settings updated.",
+        "payload_hash": "29f51dcb15623d1ac583612652565c958d307ced2d81b694af869087977bc382",
+        "details": [
+            "Area: Settings",
+            "Change: Update Site Settings",
+            "Item: Global site settings"
+        ],
+        "payload": {
+            "area": "Settings",
+            "kind": "update",
+            "entity": "Site Settings",
+            "label": "Global site settings",
+            "before": {
+                "site_name": "Azuronn",
+                "site_tagline": "Jewelry Shop eCommerce",
+                "site_url": "http://localhost",
+                "logo_path": "/assets/Azuronn_logo_Final.png",
+                "store_address": "Your address goes here.",
+                "store_phone": "0123456789",
+                "store_email": "demo@example.com",
+                "announcement_text": "Free shipping on all orders with coupon code",
+                "announcement_code": "Rings2026",
+                "announcement_url": "#",
+                "cart_count": 2,
+                "cart_total": "£138.00",
+                "social": {
+                    "facebook": "#",
+                    "twitter": "#",
+                    "rss": "#",
+                    "googleplus": "#",
+                    "youtube": "#"
+                }
+            },
+            "after": {
+                "site_name": "Azuronn",
+                "site_tagline": "Jewelry Shop eCommerce",
+                "logo_path": "/assets/Azuronn_logo_Final.png",
+                "store_phone": "0123456789",
+                "store_email": "azuronn@gmail.com"
+            },
+            "raw_before": {
+                "site_name": "Azuronn",
+                "site_tagline": "Jewelry Shop eCommerce",
+                "site_url": "http://localhost",
+                "logo_path": "/assets/Azuronn_logo_Final.png",
+                "store_address": "Your address goes here.",
+                "store_phone": "0123456789",
+                "store_email": "demo@example.com",
+                "announcement_text": "Free shipping on all orders with coupon code",
+                "announcement_code": "Rings2026",
+                "announcement_url": "#",
+                "cart_count": 2,
+                "cart_total": "£138.00",
+                "social": {
+                    "facebook": "#",
+                    "twitter": "#",
+                    "rss": "#",
+                    "googleplus": "#",
+                    "youtube": "#"
+                }
+            },
+            "raw_after": {
+                "site_name": "Azuronn",
+                "site_tagline": "Jewelry Shop eCommerce",
+                "logo_path": "/assets/Azuronn_logo_Final.png",
+                "store_phone": "0123456789",
+                "store_email": "azuronn@gmail.com"
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260520093544-9a1043",
+        "action": "delete-diamond",
+        "view": "diamonds",
+        "summary": "Delete Diamond • dc",
+        "status": "pending",
+        "actor_portal": "employee",
+        "actor_name": "Abdul",
+        "actor_username": "abdul@",
+        "created_at": "2026-05-20 09:35",
+        "resolved_at": "",
+        "resolved_by": "",
+        "note": "",
+        "payload_hash": "39b92079765ce7baae0dfdd1177df1524b5f70c5fe5ba315ad2e1c5474038cd0",
+        "details": [
+            "Area: Diamonds",
+            "Change: Delete Diamond",
+            "Item: dc",
+            "Target ID: round-cdc-cdcd-dcdc",
+            "Shape: round"
+        ],
+        "payload": {
+            "area": "Diamonds",
+            "kind": "delete",
+            "entity": "Diamond",
+            "label": "dc",
+            "target_id": "round-cdc-cdcd-dcdc",
+            "context": {
+                "Shape": "round"
+            },
+            "before": {
+                "Diamond ID": "round-cdc-cdcd-dcdc",
+                "Title": "dc",
+                "Shape": "round",
+                "Price": "90000",
+                "Carat": "cdc",
+                "Color": "cdcd",
+                "Clarity": "dcdc",
+                "Cut": "cdcs",
+                "Description": "cdcd",
+                "Status": "active"
+            },
+            "raw_before": {
+                "id": "round-cdc-cdcd-dcdc",
+                "shape": "round",
+                "title": "dc",
+                "carat": "cdc",
+                "color": "cdcd",
+                "clarity": "dcdc",
+                "cut": "cdcs",
+                "ratio": "cscdcd",
+                "measurement": "scdscscscdsc",
+                "ref": "scdc",
+                "igi_certificate": "aaaaa",
+                "price": 90000,
+                "description": "cdcd",
+                "badge": "Lab Selected",
+                "status": "active"
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260520092617-39544f",
+        "action": "save-catalog-assignments",
+        "view": "catalog",
+        "summary": "Update Assignments • Storefront product assignments",
+        "status": "pending",
+        "actor_portal": "employee",
+        "actor_name": "Abdul",
+        "actor_username": "abdul@",
+        "created_at": "2026-05-20 09:26",
+        "resolved_at": "",
+        "resolved_by": "",
+        "note": "",
+        "payload_hash": "5d292c0cb052861cae8623fbc7fa1ec5994a26cb141e5230ed0dce9ecb1c8d4f",
+        "details": [
+            "Area: Catalog",
+            "Change: Update Assignments",
+            "Item: Storefront product assignments"
+        ],
+        "payload": {
+            "area": "Catalog",
+            "kind": "update",
+            "entity": "Assignments",
+            "label": "Storefront product assignments",
+            "before": {
+                "featured": [
+                    "prd-aliquam-furniture-3",
+                    "prd-letraset-animal",
+                    "prd-natural-lorem-ipsum",
+                    "prd-2mm-basket-dome"
+                ],
+                "bestselling": [
+                    "prd-aliquam-furniture",
+                    "prd-2mm-basket-dome"
+                ],
+                "shop_by_style": [
+                    "ring::solitaire",
+                    "ring::halo",
+                    "ring::hidden-halo",
+                    "ring::test-style",
+                    "earring::drops",
+                    "bracelet::diamond-bangle",
+                    "necklace::solitaire",
+                    "pendant::tennis"
+                ]
+            },
+            "after": {
+                "featured": [
+                    "prd-aliquam-furniture-3",
+                    "prd-letraset-animal",
+                    "prd-natural-lorem-ipsum",
+                    "prd-2mm-basket-dome"
+                ],
+                "bestselling": [
+                    "prd-aliquam-furniture",
+                    "prd-2mm-basket-dome"
+                ],
+                "shop_by_style": [
+                    "ring::solitaire",
+                    "ring::halo",
+                    "ring::hidden-halo",
+                    "ring::three-stone",
+                    "ring::vintage",
+                    "ring::test-style",
+                    "earring::drops",
+                    "bracelet::diamond-bangle",
+                    "necklace::solitaire",
+                    "pendant::tennis"
+                ]
+            },
+            "raw_before": {
+                "featured": [
+                    "prd-aliquam-furniture-3",
+                    "prd-letraset-animal",
+                    "prd-natural-lorem-ipsum",
+                    "prd-2mm-basket-dome"
+                ],
+                "bestselling": [
+                    "prd-aliquam-furniture",
+                    "prd-2mm-basket-dome"
+                ],
+                "shop_by_style": [
+                    "ring::solitaire",
+                    "ring::halo",
+                    "ring::hidden-halo",
+                    "ring::test-style",
+                    "earring::drops",
+                    "bracelet::diamond-bangle",
+                    "necklace::solitaire",
+                    "pendant::tennis"
+                ]
+            },
+            "raw_after": {
+                "featured": [
+                    "prd-aliquam-furniture-3",
+                    "prd-letraset-animal",
+                    "prd-natural-lorem-ipsum",
+                    "prd-2mm-basket-dome"
+                ],
+                "shop_by_style": [
+                    "ring::solitaire",
+                    "ring::halo",
+                    "ring::hidden-halo",
+                    "ring::three-stone",
+                    "ring::vintage",
+                    "ring::test-style",
+                    "earring::drops",
+                    "bracelet::diamond-bangle",
+                    "necklace::solitaire",
+                    "pendant::tennis"
+                ],
+                "bestselling": [
+                    "prd-aliquam-furniture",
+                    "prd-2mm-basket-dome"
+                ]
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260520065159-a4a020",
+        "action": "save-inventory",
+        "view": "inventory",
+        "summary": "Update Inventory • 2mm Basket Dome",
+        "status": "approved",
+        "actor_portal": "employee",
+        "actor_name": "Abdul",
+        "actor_username": "abdul@",
+        "created_at": "2026-05-20 06:51",
+        "resolved_at": "2026-05-20 06:52",
+        "resolved_by": "admin",
+        "note": "Inventory updated.",
+        "payload_hash": "8fff014eee9a8bd6f7f66b01831fac3b7f70566956d9b7915d13bf2d86183ddd",
+        "details": [
+            "Area: Inventory",
+            "Change: Update Inventory",
+            "Item: 2mm Basket Dome",
+            "Target ID: prd-2mm-basket-dome",
+            "Product Type: Rings"
+        ],
+        "payload": {
+            "area": "Inventory",
+            "kind": "update",
+            "entity": "Inventory",
+            "label": "2mm Basket Dome",
+            "target_id": "prd-2mm-basket-dome",
+            "context": {
+                "Product Type": "Rings"
+            },
+            "before": {
+                "Product ID": "prd-2mm-basket-dome",
+                "Name": "2mm Basket Dome",
+                "Product Type": "Rings",
+                "Inventory": [
+                    {
+                        "Scope": "Gold",
+                        "Tracking": "Tracked",
+                        "Available Quantity": "15",
+                        "Status": "In stock"
+                    },
+                    {
+                        "Scope": "Platinum",
+                        "Tracking": "Not tracked",
+                        "Available Quantity": "Untracked",
+                        "Status": "Not tracked"
+                    }
+                ]
+            },
+            "after": {
+                "Product ID": "prd-2mm-basket-dome",
+                "Name": "2mm Basket Dome",
+                "Product Type": "Rings",
+                "Inventory": [
+                    {
+                        "Scope": "Gold",
+                        "Tracking": "Tracked",
+                        "Available Quantity": "13",
+                        "Status": "In stock"
+                    },
+                    {
+                        "Scope": "Platinum",
+                        "Tracking": "Tracked",
+                        "Available Quantity": "2",
+                        "Status": "Low stock"
+                    }
+                ]
+            },
+            "raw_before": {
+                "id": "prd-2mm-basket-dome",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "name": "2mm Basket Dome",
+                "status": "active",
+                "inventory_quantity": 0,
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_tracked": true,
+                        "inventory_quantity": 15,
+                        "metal": "Gold",
+                        "price": 715,
+                        "old_price": "£1,000.00",
+                        "hover_image": "/assets/uploads/admin/admin-20260519-124240-7ab50f49.jpg",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260519-124239-ef0261ef.jpg",
+                            "/assets/uploads/admin/admin-20260519-124240-7ab50f49.jpg",
+                            "/assets/uploads/admin/admin-20260519-124240-4af3dce0.mp4"
+                        ],
+                        "description": "description",
+                        "features": [
+                            "this",
+                            "is",
+                            "gold"
+                        ],
+                        "shapes": [
+                            "round",
+                            "cushion",
+                            "princess",
+                            "pear",
+                            "radiant",
+                            "asscher"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "6",
+                            "9"
+                        ],
+                        "band_options": [
+                            {
+                                "active": true,
+                                "label": "Yellow / White Gold",
+                                "surcharge": 0
+                            },
+                            {
+                                "active": true,
+                                "label": "Yellow / Yellow Gold",
+                                "surcharge": 0
+                            },
+                            {
+                                "active": true,
+                                "label": "White / White Gold",
+                                "surcharge": 50
+                            },
+                            {
+                                "active": true,
+                                "label": "Rose / White Gold",
+                                "surcharge": 0
+                            }
+                        ]
+                    },
+                    {
+                        "active": true,
+                        "inventory_quantity": 0,
+                        "metal": "Platinum",
+                        "price": 675,
+                        "old_price": "£900.00",
+                        "hover_image": "/assets/uploads/admin/admin-20260519-124241-f26a6bf7.jpg",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260519-124240-a3674d5b.jpg",
+                            "/assets/uploads/admin/admin-20260519-124241-f26a6bf7.jpg"
+                        ],
+                        "description": "plat description",
+                        "features": [
+                            "this",
+                            "is",
+                            "platinum"
+                        ],
+                        "shapes": [
+                            "round",
+                            "oval",
+                            "cushion",
+                            "princess",
+                            "emerald",
+                            "pear",
+                            "marquise",
+                            "radiant",
+                            "asscher",
+                            "heart"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9"
+                        ],
+                        "band_options": [
+                            {
+                                "active": true,
+                                "label": "Yellow / White Gold",
+                                "surcharge": 50
+                            },
+                            {
+                                "active": true,
+                                "label": "Yellow / Yellow Gold",
+                                "surcharge": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            "raw_after": {
+                "id": "prd-2mm-basket-dome",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "name": "2mm Basket Dome",
+                "status": "active",
+                "inventory_quantity": 0,
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_tracked": true,
+                        "inventory_quantity": 13,
+                        "metal": "Gold",
+                        "price": 715,
+                        "old_price": "£1,000.00",
+                        "hover_image": "/assets/uploads/admin/admin-20260519-124240-7ab50f49.jpg",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260519-124239-ef0261ef.jpg",
+                            "/assets/uploads/admin/admin-20260519-124240-7ab50f49.jpg",
+                            "/assets/uploads/admin/admin-20260519-124240-4af3dce0.mp4"
+                        ],
+                        "description": "description",
+                        "features": [
+                            "this",
+                            "is",
+                            "gold"
+                        ],
+                        "shapes": [
+                            "round",
+                            "cushion",
+                            "princess",
+                            "pear",
+                            "radiant",
+                            "asscher"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "6",
+                            "9"
+                        ],
+                        "band_options": [
+                            {
+                                "active": true,
+                                "label": "Yellow / White Gold",
+                                "surcharge": 0
+                            },
+                            {
+                                "active": true,
+                                "label": "Yellow / Yellow Gold",
+                                "surcharge": 0
+                            },
+                            {
+                                "active": true,
+                                "label": "White / White Gold",
+                                "surcharge": 50
+                            },
+                            {
+                                "active": true,
+                                "label": "Rose / White Gold",
+                                "surcharge": 0
+                            }
+                        ]
+                    },
+                    {
+                        "active": true,
+                        "inventory_tracked": true,
+                        "inventory_quantity": 2,
+                        "metal": "Platinum",
+                        "price": 675,
+                        "old_price": "£900.00",
+                        "hover_image": "/assets/uploads/admin/admin-20260519-124241-f26a6bf7.jpg",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260519-124240-a3674d5b.jpg",
+                            "/assets/uploads/admin/admin-20260519-124241-f26a6bf7.jpg"
+                        ],
+                        "description": "plat description",
+                        "features": [
+                            "this",
+                            "is",
+                            "platinum"
+                        ],
+                        "shapes": [
+                            "round",
+                            "oval",
+                            "cushion",
+                            "princess",
+                            "emerald",
+                            "pear",
+                            "marquise",
+                            "radiant",
+                            "asscher",
+                            "heart"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9"
+                        ],
+                        "band_options": [
+                            {
+                                "active": true,
+                                "label": "Yellow / White Gold",
+                                "surcharge": 50
+                            },
+                            {
+                                "active": true,
+                                "label": "Yellow / Yellow Gold",
+                                "surcharge": 0
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260520064516-baca40",
+        "action": "save-inventory",
+        "view": "inventory",
+        "summary": "Update Inventory • 2mm Basket Dome",
+        "status": "approved",
+        "actor_portal": "employee",
+        "actor_name": "Abdul",
+        "actor_username": "abdul@",
+        "created_at": "2026-05-20 06:45",
+        "resolved_at": "2026-05-20 06:48",
+        "resolved_by": "admin",
+        "note": "Inventory updated.",
+        "payload_hash": "5e9feae2c045da8c3a373ebcedb33a1f99d13fadddad31590ac1b73c6bc8b407",
+        "details": [
+            "Area: Inventory",
+            "Change: Update Inventory",
+            "Item: 2mm Basket Dome",
+            "Target ID: prd-2mm-basket-dome",
+            "Product Type: Rings"
+        ],
+        "payload": {
+            "area": "Inventory",
+            "kind": "update",
+            "entity": "Inventory",
+            "label": "2mm Basket Dome",
+            "target_id": "prd-2mm-basket-dome",
+            "context": {
+                "Product Type": "Rings"
+            },
+            "before": {
+                "Product ID": "prd-2mm-basket-dome",
+                "Name": "2mm Basket Dome",
+                "Product Type": "Rings",
+                "Inventory": [
+                    {
+                        "Scope": "Gold",
+                        "Tracking": "Not tracked",
+                        "Available Quantity": "Untracked",
+                        "Status": "Not tracked"
+                    },
+                    {
+                        "Scope": "Platinum",
+                        "Tracking": "Not tracked",
+                        "Available Quantity": "Untracked",
+                        "Status": "Not tracked"
+                    }
+                ]
+            },
+            "after": {
+                "Product ID": "prd-2mm-basket-dome",
+                "Name": "2mm Basket Dome",
+                "Product Type": "Rings",
+                "Inventory": [
+                    {
+                        "Scope": "Gold",
+                        "Tracking": "Tracked",
+                        "Available Quantity": "15",
+                        "Status": "In stock"
+                    },
+                    {
+                        "Scope": "Platinum",
+                        "Tracking": "Not tracked",
+                        "Available Quantity": "Untracked",
+                        "Status": "Not tracked"
+                    }
+                ]
+            },
+            "raw_before": {
+                "id": "prd-2mm-basket-dome",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "name": "2mm Basket Dome",
+                "status": "active",
+                "inventory_quantity": 0,
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_quantity": 0,
+                        "metal": "Gold",
+                        "price": 715,
+                        "old_price": "£1,000.00",
+                        "hover_image": "/assets/uploads/admin/admin-20260519-124240-7ab50f49.jpg",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260519-124239-ef0261ef.jpg",
+                            "/assets/uploads/admin/admin-20260519-124240-7ab50f49.jpg",
+                            "/assets/uploads/admin/admin-20260519-124240-4af3dce0.mp4"
+                        ],
+                        "description": "description",
+                        "features": [
+                            "this",
+                            "is",
+                            "gold"
+                        ],
+                        "shapes": [
+                            "round",
+                            "cushion",
+                            "princess",
+                            "pear",
+                            "radiant",
+                            "asscher"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "6",
+                            "9"
+                        ],
+                        "band_options": [
+                            {
+                                "active": true,
+                                "label": "Yellow / White Gold",
+                                "surcharge": 0
+                            },
+                            {
+                                "active": true,
+                                "label": "Yellow / Yellow Gold",
+                                "surcharge": 0
+                            },
+                            {
+                                "active": true,
+                                "label": "White / White Gold",
+                                "surcharge": 50
+                            },
+                            {
+                                "active": true,
+                                "label": "Rose / White Gold",
+                                "surcharge": 0
+                            }
+                        ]
+                    },
+                    {
+                        "active": true,
+                        "inventory_quantity": 0,
+                        "metal": "Platinum",
+                        "price": 675,
+                        "old_price": "£900.00",
+                        "hover_image": "/assets/uploads/admin/admin-20260519-124241-f26a6bf7.jpg",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260519-124240-a3674d5b.jpg",
+                            "/assets/uploads/admin/admin-20260519-124241-f26a6bf7.jpg"
+                        ],
+                        "description": "plat description",
+                        "features": [
+                            "this",
+                            "is",
+                            "platinum"
+                        ],
+                        "shapes": [
+                            "round",
+                            "oval",
+                            "cushion",
+                            "princess",
+                            "emerald",
+                            "pear",
+                            "marquise",
+                            "radiant",
+                            "asscher",
+                            "heart"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9"
+                        ],
+                        "band_options": [
+                            {
+                                "active": true,
+                                "label": "Yellow / White Gold",
+                                "surcharge": 50
+                            },
+                            {
+                                "active": true,
+                                "label": "Yellow / Yellow Gold",
+                                "surcharge": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            "raw_after": {
+                "id": "prd-2mm-basket-dome",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "name": "2mm Basket Dome",
+                "status": "active",
+                "inventory_quantity": 0,
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_tracked": true,
+                        "inventory_quantity": 15,
+                        "metal": "Gold",
+                        "price": 715,
+                        "old_price": "£1,000.00",
+                        "hover_image": "/assets/uploads/admin/admin-20260519-124240-7ab50f49.jpg",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260519-124239-ef0261ef.jpg",
+                            "/assets/uploads/admin/admin-20260519-124240-7ab50f49.jpg",
+                            "/assets/uploads/admin/admin-20260519-124240-4af3dce0.mp4"
+                        ],
+                        "description": "description",
+                        "features": [
+                            "this",
+                            "is",
+                            "gold"
+                        ],
+                        "shapes": [
+                            "round",
+                            "cushion",
+                            "princess",
+                            "pear",
+                            "radiant",
+                            "asscher"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "6",
+                            "9"
+                        ],
+                        "band_options": [
+                            {
+                                "active": true,
+                                "label": "Yellow / White Gold",
+                                "surcharge": 0
+                            },
+                            {
+                                "active": true,
+                                "label": "Yellow / Yellow Gold",
+                                "surcharge": 0
+                            },
+                            {
+                                "active": true,
+                                "label": "White / White Gold",
+                                "surcharge": 50
+                            },
+                            {
+                                "active": true,
+                                "label": "Rose / White Gold",
+                                "surcharge": 0
+                            }
+                        ]
+                    },
+                    {
+                        "active": true,
+                        "inventory_quantity": 0,
+                        "metal": "Platinum",
+                        "price": 675,
+                        "old_price": "£900.00",
+                        "hover_image": "/assets/uploads/admin/admin-20260519-124241-f26a6bf7.jpg",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260519-124240-a3674d5b.jpg",
+                            "/assets/uploads/admin/admin-20260519-124241-f26a6bf7.jpg"
+                        ],
+                        "description": "plat description",
+                        "features": [
+                            "this",
+                            "is",
+                            "platinum"
+                        ],
+                        "shapes": [
+                            "round",
+                            "oval",
+                            "cushion",
+                            "princess",
+                            "emerald",
+                            "pear",
+                            "marquise",
+                            "radiant",
+                            "asscher",
+                            "heart"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9"
+                        ],
+                        "band_options": [
+                            {
+                                "active": true,
+                                "label": "Yellow / White Gold",
+                                "surcharge": 50
+                            },
+                            {
+                                "active": true,
+                                "label": "Yellow / Yellow Gold",
+                                "surcharge": 0
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260520060343-55fb3b",
+        "action": "save-attribute-profile",
+        "view": "attributes",
+        "summary": "Update Attribute Profile • Rings profile",
+        "status": "pending",
+        "actor_portal": "employee",
+        "actor_name": "Abdul",
+        "actor_username": "abdul@",
+        "created_at": "2026-05-20 06:03",
+        "resolved_at": "",
+        "resolved_by": "",
+        "note": "",
+        "payload_hash": "20d7b918f7cdf483b43621c2a4863197a6805c595a6ae84dad904acb9f65ed74",
+        "details": [
+            "Area: Attributes",
+            "Change: Update Attribute Profile",
+            "Item: Rings profile",
+            "Target ID: Rings",
+            "Category: Rings"
+        ],
+        "payload": {
+            "area": "Attributes",
+            "kind": "update",
+            "entity": "Attribute Profile",
+            "label": "Rings profile",
+            "target_id": "Rings",
+            "context": {
+                "Category": "Rings"
+            },
+            "before": {
+                "Category": "Rings",
+                "Size Choices": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "Metal Options": [
+                    {
+                        "Label": "Gold",
+                        "Value": "gold",
+                        "Description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "Label": "Platinum",
+                        "Value": "platinum",
+                        "Description": "Naturally white premium metal with a substantial feel."
+                    }
+                ],
+                "Band / Claw Options": [
+                    {
+                        "Label": "Yellow / White Gold",
+                        "Value": "yellow-white-gold",
+                        "Description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "Label": "Yellow / Yellow Gold",
+                        "Value": "yellow-yellow-gold",
+                        "Description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "Label": "White / White Gold",
+                        "Value": "white-white-gold",
+                        "Description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "Label": "Rose / White Gold",
+                        "Value": "rose-white-gold",
+                        "Description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "Style Showcase": [
+                    {
+                        "Title": "Solitaire",
+                        "Image": "product3.jpg"
+                    },
+                    {
+                        "Title": "Halo",
+                        "Image": "product10.jpg"
+                    },
+                    {
+                        "Title": "Hidden Halo",
+                        "Image": "product3.jpg"
+                    },
+                    {
+                        "Title": "Three Stone",
+                        "Image": "product8.jpg"
+                    },
+                    {
+                        "Title": "Vintage",
+                        "Image": "product4.jpg"
+                    },
+                    {
+                        "Title": "Toi et Moi",
+                        "Image": "product2.jpg"
+                    },
+                    {
+                        "Title": "Sidestones",
+                        "Image": "product1.jpg"
+                    },
+                    {
+                        "Title": "test",
+                        "Image": "admin-20260519-181200-b8131704.jpg"
+                    }
+                ]
+            },
+            "after": {
+                "Category": "Rings",
+                "Size Choices": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "Metal Options": [
+                    {
+                        "Label": "Gold",
+                        "Value": "gold",
+                        "Description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "Label": "Platinum",
+                        "Value": "platinum",
+                        "Description": "Naturally white premium metal with a substantial feel."
+                    },
+                    {
+                        "Label": "blue",
+                        "Value": "blue"
+                    }
+                ],
+                "Band / Claw Options": [
+                    {
+                        "Label": "Yellow / White Gold",
+                        "Value": "yellow-white-gold",
+                        "Description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "Label": "Yellow / Yellow Gold",
+                        "Value": "yellow-yellow-gold",
+                        "Description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "Label": "White / White Gold",
+                        "Value": "white-white-gold",
+                        "Description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "Label": "Rose / White Gold",
+                        "Value": "rose-white-gold",
+                        "Description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "Style Showcase": [
+                    {
+                        "Title": "Solitaire",
+                        "Image": "product3.jpg"
+                    },
+                    {
+                        "Title": "Halo",
+                        "Image": "product10.jpg"
+                    },
+                    {
+                        "Title": "Hidden Halo",
+                        "Image": "product3.jpg"
+                    },
+                    {
+                        "Title": "Three Stone",
+                        "Image": "product8.jpg"
+                    },
+                    {
+                        "Title": "Vintage",
+                        "Image": "product4.jpg"
+                    },
+                    {
+                        "Title": "Toi et Moi",
+                        "Image": "product2.jpg"
+                    },
+                    {
+                        "Title": "Sidestones",
+                        "Image": "product1.jpg"
+                    },
+                    {
+                        "Title": "test",
+                        "Image": "admin-20260519-181200-b8131704.jpg"
+                    }
+                ]
+            },
+            "raw_before": {
+                "type": "Rings",
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "4",
+                        "label": "4",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "5",
+                        "label": "5",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "6",
+                        "label": "6",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "7",
+                        "label": "7",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "8",
+                        "label": "8",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "9",
+                        "label": "9",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "S",
+                        "label": "S",
+                        "tone": "classic"
+                    }
+                ],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "Gold",
+                        "description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "value": "platinum",
+                        "label": "Platinum",
+                        "description": "Naturally white premium metal with a substantial feel."
+                    }
+                ],
+                "option_band_claw_metal_options": [
+                    {
+                        "value": "yellow-white-gold",
+                        "label": "Yellow / White Gold",
+                        "description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "value": "yellow-yellow-gold",
+                        "label": "Yellow / Yellow Gold",
+                        "description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "value": "white-white-gold",
+                        "label": "White / White Gold",
+                        "description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "value": "rose-white-gold",
+                        "label": "Rose / White Gold",
+                        "description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "style_cards": [
+                    {
+                        "value": "solitaire",
+                        "label": "Solitaire",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "halo",
+                        "label": "Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg"
+                    },
+                    {
+                        "value": "hidden-halo",
+                        "label": "Hidden Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "three-stone",
+                        "label": "Three Stone",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg"
+                    },
+                    {
+                        "value": "vintage",
+                        "label": "Vintage",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg"
+                    },
+                    {
+                        "value": "toi-et-moi",
+                        "label": "Toi et Moi",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg"
+                    },
+                    {
+                        "value": "sidestones",
+                        "label": "Sidestones",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg"
+                    },
+                    {
+                        "value": "test",
+                        "label": "test",
+                        "image": "/assets/uploads/admin/admin-20260519-181200-b8131704.jpg"
+                    }
+                ],
+                "diamond_inventory": [
+                    {
+                        "id": "princess-carat-color-grade-clartiy",
+                        "shape": "princess",
+                        "title": "test",
+                        "image": "/assets/uploads/admin/admin-20260518-154800-b4f7bf13.png",
+                        "carat": "carat",
+                        "color": "color grade",
+                        "clarity": "clartiy",
+                        "cut": "cut",
+                        "price": 1500,
+                        "description": "description",
+                        "badge": "Lab Selected",
+                        "status": "active"
+                    },
+                    {
+                        "id": "round-cdc-cdcd-dcdc",
+                        "shape": "round",
+                        "title": "dc",
+                        "carat": "cdc",
+                        "color": "cdcd",
+                        "clarity": "dcdc",
+                        "cut": "cdcs",
+                        "ratio": "cscdcd",
+                        "measurement": "scdscscscdsc",
+                        "ref": "scdc",
+                        "igi_certificate": "aaaaa",
+                        "price": 90000,
+                        "description": "cdcd",
+                        "badge": "Lab Selected",
+                        "status": "active"
+                    }
+                ]
+            },
+            "raw_after": {
+                "type": "Rings",
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "4",
+                        "label": "4",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "5",
+                        "label": "5",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "6",
+                        "label": "6",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "7",
+                        "label": "7",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "8",
+                        "label": "8",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "9",
+                        "label": "9",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "S",
+                        "label": "S",
+                        "tone": "classic"
+                    }
+                ],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "Gold",
+                        "description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "value": "platinum",
+                        "label": "Platinum",
+                        "description": "Naturally white premium metal with a substantial feel."
+                    },
+                    {
+                        "value": "blue",
+                        "label": "blue"
+                    }
+                ],
+                "option_band_claw_metal_options": [
+                    {
+                        "value": "yellow-white-gold",
+                        "label": "Yellow / White Gold",
+                        "description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "value": "yellow-yellow-gold",
+                        "label": "Yellow / Yellow Gold",
+                        "description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "value": "white-white-gold",
+                        "label": "White / White Gold",
+                        "description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "value": "rose-white-gold",
+                        "label": "Rose / White Gold",
+                        "description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "style_cards": [
+                    {
+                        "value": "solitaire",
+                        "label": "Solitaire",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "halo",
+                        "label": "Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg"
+                    },
+                    {
+                        "value": "hidden-halo",
+                        "label": "Hidden Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "three-stone",
+                        "label": "Three Stone",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg"
+                    },
+                    {
+                        "value": "vintage",
+                        "label": "Vintage",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg"
+                    },
+                    {
+                        "value": "toi-et-moi",
+                        "label": "Toi et Moi",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg"
+                    },
+                    {
+                        "value": "sidestones",
+                        "label": "Sidestones",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg"
+                    },
+                    {
+                        "value": "test",
+                        "label": "test",
+                        "image": "/assets/uploads/admin/admin-20260519-181200-b8131704.jpg"
+                    }
+                ],
+                "diamond_inventory": [
+                    {
+                        "id": "princess-carat-color-grade-clartiy",
+                        "shape": "princess",
+                        "title": "test",
+                        "image": "/assets/uploads/admin/admin-20260518-154800-b4f7bf13.png",
+                        "carat": "carat",
+                        "color": "color grade",
+                        "clarity": "clartiy",
+                        "cut": "cut",
+                        "price": 1500,
+                        "description": "description",
+                        "badge": "Lab Selected",
+                        "status": "active"
+                    },
+                    {
+                        "id": "round-cdc-cdcd-dcdc",
+                        "shape": "round",
+                        "title": "dc",
+                        "carat": "cdc",
+                        "color": "cdcd",
+                        "clarity": "dcdc",
+                        "cut": "cdcs",
+                        "ratio": "cscdcd",
+                        "measurement": "scdscscscdsc",
+                        "ref": "scdc",
+                        "igi_certificate": "aaaaa",
+                        "price": 90000,
+                        "description": "cdcd",
+                        "badge": "Lab Selected",
+                        "status": "active"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260520053935-d7f401",
+        "action": "create-diamond",
+        "view": "diamonds",
+        "summary": "Create Diamond • dc",
+        "status": "approved",
+        "actor_portal": "employee",
+        "actor_name": "",
+        "actor_username": "employee",
+        "created_at": "2026-05-20 05:39",
+        "resolved_at": "2026-05-20 05:54",
+        "resolved_by": "admin",
+        "note": "Diamond added.",
+        "payload_hash": "5e607ca50a298c1870fb03e8fae5148e8731a421b225f2bceb2dd468ab9cc79e",
+        "details": [
+            "Area: Diamonds",
+            "Change: Create Diamond",
+            "Item: dc",
+            "Target ID: round-cdc-cdcd-dcdc",
+            "Shape: round"
+        ],
+        "payload": {
+            "area": "Diamonds",
+            "kind": "create",
+            "entity": "Diamond",
+            "label": "dc",
+            "target_id": "round-cdc-cdcd-dcdc",
+            "context": {
+                "Shape": "round"
+            },
+            "after": {
+                "Diamond ID": "round-cdc-cdcd-dcdc",
+                "Title": "dc",
+                "Shape": "round",
+                "Price": "90000",
+                "Carat": "cdc",
+                "Color": "cdcd",
+                "Clarity": "dcdc",
+                "Cut": "cdcs",
+                "Description": "cdcd",
+                "Status": "active"
+            },
+            "raw_after": {
+                "id": "round-cdc-cdcd-dcdc",
+                "shape": "round",
+                "title": "dc",
+                "carat": "cdc",
+                "color": "cdcd",
+                "clarity": "dcdc",
+                "cut": "cdcs",
+                "ratio": "cscdcd",
+                "measurement": "scdscscscdsc",
+                "ref": "scdc",
+                "igi_certificate": "aaaaa",
+                "price": 90000,
+                "description": "cdcd",
+                "badge": "Lab Selected",
+                "status": "active"
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260519204214-0c5a07",
+        "action": "save-attribute-profile",
+        "view": "attributes",
+        "summary": "Update Attribute Profile • Rings profile",
+        "status": "pending",
+        "actor_portal": "employee",
+        "actor_name": "",
+        "actor_username": "employee",
+        "created_at": "2026-05-19 20:42",
+        "resolved_at": "",
+        "resolved_by": "",
+        "note": "",
+        "payload_hash": "005fa35372fb0962fbd31f9f949a9f08f702dda5188cbf5aa3895bf81eafe7a0",
+        "details": [
+            "Area: Attributes",
+            "Change: Update Attribute Profile",
+            "Item: Rings profile",
+            "Target ID: Rings",
+            "Category: Rings"
+        ],
+        "payload": {
+            "area": "Attributes",
+            "kind": "update",
+            "entity": "Attribute Profile",
+            "label": "Rings profile",
+            "target_id": "Rings",
+            "context": {
+                "Category": "Rings"
+            },
+            "before": {
+                "Category": "Rings",
+                "Size Choices": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "Metal Options": [
+                    {
+                        "Label": "Gold",
+                        "Value": "gold",
+                        "Description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "Label": "Platinum",
+                        "Value": "platinum",
+                        "Description": "Naturally white premium metal with a substantial feel."
+                    }
+                ],
+                "Band / Claw Options": [
+                    {
+                        "Label": "Yellow / White Gold",
+                        "Value": "yellow-white-gold",
+                        "Description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "Label": "Yellow / Yellow Gold",
+                        "Value": "yellow-yellow-gold",
+                        "Description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "Label": "White / White Gold",
+                        "Value": "white-white-gold",
+                        "Description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "Label": "Rose / White Gold",
+                        "Value": "rose-white-gold",
+                        "Description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "Style Showcase": [
+                    {
+                        "Title": "Solitaire",
+                        "Image": "product3.jpg"
+                    },
+                    {
+                        "Title": "Halo",
+                        "Image": "product10.jpg"
+                    },
+                    {
+                        "Title": "Hidden Halo",
+                        "Image": "product3.jpg"
+                    },
+                    {
+                        "Title": "Three Stone",
+                        "Image": "product8.jpg"
+                    },
+                    {
+                        "Title": "Vintage",
+                        "Image": "product4.jpg"
+                    },
+                    {
+                        "Title": "Toi et Moi",
+                        "Image": "product2.jpg"
+                    },
+                    {
+                        "Title": "Sidestones",
+                        "Image": "product1.jpg"
+                    },
+                    {
+                        "Title": "test",
+                        "Image": "admin-20260519-181200-b8131704.jpg"
+                    }
+                ]
+            },
+            "after": {
+                "Category": "Rings",
+                "Size Choices": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "Metal Options": [
+                    {
+                        "Label": "Gold",
+                        "Value": "gold",
+                        "Description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "Label": "Platinum",
+                        "Value": "platinum",
+                        "Description": "Naturally white premium metal with a substantial feel."
+                    },
+                    {
+                        "Label": "pink",
+                        "Value": "pink"
+                    }
+                ],
+                "Band / Claw Options": [
+                    {
+                        "Label": "Yellow / White Gold",
+                        "Value": "yellow-white-gold",
+                        "Description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "Label": "Yellow / Yellow Gold",
+                        "Value": "yellow-yellow-gold",
+                        "Description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "Label": "White / White Gold",
+                        "Value": "white-white-gold",
+                        "Description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "Label": "Rose / White Gold",
+                        "Value": "rose-white-gold",
+                        "Description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "Style Showcase": [
+                    {
+                        "Title": "Solitaire",
+                        "Image": "product3.jpg"
+                    },
+                    {
+                        "Title": "Halo",
+                        "Image": "product10.jpg"
+                    },
+                    {
+                        "Title": "Hidden Halo",
+                        "Image": "product3.jpg"
+                    },
+                    {
+                        "Title": "Three Stone",
+                        "Image": "product8.jpg"
+                    },
+                    {
+                        "Title": "Vintage",
+                        "Image": "product4.jpg"
+                    },
+                    {
+                        "Title": "Toi et Moi",
+                        "Image": "product2.jpg"
+                    },
+                    {
+                        "Title": "Sidestones",
+                        "Image": "product1.jpg"
+                    },
+                    {
+                        "Title": "test",
+                        "Image": "admin-20260519-181200-b8131704.jpg"
+                    }
+                ]
+            },
+            "raw_before": {
+                "type": "Rings",
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "4",
+                        "label": "4",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "5",
+                        "label": "5",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "6",
+                        "label": "6",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "7",
+                        "label": "7",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "8",
+                        "label": "8",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "9",
+                        "label": "9",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "S",
+                        "label": "S",
+                        "tone": "classic"
+                    }
+                ],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "Gold",
+                        "description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "value": "platinum",
+                        "label": "Platinum",
+                        "description": "Naturally white premium metal with a substantial feel."
+                    }
+                ],
+                "option_band_claw_metal_options": [
+                    {
+                        "value": "yellow-white-gold",
+                        "label": "Yellow / White Gold",
+                        "description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "value": "yellow-yellow-gold",
+                        "label": "Yellow / Yellow Gold",
+                        "description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "value": "white-white-gold",
+                        "label": "White / White Gold",
+                        "description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "value": "rose-white-gold",
+                        "label": "Rose / White Gold",
+                        "description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "style_cards": [
+                    {
+                        "value": "solitaire",
+                        "label": "Solitaire",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "halo",
+                        "label": "Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg"
+                    },
+                    {
+                        "value": "hidden-halo",
+                        "label": "Hidden Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "three-stone",
+                        "label": "Three Stone",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg"
+                    },
+                    {
+                        "value": "vintage",
+                        "label": "Vintage",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg"
+                    },
+                    {
+                        "value": "toi-et-moi",
+                        "label": "Toi et Moi",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg"
+                    },
+                    {
+                        "value": "sidestones",
+                        "label": "Sidestones",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg"
+                    },
+                    {
+                        "value": "test",
+                        "label": "test",
+                        "image": "/assets/uploads/admin/admin-20260519-181200-b8131704.jpg"
+                    }
+                ]
+            },
+            "raw_after": {
+                "type": "Rings",
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "4",
+                        "label": "4",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "5",
+                        "label": "5",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "6",
+                        "label": "6",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "7",
+                        "label": "7",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "8",
+                        "label": "8",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "9",
+                        "label": "9",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "S",
+                        "label": "S",
+                        "tone": "classic"
+                    }
+                ],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "Gold",
+                        "description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "value": "platinum",
+                        "label": "Platinum",
+                        "description": "Naturally white premium metal with a substantial feel."
+                    },
+                    {
+                        "value": "pink",
+                        "label": "pink"
+                    }
+                ],
+                "option_band_claw_metal_options": [
+                    {
+                        "value": "yellow-white-gold",
+                        "label": "Yellow / White Gold",
+                        "description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "value": "yellow-yellow-gold",
+                        "label": "Yellow / Yellow Gold",
+                        "description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "value": "white-white-gold",
+                        "label": "White / White Gold",
+                        "description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "value": "rose-white-gold",
+                        "label": "Rose / White Gold",
+                        "description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "style_cards": [
+                    {
+                        "value": "solitaire",
+                        "label": "Solitaire",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "halo",
+                        "label": "Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg"
+                    },
+                    {
+                        "value": "hidden-halo",
+                        "label": "Hidden Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "three-stone",
+                        "label": "Three Stone",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg"
+                    },
+                    {
+                        "value": "vintage",
+                        "label": "Vintage",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg"
+                    },
+                    {
+                        "value": "toi-et-moi",
+                        "label": "Toi et Moi",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg"
+                    },
+                    {
+                        "value": "sidestones",
+                        "label": "Sidestones",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg"
+                    },
+                    {
+                        "value": "test",
+                        "label": "test",
+                        "image": "/assets/uploads/admin/admin-20260519-181200-b8131704.jpg"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260519202541-3408ba",
+        "action": "save-attribute-profile",
+        "view": "attributes",
+        "summary": "Update Attribute Profile • Rings profile",
+        "status": "pending",
+        "actor_portal": "employee",
+        "actor_name": "",
+        "actor_username": "employee",
+        "created_at": "2026-05-19 20:25",
+        "resolved_at": "",
+        "resolved_by": "",
+        "note": "",
+        "payload_hash": "94e7c5df8c4d05d6756925ca46082044b19c5703a2ffce07e62082ea7faaadb5",
+        "details": [
+            "Area: Attributes",
+            "Change: Update Attribute Profile",
+            "Item: Rings profile",
+            "Target ID: Rings",
+            "Category: Rings"
+        ],
+        "payload": {
+            "area": "Attributes",
+            "kind": "update",
+            "entity": "Attribute Profile",
+            "label": "Rings profile",
+            "target_id": "Rings",
+            "context": {
+                "Category": "Rings"
+            },
+            "before": {
+                "Category": "Rings",
+                "Size Choices": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "Metal Options": [
+                    "Gold",
+                    "Platinum"
+                ],
+                "Band / Claw Options": [
+                    "Yellow / White Gold",
+                    "Yellow / Yellow Gold",
+                    "White / White Gold",
+                    "Rose / White Gold"
+                ],
+                "Style Showcase": [
+                    "Solitaire",
+                    "Halo",
+                    "Hidden Halo",
+                    "Three Stone",
+                    "Vintage",
+                    "Toi et Moi",
+                    "Sidestones",
+                    "test"
+                ]
+            },
+            "after": {
+                "Category": "Rings",
+                "Size Choices": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "Metal Options": [
+                    "Gold",
+                    "Platinum",
+                    "test-attribute"
+                ],
+                "Band / Claw Options": [
+                    "Yellow / White Gold",
+                    "Yellow / Yellow Gold",
+                    "White / White Gold",
+                    "Rose / White Gold"
+                ],
+                "Style Showcase": [
+                    "Solitaire",
+                    "Halo",
+                    "Hidden Halo",
+                    "Three Stone",
+                    "Vintage",
+                    "Toi et Moi",
+                    "Sidestones",
+                    "test"
+                ]
+            },
+            "raw_before": {
+                "type": "Rings",
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "4",
+                        "label": "4",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "5",
+                        "label": "5",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "6",
+                        "label": "6",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "7",
+                        "label": "7",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "8",
+                        "label": "8",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "9",
+                        "label": "9",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "S",
+                        "label": "S",
+                        "tone": "classic"
+                    }
+                ],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "Gold",
+                        "description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "value": "platinum",
+                        "label": "Platinum",
+                        "description": "Naturally white premium metal with a substantial feel."
+                    }
+                ],
+                "option_band_claw_metal_options": [
+                    {
+                        "value": "yellow-white-gold",
+                        "label": "Yellow / White Gold",
+                        "description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "value": "yellow-yellow-gold",
+                        "label": "Yellow / Yellow Gold",
+                        "description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "value": "white-white-gold",
+                        "label": "White / White Gold",
+                        "description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "value": "rose-white-gold",
+                        "label": "Rose / White Gold",
+                        "description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "style_cards": [
+                    {
+                        "value": "solitaire",
+                        "label": "Solitaire",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "halo",
+                        "label": "Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg"
+                    },
+                    {
+                        "value": "hidden-halo",
+                        "label": "Hidden Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "three-stone",
+                        "label": "Three Stone",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg"
+                    },
+                    {
+                        "value": "vintage",
+                        "label": "Vintage",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg"
+                    },
+                    {
+                        "value": "toi-et-moi",
+                        "label": "Toi et Moi",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg"
+                    },
+                    {
+                        "value": "sidestones",
+                        "label": "Sidestones",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg"
+                    },
+                    {
+                        "value": "test",
+                        "label": "test",
+                        "image": "/assets/uploads/admin/admin-20260519-181200-b8131704.jpg"
+                    }
+                ]
+            },
+            "raw_after": {
+                "type": "Rings",
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "S"
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "4",
+                        "label": "4",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "5",
+                        "label": "5",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "6",
+                        "label": "6",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "7",
+                        "label": "7",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "8",
+                        "label": "8",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "9",
+                        "label": "9",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "S",
+                        "label": "S",
+                        "tone": "classic"
+                    }
+                ],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "Gold",
+                        "description": "Classic gold craftsmanship with a warm, refined finish."
+                    },
+                    {
+                        "value": "platinum",
+                        "label": "Platinum",
+                        "description": "Naturally white premium metal with a substantial feel."
+                    },
+                    {
+                        "value": "test-attribute",
+                        "label": "test-attribute"
+                    }
+                ],
+                "option_band_claw_metal_options": [
+                    {
+                        "value": "yellow-white-gold",
+                        "label": "Yellow / White Gold",
+                        "description": "Yellow gold band with crisp white gold claws."
+                    },
+                    {
+                        "value": "yellow-yellow-gold",
+                        "label": "Yellow / Yellow Gold",
+                        "description": "A fully yellow gold look from band to setting."
+                    },
+                    {
+                        "value": "white-white-gold",
+                        "label": "White / White Gold",
+                        "description": "Bright white gold throughout for a clean finish."
+                    },
+                    {
+                        "value": "rose-white-gold",
+                        "label": "Rose / White Gold",
+                        "description": "Soft rose gold band balanced with white gold claws."
+                    }
+                ],
+                "style_cards": [
+                    {
+                        "value": "solitaire",
+                        "label": "Solitaire",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "halo",
+                        "label": "Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg"
+                    },
+                    {
+                        "value": "hidden-halo",
+                        "label": "Hidden Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "three-stone",
+                        "label": "Three Stone",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg"
+                    },
+                    {
+                        "value": "vintage",
+                        "label": "Vintage",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg"
+                    },
+                    {
+                        "value": "toi-et-moi",
+                        "label": "Toi et Moi",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg"
+                    },
+                    {
+                        "value": "sidestones",
+                        "label": "Sidestones",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg"
+                    },
+                    {
+                        "value": "test",
+                        "label": "test",
+                        "image": "/assets/uploads/admin/admin-20260519-181200-b8131704.jpg"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260519192840-130672",
+        "action": "update-product",
+        "view": "catalog",
+        "summary": "Update product",
+        "status": "rejected",
+        "actor_portal": "employee",
+        "actor_name": "",
+        "actor_username": "employee",
+        "created_at": "2026-05-19 19:28",
+        "resolved_at": "2026-05-19 19:51",
+        "resolved_by": "admin",
+        "note": "Rejected by Super Admin",
+        "payload_hash": "d426461a4e6757e6ad635d6917e63f2600b3d166e3e8f95759f8bd085b376523",
+        "details": [],
+        "payload": {
+            "product_id": "prd-main-test",
+            "product": {
+                "id": "prd-main-test",
+                "product_type": "Necklaces",
+                "color": "Yellow Gold",
+                "category": "new",
+                "name": "main-test-employee",
+                "old_price": "",
+                "new_price": "",
+                "default_image": "",
+                "hover_image": "",
+                "popup_image": "",
+                "description": "",
+                "status": "active",
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "Color",
+                "option_size_label": "Size",
+                "option_color_display": "compact",
+                "option_size_display": "compact",
+                "option_colors": [],
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "metal": "Golden",
+                        "price": 99,
+                        "old_price": "£50.00",
+                        "image": "",
+                        "hover_image": "/assets/uploads/admin/admin-20260517-174658-4ec593a5.png",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260517-174658-70b77121.png",
+                            "/assets/uploads/admin/admin-20260517-174658-4ec593a5.png"
+                        ],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "8",
+                            "9"
+                        ],
+                        "band_options": []
+                    },
+                    {
+                        "active": true,
+                        "metal": "Platinum",
+                        "price": 888,
+                        "old_price": "£555.00",
+                        "image": "",
+                        "hover_image": "/assets/uploads/admin/admin-20260517-174658-a7783ab4.png",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260517-174658-5a0fd8bd.png",
+                            "/assets/uploads/admin/admin-20260517-174658-a7783ab4.png"
+                        ],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [
+                            "4",
+                            "9"
+                        ],
+                        "band_options": []
+                    }
+                ],
+                "option_delivery_options": [
+                    {
+                        "value": "standard",
+                        "label": "4-5 Weeks Delivery",
+                        "description": "Included with your order and preselected for made-to-order craftsmanship.",
+                        "price": 0,
+                        "price_label": "Included",
+                        "badge": "Basic"
+                    },
+                    {
+                        "value": "priority",
+                        "label": "3-4 Weeks Delivery",
+                        "description": "Priority production and dispatch for a faster delivery window.",
+                        "price": 100,
+                        "price_label": "+£100",
+                        "badge": "Priority"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "id": "admin-request-20260519192826-42ea5e",
+        "action": "update-product",
+        "view": "catalog",
+        "summary": "Update product",
+        "status": "rejected",
+        "actor_portal": "employee",
+        "actor_name": "",
+        "actor_username": "employee",
+        "created_at": "2026-05-19 19:28",
+        "resolved_at": "2026-05-19 19:50",
+        "resolved_by": "admin",
+        "note": "Rejected by Super Admin",
+        "payload_hash": "d426461a4e6757e6ad635d6917e63f2600b3d166e3e8f95759f8bd085b376523",
+        "details": [],
+        "payload": {
+            "product_id": "prd-main-test",
+            "product": {
+                "id": "prd-main-test",
+                "product_type": "Necklaces",
+                "color": "Yellow Gold",
+                "category": "new",
+                "name": "main-test-employee",
+                "old_price": "",
+                "new_price": "",
+                "default_image": "",
+                "hover_image": "",
+                "popup_image": "",
+                "description": "",
+                "status": "active",
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "Color",
+                "option_size_label": "Size",
+                "option_color_display": "compact",
+                "option_size_display": "compact",
+                "option_colors": [],
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "metal": "Golden",
+                        "price": 99,
+                        "old_price": "£50.00",
+                        "image": "",
+                        "hover_image": "/assets/uploads/admin/admin-20260517-174658-4ec593a5.png",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260517-174658-70b77121.png",
+                            "/assets/uploads/admin/admin-20260517-174658-4ec593a5.png"
+                        ],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [
+                            "4",
+                            "5",
+                            "8",
+                            "9"
+                        ],
+                        "band_options": []
+                    },
+                    {
+                        "active": true,
+                        "metal": "Platinum",
+                        "price": 888,
+                        "old_price": "£555.00",
+                        "image": "",
+                        "hover_image": "/assets/uploads/admin/admin-20260517-174658-a7783ab4.png",
+                        "gallery": [
+                            "/assets/uploads/admin/admin-20260517-174658-5a0fd8bd.png",
+                            "/assets/uploads/admin/admin-20260517-174658-a7783ab4.png"
+                        ],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [
+                            "4",
+                            "9"
+                        ],
+                        "band_options": []
+                    }
+                ],
+                "option_delivery_options": [
+                    {
+                        "value": "standard",
+                        "label": "4-5 Weeks Delivery",
+                        "description": "Included with your order and preselected for made-to-order craftsmanship.",
+                        "price": 0,
+                        "price_label": "Included",
+                        "badge": "Basic"
+                    },
+                    {
+                        "value": "priority",
+                        "label": "3-4 Weeks Delivery",
+                        "description": "Priority production and dispatch for a faster delivery window.",
+                        "price": 100,
+                        "price_label": "+£100",
+                        "badge": "Priority"
+                    }
+                ]
+            }
+        }
+    }
+]

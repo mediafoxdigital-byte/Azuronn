@@ -1,0 +1,73 @@
+{
+    "config": {
+        "default_duration": 60,
+        "slot_interval": 15,
+        "lead_time_hours": 2,
+        "max_advance_days": 90,
+        "capacity": 1,
+        "weekdays": {
+            "mon": {
+                "open": "10:00",
+                "close": "18:00",
+                "closed": false
+            },
+            "tue": {
+                "open": "10:00",
+                "close": "18:00",
+                "closed": false
+            },
+            "wed": {
+                "open": "10:00",
+                "close": "18:00",
+                "closed": false
+            },
+            "thu": {
+                "open": "10:00",
+                "close": "18:00",
+                "closed": false
+            },
+            "fri": {
+                "open": "10:00",
+                "close": "18:00",
+                "closed": false
+            },
+            "sat": {
+                "open": "10:00",
+                "close": "16:00",
+                "closed": false
+            },
+            "sun": {
+                "open": "10:00",
+                "close": "18:00",
+                "closed": true
+            }
+        },
+        "blackout_dates": [],
+        "blackout_ranges": [],
+        "service_durations": []
+    },
+    "bookings": [
+        {
+            "id": "apt-dc08493b1480a88f",
+            "ref": "AZ-260731-B0A5",
+            "service": "ring-wedding",
+            "service_label": "Wedding Rings",
+            "date": "2026-07-31",
+            "time": "14:45",
+            "duration": 60,
+            "first_name": "zcxzxcz",
+            "last_name": "xzcz",
+            "email": "test@gmail.com",
+            "country_code": "+44",
+            "mobile": "1234567890",
+            "consent_email": false,
+            "consent_sms": false,
+            "consent_mail": false,
+            "notes": "",
+            "status": "confirmed",
+            "created_at": "2026-07-31T10:47:48+00:00",
+            "confirmation_email_sent": false,
+            "confirmation_email_at": null
+        }
+    ]
+}

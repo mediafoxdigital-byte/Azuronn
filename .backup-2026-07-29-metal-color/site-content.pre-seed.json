@@ -1,0 +1,2859 @@
+{
+    "settings": {
+        "site_name": "Azuronn",
+        "site_tagline": "Jewelry Shop eCommerce",
+        "site_url": "http://localhost",
+        "logo_path": "/assets/AZURONN Logo_2-01.png",
+        "store_address": "Your address goes here.",
+        "store_phone": "0123456789",
+        "store_email": "demo@example.com",
+        "announcement_text": "Free shipping on all orders with coupon code",
+        "announcement_code": "Rings2026",
+        "announcement_url": "#",
+        "cart_count": 2,
+        "cart_total": "£138.00",
+        "social": {
+            "facebook": "#",
+            "twitter": "#",
+            "rss": "#",
+            "googleplus": "#",
+            "youtube": "#"
+        }
+    },
+    "hero": {
+        "offer": "Exclusive Offer -10% Off This Week",
+        "title": "Jewelry Arrivals",
+        "price_prefix": "Starting At",
+        "price_value": "£2.199.00",
+        "cta_label": "SHOPPING NOW",
+        "cta_url": "#",
+        "image": ""
+    },
+    "category_cards": [
+        {
+            "header_label": "Classic Essentials",
+            "header_icon": "fas fa-gem",
+            "sub": "Solitaire, halo, and signature engagement designs.",
+            "title": "Engagement Rings",
+            "price": "Solitaire, halo, vintage, and toi et moi designs",
+            "url": "/shop/?type=Ring&ring_category=engagement",
+            "image": "/assets/uploads/diamond-shapes/round-hand-preview.webp",
+            "alt": "Engagement Rings"
+        },
+        {
+            "header_label": "Forever Bands",
+            "header_icon": "fas fa-ring",
+            "sub": "Women's and men's wedding bands in gold and platinum.",
+            "title": "Wedding Rings",
+            "price": "Classic, eternity, and diamond wedding bands",
+            "url": "/shop/?type=Ring&ring_category=wedding",
+            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+            "alt": "Wedding Rings"
+        },
+        {
+            "header_label": "Brilliant Accents",
+            "header_icon": "fas fa-star",
+            "sub": "Studs, drops, hoops, and heart-set favourites.",
+            "title": "Earrings",
+            "price": "Studs, hoops, drops, and halo designs",
+            "url": "/shop/?type=Earring",
+            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+            "alt": "Earrings"
+        },
+        {
+            "header_label": "Gift Icons",
+            "header_icon": "fas fa-heart",
+            "sub": "Solitaire, halo, and motif pendants for daily wear.",
+            "title": "Pendants",
+            "price": "Solitaire pendants, motifs, and layered pieces",
+            "url": "/shop/?type=Pendant",
+            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+            "alt": "Pendants"
+        },
+        {
+            "header_label": "Wrist Layers",
+            "header_icon": "fas fa-circle-notch",
+            "sub": "Diamond tennis lines, cuffs, and modern bangles.",
+            "title": "Bangles & Bracelets",
+            "price": "Bangles, cuffs, tennis bracelets, and chains",
+            "url": "/shop/?type=Bracelet",
+            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+            "alt": "Bangles and Bracelets"
+        },
+        {
+            "header_label": "Neckline Glow",
+            "header_icon": "fas fa-sun",
+            "sub": "Layered diamond necklaces and occasion-ready silhouettes.",
+            "title": "Necklaces",
+            "price": "Tennis, layered, station, and statement necklaces",
+            "url": "/shop/?type=Necklace",
+            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+            "alt": "Necklaces"
+        },
+        {
+            "header_label": "Tradition Edit",
+            "header_icon": "fas fa-link",
+            "sub": "Contemporary mangalsutra styles with diamond detailing.",
+            "title": "Mangalsutra",
+            "price": "Traditional and modern mangalsutra designs",
+            "url": "/shop/?q=Mangalsutra",
+            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+            "alt": "Mangalsutra"
+        }
+    ],
+    "catalog_meta": {
+        "product_types": [
+            "Ring",
+            "Bracelet",
+            "Necklace",
+            "Earring",
+            "Pendant",
+            "Brooch",
+            "Jewellery Set"
+        ],
+        "colors": [
+            "Yellow Gold",
+            "Rose Gold",
+            "White Gold",
+            "Silver",
+            "Platinum",
+            "Emerald Green",
+            "Ruby Red",
+            "Diamond White"
+        ],
+        "attribute_profiles": {
+            "Ring": {
+                "type": "Ring",
+                "option_color_label": "Color",
+                "option_size_label": "Size",
+                "option_color_display": "compact",
+                "option_size_display": "compact",
+                "option_colors": [],
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                ],
+                "option_color_choices": [],
+                "option_size_choices": [
+                    {
+                        "value": "4",
+                        "label": "4",
+                        "caption": "",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "5",
+                        "label": "5",
+                        "caption": "",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "6",
+                        "label": "6",
+                        "caption": "",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "7",
+                        "label": "7",
+                        "caption": "",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "8",
+                        "label": "8",
+                        "caption": "",
+                        "tone": "classic"
+                    },
+                    {
+                        "value": "9",
+                        "label": "9",
+                        "caption": "",
+                        "tone": "classic"
+                    }
+                ],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "Gold",
+                        "description": "Classic gold craftsmanship with a warm, refined finish.",
+                        "price": 500,
+                        "surcharge": 0,
+                        "color_hex": "#cda434",
+                        "image": ""
+                    },
+                    {
+                        "value": "platinum",
+                        "label": "Platinum",
+                        "description": "Naturally white premium metal with a substantial feel.",
+                        "price": 750,
+                        "surcharge": 0,
+                        "color_hex": "#e5e4e2",
+                        "image": ""
+                    },
+                    {
+                        "value": "blue",
+                        "label": "blue",
+                        "description": "",
+                        "price": 0,
+                        "surcharge": 0,
+                        "color_hex": "#5b59a6",
+                        "image": ""
+                    }
+                ],
+                "option_band_claw_metal_options": [
+                    {
+                        "value": "yellow-white-gold",
+                        "label": "Yellow / White Gold",
+                        "description": "Yellow gold band with crisp white gold claws.",
+                        "price": 0,
+                        "surcharge": 0,
+                        "color_hex": "",
+                        "image": ""
+                    },
+                    {
+                        "value": "yellow-yellow-gold",
+                        "label": "Yellow / Yellow Gold",
+                        "description": "A fully yellow gold look from band to setting.",
+                        "price": 0,
+                        "surcharge": 0,
+                        "color_hex": "",
+                        "image": ""
+                    },
+                    {
+                        "value": "white-white-gold",
+                        "label": "White / White Gold",
+                        "description": "Bright white gold throughout for a clean finish.",
+                        "price": 0,
+                        "surcharge": 0,
+                        "color_hex": "",
+                        "image": ""
+                    },
+                    {
+                        "value": "rose-white-gold",
+                        "label": "Rose / White Gold",
+                        "description": "Soft rose gold band balanced with white gold claws.",
+                        "price": 0,
+                        "surcharge": 60,
+                        "color_hex": "",
+                        "image": ""
+                    }
+                ],
+                "option_delivery_options": [
+                    {
+                        "value": "standard",
+                        "label": "4-5 Weeks Delivery",
+                        "description": "Included with your order and preselected for made-to-order craftsmanship.",
+                        "price": 0,
+                        "price_label": "Included",
+                        "badge": "Basic"
+                    },
+                    {
+                        "value": "priority",
+                        "label": "3-4 Weeks Delivery",
+                        "description": "Priority production and dispatch for a faster delivery window.",
+                        "price": 100,
+                        "price_label": "+£100",
+                        "badge": "Priority"
+                    }
+                ],
+                "selector_cards": [],
+                "style_cards": [
+                    {
+                        "value": "solitaire",
+                        "label": "Solitaire",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "halo",
+                        "label": "Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg"
+                    },
+                    {
+                        "value": "hidden-halo",
+                        "label": "Hidden Halo",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg"
+                    },
+                    {
+                        "value": "three-stone",
+                        "label": "Three Stone",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product8.jpg"
+                    },
+                    {
+                        "value": "vintage",
+                        "label": "Vintage",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg"
+                    },
+                    {
+                        "value": "toi-et-moi",
+                        "label": "Toi et Moi",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg"
+                    },
+                    {
+                        "value": "sidestones",
+                        "label": "Sidestones",
+                        "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg"
+                    }
+                ],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": [
+                        {
+                            "value": "classic-band",
+                            "label": "Classic Band",
+                            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg"
+                        },
+                        {
+                            "value": "eternity",
+                            "label": "Eternity",
+                            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg"
+                        },
+                        {
+                            "value": "pav",
+                            "label": "Pavé",
+                            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg"
+                        },
+                        {
+                            "value": "curved-contoured",
+                            "label": "Curved & Contoured",
+                            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg"
+                        },
+                        {
+                            "value": "two-tone",
+                            "label": "Two-Tone",
+                            "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg"
+                        }
+                    ]
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            },
+            "Earring": {
+                "type": "Earring",
+                "option_color_label": "Metal",
+                "option_size_label": "Total Carat Weight",
+                "option_color_display": "jewellery-metals",
+                "option_size_display": "stone-weights",
+                "option_colors": [
+                    "18K White Gold",
+                    "18K Yellow Gold",
+                    "18K Rose Gold",
+                    "9K White Gold",
+                    "9K Yellow Gold",
+                    "9K Rose Gold"
+                ],
+                "option_sizes": [
+                    "0.6 ctw",
+                    "0.8 ctw",
+                    "1 ctw",
+                    "2.4 ctw"
+                ],
+                "option_color_choices": [
+                    {
+                        "value": "18K White Gold",
+                        "label": "White Gold",
+                        "kicker": "18K",
+                        "tone": "white"
+                    },
+                    {
+                        "value": "18K Yellow Gold",
+                        "label": "Yellow Gold",
+                        "kicker": "18K",
+                        "tone": "yellow"
+                    },
+                    {
+                        "value": "18K Rose Gold",
+                        "label": "Rose Gold",
+                        "kicker": "18K",
+                        "tone": "rose"
+                    },
+                    {
+                        "value": "9K White Gold",
+                        "label": "White Gold",
+                        "kicker": "9K",
+                        "tone": "white"
+                    },
+                    {
+                        "value": "9K Yellow Gold",
+                        "label": "Yellow Gold",
+                        "kicker": "9K",
+                        "tone": "yellow"
+                    },
+                    {
+                        "value": "9K Rose Gold",
+                        "label": "Rose Gold",
+                        "kicker": "9K",
+                        "tone": "rose"
+                    }
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "0.6 ctw",
+                        "label": "0.6 ctw",
+                        "caption": "",
+                        "tone": "accent"
+                    },
+                    {
+                        "value": "0.8 ctw",
+                        "label": "0.8 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "1 ctw",
+                        "label": "1 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "2.4 ctw",
+                        "label": "2.4 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    }
+                ],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "option_delivery_options": [],
+                "selector_cards": [],
+                "style_cards": [],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": []
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            },
+            "Bracelet": {
+                "type": "Bracelet",
+                "option_color_label": "Metal",
+                "option_size_label": "Diamond Weight & Length",
+                "option_color_display": "jewellery-metals",
+                "option_size_display": "stone-weights",
+                "option_colors": [
+                    "18K White Gold",
+                    "18K Yellow Gold",
+                    "9K White Gold",
+                    "9K Yellow Gold"
+                ],
+                "option_sizes": [
+                    "3.6 ctw / 165mm",
+                    "3.8 ctw / 175mm"
+                ],
+                "option_color_choices": [
+                    {
+                        "value": "18K White Gold",
+                        "label": "White Gold",
+                        "kicker": "18K",
+                        "tone": "white"
+                    },
+                    {
+                        "value": "18K Yellow Gold",
+                        "label": "Yellow Gold",
+                        "kicker": "18K",
+                        "tone": "yellow"
+                    },
+                    {
+                        "value": "9K White Gold",
+                        "label": "White Gold",
+                        "kicker": "9K",
+                        "tone": "white"
+                    },
+                    {
+                        "value": "9K Yellow Gold",
+                        "label": "Yellow Gold",
+                        "kicker": "9K",
+                        "tone": "yellow"
+                    }
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "3.6 ctw / 165mm",
+                        "label": "3.6 ctw",
+                        "caption": "165mm",
+                        "tone": "accent"
+                    },
+                    {
+                        "value": "3.8 ctw / 175mm",
+                        "label": "3.8 ctw",
+                        "caption": "175mm",
+                        "tone": "neutral"
+                    }
+                ],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "option_delivery_options": [],
+                "selector_cards": [],
+                "style_cards": [],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": []
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            },
+            "Necklace": {
+                "type": "Necklace",
+                "option_color_label": "Metal",
+                "option_size_label": "Total Carat Weight",
+                "option_color_display": "jewellery-metals",
+                "option_size_display": "stone-weights",
+                "option_colors": [
+                    "18K White Gold",
+                    "18K Yellow Gold",
+                    "18K Rose Gold"
+                ],
+                "option_sizes": [
+                    "0.5 ctw",
+                    "0.7 ctw",
+                    "1 ctw",
+                    "1.25 ctw",
+                    "1.5 ctw",
+                    "2 ctw",
+                    "3 ctw"
+                ],
+                "option_color_choices": [
+                    {
+                        "value": "18K White Gold",
+                        "label": "White Gold",
+                        "kicker": "18K",
+                        "tone": "white"
+                    },
+                    {
+                        "value": "18K Yellow Gold",
+                        "label": "Yellow Gold",
+                        "kicker": "18K",
+                        "tone": "yellow"
+                    },
+                    {
+                        "value": "18K Rose Gold",
+                        "label": "Rose Gold",
+                        "kicker": "18K",
+                        "tone": "rose"
+                    }
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "0.5 ctw",
+                        "label": "0.5 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "0.7 ctw",
+                        "label": "0.7 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "1 ctw",
+                        "label": "1 ctw",
+                        "caption": "",
+                        "tone": "accent"
+                    },
+                    {
+                        "value": "1.25 ctw",
+                        "label": "1.25 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "1.5 ctw",
+                        "label": "1.5 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "2 ctw",
+                        "label": "2 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "3 ctw",
+                        "label": "3 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    }
+                ],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "option_delivery_options": [],
+                "selector_cards": [],
+                "style_cards": [],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": []
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            },
+            "Pendant": {
+                "type": "Pendant",
+                "option_color_label": "Metal",
+                "option_size_label": "Total Carat Weight",
+                "option_color_display": "jewellery-metals",
+                "option_size_display": "stone-weights",
+                "option_colors": [
+                    "18K White Gold",
+                    "18K Yellow Gold",
+                    "18K Rose Gold"
+                ],
+                "option_sizes": [
+                    "0.5 ctw",
+                    "0.7 ctw",
+                    "1 ctw",
+                    "1.25 ctw",
+                    "1.5 ctw",
+                    "2 ctw",
+                    "3 ctw"
+                ],
+                "option_color_choices": [
+                    {
+                        "value": "18K White Gold",
+                        "label": "White Gold",
+                        "kicker": "18K",
+                        "tone": "white"
+                    },
+                    {
+                        "value": "18K Yellow Gold",
+                        "label": "Yellow Gold",
+                        "kicker": "18K",
+                        "tone": "yellow"
+                    },
+                    {
+                        "value": "18K Rose Gold",
+                        "label": "Rose Gold",
+                        "kicker": "18K",
+                        "tone": "rose"
+                    }
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "0.5 ctw",
+                        "label": "0.5 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "0.7 ctw",
+                        "label": "0.7 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "1 ctw",
+                        "label": "1 ctw",
+                        "caption": "",
+                        "tone": "accent"
+                    },
+                    {
+                        "value": "1.25 ctw",
+                        "label": "1.25 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "1.5 ctw",
+                        "label": "1.5 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "2 ctw",
+                        "label": "2 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "3 ctw",
+                        "label": "3 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    }
+                ],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "option_delivery_options": [],
+                "selector_cards": [],
+                "style_cards": [],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": []
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            },
+            "Brooch": {
+                "type": "Brooch",
+                "option_color_label": "Metal",
+                "option_size_label": "Total Carat Weight",
+                "option_color_display": "jewellery-metals",
+                "option_size_display": "stone-weights",
+                "option_colors": [
+                    "18K White Gold",
+                    "18K Yellow Gold",
+                    "18K Rose Gold"
+                ],
+                "option_sizes": [
+                    "0.5 ctw",
+                    "0.7 ctw",
+                    "1 ctw",
+                    "1.25 ctw",
+                    "1.5 ctw",
+                    "2 ctw",
+                    "3 ctw"
+                ],
+                "option_color_choices": [
+                    {
+                        "value": "18K White Gold",
+                        "label": "White Gold",
+                        "kicker": "18K",
+                        "tone": "white"
+                    },
+                    {
+                        "value": "18K Yellow Gold",
+                        "label": "Yellow Gold",
+                        "kicker": "18K",
+                        "tone": "yellow"
+                    },
+                    {
+                        "value": "18K Rose Gold",
+                        "label": "Rose Gold",
+                        "kicker": "18K",
+                        "tone": "rose"
+                    }
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "0.5 ctw",
+                        "label": "0.5 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "0.7 ctw",
+                        "label": "0.7 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "1 ctw",
+                        "label": "1 ctw",
+                        "caption": "",
+                        "tone": "accent"
+                    }
+                ],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "option_delivery_options": [],
+                "selector_cards": [],
+                "style_cards": [],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": []
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            },
+            "Jewellery Set": {
+                "type": "Jewellery Set",
+                "option_color_label": "Metal",
+                "option_size_label": "Total Carat Weight",
+                "option_color_display": "jewellery-metals",
+                "option_size_display": "stone-weights",
+                "option_colors": [
+                    "18K White Gold",
+                    "18K Yellow Gold",
+                    "18K Rose Gold"
+                ],
+                "option_sizes": [
+                    "0.5 ctw",
+                    "0.7 ctw",
+                    "1 ctw",
+                    "1.25 ctw",
+                    "1.5 ctw",
+                    "2 ctw",
+                    "3 ctw"
+                ],
+                "option_color_choices": [
+                    {
+                        "value": "18K White Gold",
+                        "label": "White Gold",
+                        "kicker": "18K",
+                        "tone": "white"
+                    },
+                    {
+                        "value": "18K Yellow Gold",
+                        "label": "Yellow Gold",
+                        "kicker": "18K",
+                        "tone": "yellow"
+                    },
+                    {
+                        "value": "18K Rose Gold",
+                        "label": "Rose Gold",
+                        "kicker": "18K",
+                        "tone": "rose"
+                    }
+                ],
+                "option_size_choices": [
+                    {
+                        "value": "0.5 ctw",
+                        "label": "0.5 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "0.7 ctw",
+                        "label": "0.7 ctw",
+                        "caption": "",
+                        "tone": "neutral"
+                    },
+                    {
+                        "value": "1 ctw",
+                        "label": "1 ctw",
+                        "caption": "",
+                        "tone": "accent"
+                    }
+                ],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "option_delivery_options": [],
+                "selector_cards": [],
+                "style_cards": [],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": []
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            }
+        }
+    },
+    "navigation": {
+        "items": [
+            {
+                "label": "Engagement Rings",
+                "url": "/shop/?type=Ring&ring_category=engagement",
+                "active": true,
+                "compact": false,
+                "columns": [
+                    {
+                        "title": "Browse Rings",
+                        "links": [
+                            {
+                                "label": "Shop All Rings",
+                                "url": "/shop/?type=Ring&ring_category=engagement"
+                            },
+                            {
+                                "label": "Ring Designs",
+                                "url": "/shop/?type=Ring&ring_category=engagement"
+                            },
+                            {
+                                "label": "Diamond Shapes",
+                                "url": "/shop/?type=Ring&ring_category=engagement"
+                            },
+                            {
+                                "label": "Custom Ring Journey",
+                                "url": "/shop/?type=Ring&ring_category=engagement"
+                            },
+                            {
+                                "label": "Ring Inspiration",
+                                "url": "/shop/?type=Ring&ring_category=engagement"
+                            },
+                            {
+                                "label": "Client Reviews",
+                                "url": "#reviews"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Shop by Style",
+                        "links": [
+                            {
+                                "label": "Solitaire",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=solitaire"
+                            },
+                            {
+                                "label": "Halo",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=halo"
+                            },
+                            {
+                                "label": "Hidden Halo",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=hidden-halo"
+                            },
+                            {
+                                "label": "Three Stone",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=three-stone"
+                            },
+                            {
+                                "label": "Vintage",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=vintage"
+                            },
+                            {
+                                "label": "Toi et Moi",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=toi-et-moi"
+                            },
+                            {
+                                "label": "Sidestones",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=sidestones"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Shop by Shape",
+                        "links": [
+                            {
+                                "label": "Round",
+                                "url": "/shop/?type=Ring&ring_category=engagement&shape=round"
+                            },
+                            {
+                                "label": "Oval",
+                                "url": "/shop/?type=Ring&ring_category=engagement&shape=oval"
+                            },
+                            {
+                                "label": "Pear",
+                                "url": "/shop/?type=Ring&ring_category=engagement&shape=pear"
+                            },
+                            {
+                                "label": "Emerald",
+                                "url": "/shop/?type=Ring&ring_category=engagement&shape=emerald"
+                            },
+                            {
+                                "label": "Cushion",
+                                "url": "/shop/?type=Ring&ring_category=engagement&shape=cushion"
+                            },
+                            {
+                                "label": "Princess",
+                                "url": "/shop/?type=Ring&ring_category=engagement&shape=princess"
+                            },
+                            {
+                                "label": "Heart",
+                                "url": "/shop/?type=Ring&ring_category=engagement&shape=heart"
+                            },
+                            {
+                                "label": "Marquise",
+                                "url": "/shop/?type=Ring&ring_category=engagement&shape=marquise"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Featured Collections",
+                        "links": [
+                            {
+                                "label": "Lab Diamond Rings",
+                                "url": "/shop/?type=Ring&ring_category=engagement"
+                            },
+                            {
+                                "label": "Classic Solitaires",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=solitaire"
+                            },
+                            {
+                                "label": "Modern Halo Rings",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=halo"
+                            },
+                            {
+                                "label": "Vintage Rings",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=vintage"
+                            },
+                            {
+                                "label": "Toi et Moi Rings",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=toi-et-moi"
+                            },
+                            {
+                                "label": "Sidestone Rings",
+                                "url": "/shop/?type=Ring&ring_category=engagement&style=sidestones"
+                            }
+                        ]
+                    }
+                ],
+                "feature": {
+                    "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                    "alt": "Engagement Rings",
+                    "title": "Lab Diamond Rings",
+                    "subtitle": "Discover ring styles, shapes, and custom design options in one collection"
+                }
+            },
+            {
+                "label": "Wedding Rings",
+                "url": "/shop/?type=Ring&ring_category=wedding",
+                "active": true,
+                "compact": false,
+                "columns": [
+                    {
+                        "title": "Women's Wedding Rings",
+                        "links": [
+                            {
+                                "label": "Diamond Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=womens"
+                            },
+                            {
+                                "label": "Plain Gold Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=womens&style=classic-band"
+                            },
+                            {
+                                "label": "Platinum Wedding Rings",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=womens"
+                            },
+                            {
+                                "label": "Curved & Contoured Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=womens&style=curved-contour"
+                            },
+                            {
+                                "label": "Eternity Rings",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=womens&style=eternity"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Men's Wedding Rings",
+                        "links": [
+                            {
+                                "label": "Classic Plain Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=mens&style=classic-band"
+                            },
+                            {
+                                "label": "Brushed & Matte Finish",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=mens"
+                            },
+                            {
+                                "label": "Diamond Set Men's Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=mens"
+                            },
+                            {
+                                "label": "Platinum Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=mens"
+                            },
+                            {
+                                "label": "Two-Tone Rings",
+                                "url": "/shop/?type=Ring&ring_category=wedding&gender=mens&style=two-tone"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Diamond Eternity Rings",
+                        "links": [
+                            {
+                                "label": "Full Eternity Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&style=eternity"
+                            },
+                            {
+                                "label": "Half Eternity Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&style=eternity"
+                            },
+                            {
+                                "label": "Channel Set Diamond Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&style=pave"
+                            },
+                            {
+                                "label": "Pavé Diamond Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding&style=pave"
+                            },
+                            {
+                                "label": "Stackable Bands",
+                                "url": "/shop/?type=Ring&ring_category=wedding"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Bridal & Custom",
+                        "links": [
+                            {
+                                "label": "Matching Bridal Sets",
+                                "url": "/shop/?type=Ring&ring_category=wedding"
+                            },
+                            {
+                                "label": "Custom Wedding Ring Design",
+                                "url": "/shop/?type=Ring&ring_category=wedding"
+                            },
+                            {
+                                "label": "Book an Appointment",
+                                "url": "/appointment/"
+                            },
+                            {
+                                "label": "Ring Sizing Guide",
+                                "url": "/shop/?type=Ring&ring_category=wedding"
+                            },
+                            {
+                                "label": "Metal Choices Guide",
+                                "url": "/shop/?type=Ring&ring_category=wedding"
+                            }
+                        ]
+                    }
+                ],
+                "feature": {
+                    "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+                    "alt": "Wedding Rings",
+                    "title": "Timeless Wedding Bands",
+                    "subtitle": "Symbolize your lasting devotion with exquisite diamond and classic precious metal bands"
+                }
+            },
+            {
+                "label": "Jewellery",
+                "url": "/shop/?type=Necklace",
+                "active": false,
+                "compact": false,
+                "columns": [
+                    {
+                        "title": "Necklaces & Pendants",
+                        "links": [
+                            {
+                                "label": "Diamond Necklaces",
+                                "url": "/shop/?type=Necklace"
+                            },
+                            {
+                                "label": "Solitaire Pendants",
+                                "url": "/shop/?type=Pendant"
+                            },
+                            {
+                                "label": "Pearl Pendants",
+                                "url": "/shop/?type=Pendant"
+                            },
+                            {
+                                "label": "Station Necklaces",
+                                "url": "/shop/?type=Necklace"
+                            },
+                            {
+                                "label": "Halo Pendants",
+                                "url": "/shop/?type=Pendant"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Earrings",
+                        "links": [
+                            {
+                                "label": "Diamond Earrings",
+                                "url": "/shop/?type=Earring"
+                            },
+                            {
+                                "label": "Drop & Dangle Earrings",
+                                "url": "/shop/?type=Earring"
+                            },
+                            {
+                                "label": "Stud Earrings",
+                                "url": "/shop/?type=Earring"
+                            },
+                            {
+                                "label": "Hoop Earrings",
+                                "url": "/shop/?type=Earring"
+                            },
+                            {
+                                "label": "Halo Diamond Earrings",
+                                "url": "/shop/?type=Earring"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Bracelets & Bangles",
+                        "links": [
+                            {
+                                "label": "Diamond Bracelets",
+                                "url": "/shop/?type=Bracelet"
+                            },
+                            {
+                                "label": "Tennis Bracelets",
+                                "url": "/shop/?type=Bracelet"
+                            },
+                            {
+                                "label": "Classic Bangles",
+                                "url": "/shop/?type=Bracelet"
+                            },
+                            {
+                                "label": "Cuff Bracelets",
+                                "url": "/shop/?type=Bracelet"
+                            },
+                            {
+                                "label": "Gold Chain Bracelets",
+                                "url": "/shop/?type=Bracelet"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Gifts & Collections",
+                        "links": [
+                            {
+                                "label": "Anniversary Gifts",
+                                "url": "/shop/"
+                            },
+                            {
+                                "label": "Birthday Gifts",
+                                "url": "/shop/"
+                            },
+                            {
+                                "label": "Ready to Ship",
+                                "url": "/shop/"
+                            },
+                            {
+                                "label": "New Arrivals",
+                                "url": "/shop/"
+                            },
+                            {
+                                "label": "Bestselling Pieces",
+                                "url": "/shop/"
+                            }
+                        ]
+                    }
+                ],
+                "feature": {
+                    "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                    "alt": "Jewellery Collection",
+                    "title": "Fine Jewellery Edit",
+                    "subtitle": "Explore hand-set earrings, pendants, and tennis bracelets crafted with certified precision"
+                }
+            },
+            {
+                "label": "About Us",
+                "url": "/about/",
+                "active": false,
+                "compact": false,
+                "columns": [],
+                "feature": {
+                    "image": "",
+                    "alt": "",
+                    "title": "",
+                    "subtitle": ""
+                }
+            }
+        ]
+    },
+    "products": {
+        "title": "Product Library",
+        "items": [
+            {
+                "id": "prd-aliquam-furniture",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Men Potato chips",
+                "ring_category": "engagement",
+                "ring_gender": "",
+                "name": "Aliquam Furniture",
+                "old_price": "£80.00",
+                "new_price": "£75.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [
+                    "solitaire",
+                    "halo"
+                ],
+                "diamondShapes": [
+                    "round",
+                    "oval",
+                    "cushion"
+                ],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-onec-eu-furniture",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Clothing, Potato chips",
+                "ring_category": "engagement",
+                "ring_gender": "",
+                "name": "Donec Eu Furniture",
+                "old_price": "£86.00",
+                "new_price": "£60.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [
+                    "three-stone",
+                    "vintage"
+                ],
+                "diamondShapes": [
+                    "princess",
+                    "emerald",
+                    "pear"
+                ],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-aliquam-furniture-3",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Clothing, Potato chips",
+                "ring_category": "engagement",
+                "ring_gender": "",
+                "name": "Aliquam Furniture",
+                "old_price": "£86.00",
+                "new_price": "£60.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [
+                    "toi-et-moi",
+                    "sidestones"
+                ],
+                "diamondShapes": [
+                    "round",
+                    "marquise",
+                    "radiant"
+                ],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-furniture",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "ring_category": "engagement",
+                "ring_gender": "",
+                "name": "Furniture",
+                "old_price": "£65.00",
+                "new_price": "£60.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [
+                    "hidden-halo",
+                    "solitaire"
+                ],
+                "diamondShapes": [
+                    "asscher",
+                    "heart",
+                    "oval"
+                ],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-aliquam-furniture-6",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "womens",
+                "name": "Aliquam Furniture",
+                "old_price": "£80.00",
+                "new_price": "£60.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [
+                    "eternity",
+                    "pave"
+                ],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-natural-contrary",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Men Potato chips",
+                "ring_category": "wedding",
+                "ring_gender": "mens",
+                "name": "Natural Contrary",
+                "old_price": "",
+                "new_price": "£60.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [
+                    "classic-band",
+                    "two-tone"
+                ],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-uis-pulvinar",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Duis Pulvinar",
+                "old_price": "£86.00",
+                "new_price": "£60.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-ummy-animal",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Clothing, Potato chips",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Dummy Animal",
+                "old_price": "",
+                "new_price": "£65.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-letraset-animal",
+                "product_type": "Jewellery Set",
+                "color": "Yellow Gold",
+                "category": "Men",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "Letraset Animal",
+                "old_price": "£60.00",
+                "new_price": "£55.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-natural-lorem-ipsum",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Clothing, Potato chips",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Natural Lorem Ipsum",
+                "old_price": "",
+                "new_price": "£50.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-iamond-solitaire",
+                "product_type": "Rings",
+                "color": "Diamond White",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Diamond Solitaire",
+                "old_price": "£120.00",
+                "new_price": "£95.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-earl-cascade",
+                "product_type": "Rings",
+                "color": "Diamond White",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Pearl Cascade",
+                "old_price": "",
+                "new_price": "£78.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-silver-cuff-band",
+                "product_type": "Bracelet",
+                "color": "Silver",
+                "category": "Men",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "Silver Cuff Band",
+                "old_price": "",
+                "new_price": "£65.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-gold-leaf-ring",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Gold Leaf Ring",
+                "old_price": "£90.00",
+                "new_price": "£72.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-ose-quartz-ring",
+                "product_type": "Rings",
+                "color": "Rose Gold",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Rose Quartz Ring",
+                "old_price": "",
+                "new_price": "£88.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-crystal-drops",
+                "product_type": "Earring",
+                "color": "Diamond White",
+                "category": "Women",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "Crystal Drops",
+                "old_price": "£95.00",
+                "new_price": "£66.50",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-floral-brooch",
+                "product_type": "Brooch",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "Floral Brooch",
+                "old_price": "£85.00",
+                "new_price": "£59.50",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-iamond-signature-set",
+                "product_type": "Jewellery Set",
+                "color": "Diamond White",
+                "category": "Women",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "Diamond Signature Set",
+                "old_price": "£350.00",
+                "new_price": "£245.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-twisted-gold-band",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Twisted Gold Band",
+                "old_price": "£110.00",
+                "new_price": "£77.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-earl-teardrop",
+                "product_type": "Earring",
+                "color": "Diamond White",
+                "category": "Women",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "Pearl Teardrop",
+                "old_price": "£75.00",
+                "new_price": "£52.50",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product5.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere metus vitae arcu imperdiet",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-onec-eu-furniture-23",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Clothing, Potato chips",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Donec Eu Furniture",
+                "old_price": "",
+                "new_price": "£62.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-uis-pulvinar-25",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Duis Pulvinar",
+                "old_price": "£86.00",
+                "new_price": "£70.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product1.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-aliquam-furniture-27",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Clothing, Potato chips",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Aliquam Furniture",
+                "old_price": "£86.00",
+                "new_price": "£60.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product7.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-ummy-animal-29",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Clothing, Potato chips",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Dummy Animal",
+                "old_price": "",
+                "new_price": "£65.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product10.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product3.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-furniture-31",
+                "product_type": "Rings",
+                "color": "Yellow Gold",
+                "category": "Women",
+                "ring_category": "wedding",
+                "ring_gender": "",
+                "name": "Furniture",
+                "old_price": "£86.00",
+                "new_price": "£60.00",
+                "default_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "hover_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product4.jpg",
+                "popup_image": "https://htmldemo.net/monsta/monsta/assets/img/product/product2.jpg",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [],
+                "option_band_claw_metal_options": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            }
+        ]
+    },
+    "product_tabs": {
+        "tabs": [
+            {
+                "key": "featured",
+                "label": "Featured",
+                "product_ids": [
+                    "prd-aliquam-furniture",
+                    "prd-aliquam-furniture-3",
+                    "prd-furniture",
+                    "prd-aliquam-furniture-6",
+                    "prd-natural-contrary",
+                    "prd-letraset-animal",
+                    "prd-natural-lorem-ipsum"
+                ]
+            },
+            {
+                "key": "newarrivals",
+                "label": "New Arrivals",
+                "product_ids": [
+                    "prd-iamond-solitaire",
+                    "prd-earl-cascade",
+                    "prd-silver-cuff-band",
+                    "prd-gold-leaf-ring",
+                    "prd-ose-quartz-ring",
+                    "prd-crystal-drops",
+                    "prd-floral-brooch"
+                ]
+            },
+            {
+                "key": "onsale",
+                "label": "Onsale",
+                "product_ids": [
+                    "prd-crystal-drops",
+                    "prd-floral-brooch",
+                    "prd-iamond-signature-set",
+                    "prd-twisted-gold-band",
+                    "prd-earl-teardrop",
+                    "prd-onec-eu-furniture-23",
+                    "prd-uis-pulvinar-25"
+                ]
+            }
+        ]
+    },
+    "shop_by_style": {
+        "title": "Shop by Style",
+        "style_ids": [
+            "ring::engagement::halo"
+        ]
+    },
+    "trending": {
+        "sale": "Sale Off 20% All Products",
+        "title": "New Trending Collection",
+        "subtitle": "We Believe That Good Design is Always in Season",
+        "cta_label": "SHOPPING NOW",
+        "cta_url": "#"
+    },
+    "diamond_shapes": {
+        "title": "Shop By Diamond Shape",
+        "items": [
+            {
+                "name": "Round",
+                "label": "Classic Brilliance",
+                "description": "A timeless shape with maximum sparkle and balanced proportions for every setting style.",
+                "image": "/assets/uploads/diamond-shapes/round-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=round",
+                "icon_image": "https://qs.imgix.net/images/round-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#c6b590",
+                "tone": "classic"
+            },
+            {
+                "name": "Oval",
+                "label": "Elongated Elegance",
+                "description": "Refined and modern with a lengthening look that feels graceful on ring and pendant designs.",
+                "image": "/assets/uploads/diamond-shapes/oval-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=oval",
+                "icon_image": "https://qs.imgix.net/images/oval-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#bfae8a",
+                "tone": "graceful"
+            },
+            {
+                "name": "Cushion",
+                "label": "Soft Vintage Glow",
+                "description": "Rounded corners with romantic character and broad flashes of warm brilliance.",
+                "image": "/assets/uploads/diamond-shapes/cushion-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=cushion",
+                "icon_image": "https://qs.imgix.net/images/cushion-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#c3b086",
+                "tone": "romantic"
+            },
+            {
+                "name": "Princess",
+                "label": "Sharp Contemporary Fire",
+                "description": "A square cut with energetic sparkle and clean modern lines.",
+                "image": "/assets/uploads/diamond-shapes/princess-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=princess",
+                "icon_image": "https://qs.imgix.net/images/princess-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#b8a57d",
+                "tone": "modern"
+            },
+            {
+                "name": "Emerald",
+                "label": "Hall Of Mirrors",
+                "description": "Step-cut facets with crisp flashes and a sophisticated architectural finish.",
+                "image": "/assets/uploads/diamond-shapes/emerald-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=emerald",
+                "icon_image": "https://qs.imgix.net/images/emerald-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#afa07e",
+                "tone": "refined"
+            },
+            {
+                "name": "Pear",
+                "label": "Statement Curve",
+                "description": "A graceful teardrop silhouette designed for directional elegance and drama.",
+                "image": "/assets/uploads/diamond-shapes/pear-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=pear",
+                "icon_image": "https://qs.imgix.net/images/pear-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#c8b68d",
+                "tone": "poetic"
+            },
+            {
+                "name": "Marquise",
+                "label": "Vintage Edge",
+                "description": "A distinctive pointed shape that creates length and strong visual presence.",
+                "image": "/assets/uploads/diamond-shapes/marquise-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=marquise",
+                "icon_image": "https://qs.imgix.net/images/marquise-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#b39f77",
+                "tone": "regal"
+            },
+            {
+                "name": "Radiant",
+                "label": "Bright Geometry",
+                "description": "Crisp corners with brilliant-cut energy for high sparkle and bold structure.",
+                "image": "/assets/uploads/diamond-shapes/radiant-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=radiant",
+                "icon_image": "https://qs.imgix.net/images/radiant-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#c2ae84",
+                "tone": "bold"
+            },
+            {
+                "name": "Heart",
+                "label": "Romantic Signature",
+                "description": "A symbolic silhouette crafted for emotional gifting and statement storytelling.",
+                "image": "/assets/uploads/diamond-shapes/heart-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=heart",
+                "icon_image": "https://qs.imgix.net/images/heart-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#d0bf96",
+                "tone": "romantic"
+            },
+            {
+                "name": "Asscher",
+                "label": "Art Deco Precision",
+                "description": "An elegant square step-cut shape known for depth, symmetry, and clarity.",
+                "image": "/assets/uploads/diamond-shapes/asscher-hand-preview.webp",
+                "url": "/shop/?type=Ring&shape=asscher",
+                "icon_image": "https://qs.imgix.net/images/asscher-diamond-shape-icon.png?auto=format&q=60&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.5&w=200&h=200",
+                "accent": "#baa77f",
+                "tone": "deco"
+            }
+        ]
+    },
+    "bestselling": {
+        "title": "Bestselling Products",
+        "product_ids": [
+            "prd-iamond-solitaire",
+            "prd-earl-cascade",
+            "prd-gold-leaf-ring",
+            "prd-ose-quartz-ring",
+            "prd-crystal-drops",
+            "prd-floral-brooch",
+            "prd-aliquam-furniture-27",
+            "prd-furniture-31"
+        ]
+    },
+    "celebs": {
+        "title": "Celebs at Azuroon",
+        "items": [
+            {
+                "name": "Ajay Devgn",
+                "image": "https://i.pravatar.cc/560?img=12"
+            },
+            {
+                "name": "Saina Nehwal",
+                "image": "https://i.pravatar.cc/560?img=32"
+            },
+            {
+                "name": "Savitri Jindal",
+                "image": "https://i.pravatar.cc/560?img=20"
+            },
+            {
+                "name": "CR Patil",
+                "image": "https://i.pravatar.cc/560?img=14"
+            },
+            {
+                "name": "Shri. Naresh Bansal ji",
+                "image": "https://i.pravatar.cc/560?img=8"
+            },
+            {
+                "name": "Mr. Ramesh Agarwal",
+                "image": "https://i.pravatar.cc/560?img=7"
+            },
+            {
+                "name": "Ravi Shastri",
+                "image": "https://i.pravatar.cc/560?img=16"
+            },
+            {
+                "name": "Anita Desai",
+                "image": "https://i.pravatar.cc/560?img=23"
+            },
+            {
+                "name": "Rajiv Menon",
+                "image": "https://i.pravatar.cc/560?img=41"
+            },
+            {
+                "name": "Pooja Sharma",
+                "image": "https://i.pravatar.cc/560?img=55"
+            }
+        ]
+    },
+    "reviews": {
+        "eyebrow": "Client Love",
+        "title": "Why Clients Choose Azuronn",
+        "intro": "A refined buying experience, handcrafted ring design guidance, and aftercare that feels as considered as the jewellery itself.",
+        "rating_value": "4.9",
+        "rating_label": "Average client rating",
+        "reviews_count": "2,500+ verified reviews",
+        "items": [
+            {
+                "rating": 5,
+                "title": "Elegant, calm and deeply personal service",
+                "excerpt": "From the first shortlist to the final ring reveal, every recommendation felt thoughtful and genuinely tailored to what we wanted.",
+                "author": "Tanya Withey",
+                "meta": "Ring Design Client",
+                "verified": true
+            },
+            {
+                "rating": 5,
+                "title": "The ring design consultation was exceptional",
+                "excerpt": "We were guided through diamond shape, setting style and metal choices with a level of clarity that made the whole process effortless.",
+                "author": "John M.",
+                "meta": "Custom Design Client",
+                "verified": true
+            },
+            {
+                "rating": 4,
+                "title": "Beautiful finish and excellent communication",
+                "excerpt": "The final piece looked even better in person. Delivery updates were prompt and the packaging felt truly premium.",
+                "author": "Emma Cullen",
+                "meta": "Bridal Collection",
+                "verified": true
+            },
+            {
+                "rating": 5,
+                "title": "A luxury experience without the pressure",
+                "excerpt": "The team gave us space to compare options, answered every question clearly, and made the purchase feel confident from start to finish.",
+                "author": "Kim Goh",
+                "meta": "Diamond Setting Client",
+                "verified": true
+            },
+            {
+                "rating": 5,
+                "title": "Aftercare was as strong as the first impression",
+                "excerpt": "Resizing support, delivery timing and post-purchase communication were handled with real care. That is rare and worth noting.",
+                "author": "Noemia",
+                "meta": "Ring Client",
+                "verified": true
+            }
+        ]
+    },
+    "news": {
+        "title": "Azuronn News",
+        "items": [
+            {
+                "id": "news-blog-image-post",
+                "title": "Blog Image Post",
+                "author": "Admin",
+                "date": "30 Oct 2018",
+                "excerpt": "Azuronn\\'s latest editorial story explores the renewed appetite for jewellery that feels personal, composed, and quietly expressive. Rather than leaning into excess, the collection focus is on finely balanced silhouettes, tactile gold…",
+                "body": "<p>Azuronn\\'s latest editorial story explores the renewed appetite for jewellery that feels personal, composed, and quietly expressive. Rather than leaning into excess, the collection focus is on finely balanced silhouettes, tactile gold surfaces, and diamonds placed with a sense of rhythm.</p><p>Across the studio, the design team worked from the idea that modern luxury should feel close to the wearer. Pieces were refined to sit lightly on the body, layer naturally with existing favourites, and move between everyday dressing and evening styling without losing their presence.</p><p>Attention was given to proportion, not just sparkle. Slim bands, sculpted settings, and softened contours create a calmer visual language that still feels premium. The result is a category story built around restraint, polish, and details that reveal themselves more clearly the longer you look.</p>",
+                "url": "#",
+                "image": "https://htmldemo.net/monsta/monsta/assets/img/blog/blog1.jpg",
+                "alt": "Blog Image Post"
+            },
+            {
+                "id": "news-post-with-gallery",
+                "title": "Post With Gallery",
+                "author": "Admin",
+                "date": "30 Oct 2018",
+                "excerpt": "This gallery-led feature was created to show how a single jewellery theme can evolve through finish, proportion, and styling. Each frame focuses on the same design family from a different angle, revealing how metal tone, scale, and…",
+                "body": "<p>This gallery-led feature was created to show how a single jewellery theme can evolve through finish, proportion, and styling. Each frame focuses on the same design family from a different angle, revealing how metal tone, scale, and surrounding texture alter the mood of the piece.</p><p>The first looks lean into clean daylight, letting facets and surface polish do the work. Later frames introduce richer contrast and evening warmth, showing how the collection shifts from minimal to dramatic without needing a complete change in design language.</p><p>For Azuronn, the gallery format is less about volume and more about sequencing. The eye moves from close detail to wider composition, giving customers a fuller sense of craft, wearability, and the subtle editorial direction behind each release.</p>",
+                "url": "#",
+                "image": "https://htmldemo.net/monsta/monsta/assets/img/blog/blog2.jpg",
+                "alt": "Post With Gallery"
+            },
+            {
+                "id": "news-post-with-video",
+                "title": "Post With Video",
+                "author": "Admin",
+                "date": "30 Oct 2018",
+                "excerpt": "Video remains one of the clearest ways to understand jewellery beyond a still frame. Movement reveals how stones catch shifting light, how edges soften on the hand, and how the piece interacts with fabric, skin tone, and gesture in a way…",
+                "body": "<p>Video remains one of the clearest ways to understand jewellery beyond a still frame. Movement reveals how stones catch shifting light, how edges soften on the hand, and how the piece interacts with fabric, skin tone, and gesture in a way static photography cannot fully capture.</p><p>In this story, the visual direction stays deliberate and controlled. Slow camera passes, close crop composition, and a muted environment keep the attention on brilliance, craftsmanship, and scale. That restraint is important because premium presentation is often more convincing when it removes noise rather than adding more effects.</p><p>The finished article is intended to feel immersive but still editorial. It gives the viewer time to appreciate material quality, understand fit, and imagine the piece in real wear, which is exactly where digital presentation begins to earn trust.</p>",
+                "url": "#",
+                "image": "https://htmldemo.net/monsta/monsta/assets/img/blog/blog3.jpg",
+                "alt": "Post With Video"
+            }
+        ]
+    },
+    "newsletter": {
+        "title": "Our Newsletter",
+        "subtitle": "Get E-mail updates about our latest shop and special offers.",
+        "placeholder": "Email address...",
+        "button_label": "Subscribe",
+        "image": "/assets/uploads/admin/admin-20260720-184834-7f252391.webp",
+        "subscribers": [
+            {
+                "id": "nls-672b4e8a",
+                "account_customer_id": "",
+                "account_holder_name": "",
+                "account_holder_email": "",
+                "subscribed_email": "test@gmail.com",
+                "source": "guest",
+                "status": "active",
+                "subscribed_at": "2026-07-20 18:49:26",
+                "updated_at": "2026-07-20 18:49:26"
+            }
+        ]
+    },
+    "customers": {
+        "title": "Customer Accounts",
+        "items": [
+            {
+                "id": "cus-1001",
+                "name": "Aarav Mehta",
+                "email": "aarav@example.com",
+                "password_hash": "",
+                "phone": "+91 98765 43210",
+                "city": "Mumbai",
+                "state": "",
+                "country": "",
+                "postal_code": "",
+                "address_line_1": "",
+                "address_line_2": "",
+                "status": "active",
+                "joined_at": "2026-03-08",
+                "last_order_at": "",
+                "total_orders": "4",
+                "total_spent": "£1,420.00",
+                "wishlist_product_ids": [],
+                "saved_addresses": [],
+                "notes": "VIP bridal buyer"
+            },
+            {
+                "id": "cus-1002",
+                "name": "Nisha Kapoor",
+                "email": "nisha@example.com",
+                "password_hash": "",
+                "phone": "+91 99887 76655",
+                "city": "Delhi",
+                "state": "",
+                "country": "",
+                "postal_code": "",
+                "address_line_1": "",
+                "address_line_2": "",
+                "status": "active",
+                "joined_at": "2026-02-18",
+                "last_order_at": "",
+                "total_orders": "2",
+                "total_spent": "£540.00",
+                "wishlist_product_ids": [],
+                "saved_addresses": [],
+                "notes": "Interested in oval solitaires"
+            },
+            {
+                "id": "cus-1003",
+                "name": "Rohan Batra",
+                "email": "rohan@example.com",
+                "password_hash": "",
+                "phone": "+91 98111 22446",
+                "city": "Bengaluru",
+                "state": "",
+                "country": "",
+                "postal_code": "",
+                "address_line_1": "",
+                "address_line_2": "",
+                "status": "paused",
+                "joined_at": "2026-01-11",
+                "last_order_at": "",
+                "total_orders": "1",
+                "total_spent": "£215.00",
+                "wishlist_product_ids": [],
+                "saved_addresses": [],
+                "notes": "Requested ring resize follow-up"
+            }
+        ]
+    },
+    "orders": {
+        "title": "Order Management",
+        "items": [
+            {
+                "id": "ord-24001",
+                "customer_name": "Aarav Mehta",
+                "customer_email": "aarav@example.com",
+                "status": "completed",
+                "payment_method": "online",
+                "payment_status": "paid",
+                "payment_reference": "",
+                "total": "£860.00",
+                "subtotal": "",
+                "discount_amount": "",
+                "shipping_amount": "",
+                "coupon_code": "",
+                "item_count": "2",
+                "placed_at": "2026-04-16 10:30",
+                "customer_phone": "",
+                "customer_request_type": "",
+                "customer_request_status": "",
+                "customer_request_reason": "",
+                "customer_request_requested_at": "",
+                "customer_request_resolved_at": "",
+                "shipping_address": {
+                    "address_line_1": "",
+                    "address_line_2": "",
+                    "city": "",
+                    "state": "",
+                    "postal_code": "",
+                    "country": ""
+                },
+                "items": [],
+                "notes": "Shipping with premium gift packaging"
+            },
+            {
+                "id": "ord-24002",
+                "customer_name": "Nisha Kapoor",
+                "customer_email": "nisha@example.com",
+                "status": "completed",
+                "payment_method": "online",
+                "payment_status": "paid",
+                "payment_reference": "",
+                "total": "£275.00",
+                "subtotal": "",
+                "discount_amount": "",
+                "shipping_amount": "",
+                "coupon_code": "",
+                "item_count": "1",
+                "placed_at": "2026-04-13 16:10",
+                "customer_phone": "",
+                "customer_request_type": "",
+                "customer_request_status": "",
+                "customer_request_reason": "",
+                "customer_request_requested_at": "",
+                "customer_request_resolved_at": "",
+                "shipping_address": {
+                    "address_line_1": "",
+                    "address_line_2": "",
+                    "city": "",
+                    "state": "",
+                    "postal_code": "",
+                    "country": ""
+                },
+                "items": [],
+                "notes": "Tracking shared on WhatsApp"
+            },
+            {
+                "id": "ord-24003",
+                "customer_name": "Rohan Batra",
+                "customer_email": "rohan@example.com",
+                "status": "completed",
+                "payment_method": "cash",
+                "payment_status": "awaiting",
+                "payment_reference": "",
+                "total": "£215.00",
+                "subtotal": "",
+                "discount_amount": "",
+                "shipping_amount": "",
+                "coupon_code": "",
+                "item_count": "1",
+                "placed_at": "2026-04-19 09:05",
+                "customer_phone": "",
+                "customer_request_type": "",
+                "customer_request_status": "",
+                "customer_request_reason": "",
+                "customer_request_requested_at": "",
+                "customer_request_resolved_at": "",
+                "shipping_address": {
+                    "address_line_1": "",
+                    "address_line_2": "",
+                    "city": "",
+                    "state": "",
+                    "postal_code": "",
+                    "country": ""
+                },
+                "items": [],
+                "notes": "Cash on delivery order awaiting confirmation"
+            }
+        ]
+    },
+    "coupons": {
+        "title": "Coupons",
+        "items": [
+            {
+                "id": "coupon-welcome10",
+                "code": "WELCOME10",
+                "type": "percent",
+                "value": "10",
+                "min_order": "£100",
+                "usage_limit": "300",
+                "expires_at": "2026-12-31",
+                "status": "active",
+                "description": "Welcome discount for first-time orders",
+                "apply_label": "10% off orders above £100"
+            },
+            {
+                "id": "coupon-vip250",
+                "code": "VIP250",
+                "type": "fixed",
+                "value": "250",
+                "min_order": "£2000",
+                "usage_limit": "25",
+                "expires_at": "2026-09-30",
+                "status": "active",
+                "description": "High-value bridal consultation coupon",
+                "apply_label": "£250 off bridal orders above £2000"
+            }
+        ]
+    },
+    "footer": {
+        "information_title": "Information",
+        "information_links": [
+            {
+                "label": "About Us",
+                "url": "/about/"
+            },
+            {
+                "label": "Blog",
+                "url": "#"
+            },
+            {
+                "label": "Contact",
+                "url": "#"
+            },
+            {
+                "label": "Services",
+                "url": "#"
+            },
+            {
+                "label": "Sample Page",
+                "url": "#"
+            },
+            {
+                "label": "Portfolio",
+                "url": "#"
+            }
+        ],
+        "account_title": "My Account",
+        "account_links": [
+            {
+                "label": "My Account",
+                "url": "/account/"
+            },
+            {
+                "label": "Contact",
+                "url": "#"
+            },
+            {
+                "label": "Wishlist",
+                "url": "#"
+            },
+            {
+                "label": "Portfolio",
+                "url": "#"
+            },
+            {
+                "label": "Checkout",
+                "url": "/checkout/"
+            },
+            {
+                "label": "Frequently Questions",
+                "url": "#"
+            }
+        ],
+        "top_rated_title": "Top Rated Products",
+        "top_rated_products": [
+            {
+                "category": "Clothing, Potato chips",
+                "name": "Donec eu animal",
+                "old_price": "£86.00",
+                "new_price": "£70.00",
+                "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product6.jpg"
+            },
+            {
+                "category": "Women",
+                "name": "Dummy animal",
+                "old_price": "£74.00",
+                "new_price": "£69.00",
+                "image": "https://htmldemo.net/monsta/monsta/assets/img/product/product9.jpg"
+            }
+        ],
+        "bottom_links": [
+            {
+                "label": "Home",
+                "url": "/"
+            },
+            {
+                "label": "Online Store",
+                "url": "/shop/"
+            },
+            {
+                "label": "Promotion",
+                "url": "#"
+            },
+            {
+                "label": "Cookie Policy",
+                "url": "/cookie-policy/"
+            },
+            {
+                "label": "Terms Of Use",
+                "url": "#"
+            },
+            {
+                "label": "Sitemap",
+                "url": "#"
+            },
+            {
+                "label": "Support",
+                "url": "#"
+            },
+            {
+                "label": "Contacts",
+                "url": "#"
+            }
+        ],
+        "copyright_year": "2022",
+        "copyright_brand": "AZURONN",
+        "copyright_author": "MediaFox Digital",
+        "payment_image": "https://htmldemo.net/monsta/monsta/assets/img/icon/papyel2.png",
+        "payment_alt": "Payment Methods"
+    },
+    "social_gallery": {
+        "title": "Say \"Yes\" with Azuronn",
+        "items": [
+            {
+                "image": "/assets/uploads/proposal-1.webp",
+                "username": "@sasha.gill",
+                "alt": "Romantic beach proposal"
+            },
+            {
+                "image": "/assets/uploads/proposal-2.webp",
+                "username": "@sarahantonishyn",
+                "alt": "Happy couple proposal selfie"
+            },
+            {
+                "image": "/assets/uploads/proposal-3.webp",
+                "username": "@sahanna__________",
+                "alt": "Close up of hands with ring"
+            },
+            {
+                "image": "/assets/uploads/proposal-4.webp",
+                "username": "@saaisasee",
+                "alt": "Champagne boat proposal"
+            },
+            {
+                "image": "/assets/uploads/proposal-5.webp",
+                "username": "@rachel_minall",
+                "alt": "Coastal engagement ring"
+            },
+            {
+                "image": "/assets/uploads/proposal-6.webp",
+                "username": "@katiemaisiexx3",
+                "alt": "Balcony view proposal"
+            }
+        ]
+    },
+    "faq": {
+        "kicker": "FREQUENTLY ASKED QUESTIONS",
+        "title": "Everything you need to know before getting started",
+        "support_image": "/assets/uploads/faq-support.png",
+        "support_title": "Customer Support",
+        "support_text": "Do you have additional questions? No problem, let us help you through the process",
+        "support_btn_label": "BOOK ONLINE",
+        "support_btn_url": "#",
+        "items": [
+            {
+                "question": "Is a lab-grown diamond a real diamond?",
+                "answer": "Yes. A lab-grown diamond has the exact same chemical composition, crystal structure, and optical properties as a mined diamond — it is carbon, arranged the same way. The only difference is origin: one forms in the earth over billions of years, the other is grown in a controlled lab environment over a few weeks. Gemologically, jewellers, and international grading labs all classify it as a genuine diamond, not an imitation."
+            },
+            {
+                "question": "Will a lab-grown diamond test as a real diamond?",
+                "answer": "Yes, on any standard diamond tester (thermal or electrical conductivity), a lab-grown diamond reads as a real diamond, because it is one. It is not the same as a simulant like cubic zirconia or moissanite, which test differently. Only specialised lab equipment (used by gemological institutes) can distinguish a lab-grown stone from a mined one — visually and to a jeweller's tester, they are identical."
+            },
+            {
+                "question": "How is a lab-grown diamond different from a mined diamond, then?",
+                "answer": "The only real difference is where and how it was created. There is no visible, structural, or durability difference — both score 10 on the Mohs hardness scale and have identical fire, brilliance, and sparkle. The main practical differences buyers care about are price (LGDs typically cost 30–50% less) and origin story (grown vs. mined)."
+            },
+            {
+                "question": "Why are lab-grown diamonds sometimes called \"synthetic diamonds\"?",
+                "answer": "\"Synthetic\" is a scientific term meaning \"made through a technical process\" rather than occurring naturally — it does not mean fake or artificial in the everyday sense. Historically this label caused confusion, which is why the industry now prefers \"lab-grown\" or \"lab-created\" diamond, which more accurately reflects that the material itself is a genuine diamond."
+            },
+            {
+                "question": "What is the best certification for lab-grown diamonds?",
+                "answer": "The two most recognised international certifications are IGI (International Gemological Institute) and GIA (Gemological Institute of America). Both grade a diamond's cut, colour, clarity, and carat weight, and both clearly state on the certificate that the stone is lab-grown. Azuronn uses IGI certification for our lab-grown diamonds to ensure the highest standards of verifiable grading."
+            },
+            {
+                "question": "Does Azuronn's jewellery come with a certificate?",
+                "answer": "Yes. Every Azuronn lab-grown diamond centre stone above 0.50 carats comes with a unique, verifiable IGI or GIA grading certificate."
+            },
+            {
+                "question": "Will lab-grown diamonds lose their value?",
+                "answer": "Both lab-grown and mined diamonds are known to have limited resale value on the secondary market — this is true of nearly all fine jewellery, not unique to LGD. Diamonds, whether mined or lab-grown, are priced for retail purchase and are not typically bought back at anywhere near the original price. The value of a lab-grown diamond piece is best thought of as the beauty, craftsmanship, and meaning it holds for the wearer, not as a financial investment."
+            },
+            {
+                "question": "Can I insure my lab-grown diamond jewellery?",
+                "answer": "Yes. Lab-grown diamond jewellery can be insured the same way as mined-diamond jewellery, typically through a homeowner's/renter's policy rider or a specialist jewellery insurer. The certificate and purchase receipt/appraisal are what an insurer will require, so keep both safely."
+            },
+            {
+                "question": "Where are Azuronn's diamonds and jewellery made?",
+                "answer": "Our lab-grown diamonds are cultivated and cut in state-of-the-art facilities in India, where our jewellery is also meticulously hand-crafted by master artisans before being imported to serve our clients in Hong Kong."
+            },
+            {
+                "question": "Are lab-grown diamonds more ethical than mined diamonds?",
+                "answer": "Lab-grown diamonds avoid the land disruption and the labour and conflict concerns historically associated with some diamond mining regions. They are generally considered a more transparent, traceable supply chain choice. At Azuronn, we partner exclusively with verified growers committed to ethical and sustainable practices."
+            },
+            {
+                "question": "Where can I buy Azuronn lab-grown diamond jewellery in Hong Kong?",
+                "answer": "You can purchase Azuronn pieces directly through our website with secure delivery across Hong Kong, or by booking an appointment at our central showroom for a private consultation."
+            },
+            {
+                "question": "How long does delivery take, and are there any customs/import charges?",
+                "answer": "For in-stock items, delivery within Hong Kong takes 2-3 business days. Made-to-order and bespoke pieces generally take 3-4 weeks. All import duties into Hong Kong are already covered in the purchase price, so there are no hidden fees."
+            },
+            {
+                "question": "What is your return, exchange, and resizing policy?",
+                "answer": "We offer a 30-day return or exchange window for all ready-to-wear pieces in original, unworn condition. We also provide one complimentary ring resizing within the first 60 days of purchase."
+            },
+            {
+                "question": "How do I care for my lab-grown diamond jewellery?",
+                "answer": "Clean with a soft brush and mild soapy water, avoid harsh chemicals (chlorine, perfume, cleaning agents) making direct contact with the piece, and store separately to avoid scratching other jewellery. Because lab-grown diamonds are equally hard (Mohs 10), they hold up to daily wear the same way mined diamonds do — routine care is identical."
+            }
+        ]
+    }
+}
