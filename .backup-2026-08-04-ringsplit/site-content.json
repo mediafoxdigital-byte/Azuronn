@@ -1,5 +1,5 @@
 {
-    "content_schema_version": 3,
+    "content_schema_version": 2,
     "settings": {
         "site_name": "Azuronn",
         "site_tagline": "Jewelry Shop eCommerce",
@@ -35,27 +35,17 @@
             "header_label": "",
             "header_icon": "fas fa-gem",
             "sub": "",
-            "title": "Engagement Rings",
+            "title": "new",
             "price": "",
-            "url": "/shop/?type=Ring&ring_category=engagement",
+            "url": "#",
             "image": "",
-            "alt": "Engagement Rings"
-        },
-        {
-            "header_label": "",
-            "header_icon": "fas fa-ring",
-            "sub": "",
-            "title": "Wedding Rings",
-            "price": "",
-            "url": "/shop/?type=Ring&ring_category=wedding",
-            "image": "",
-            "alt": "Wedding Rings"
+            "alt": ""
         },
         {
             "header_label": "",
             "header_icon": "fas fa-gem",
             "sub": "",
-            "title": "earrings",
+            "title": "Rings",
             "price": "",
             "url": "#",
             "image": "",
@@ -64,9 +54,8 @@
     ],
     "catalog_meta": {
         "product_types": [
-            "Engagement Rings",
-            "Wedding Rings",
-            "Earring"
+            "new",
+            "Ring"
         ],
         "colors": [
             "Yellow Gold",
@@ -86,10 +75,15 @@
                 "option_color_display": "",
                 "option_size_display": "",
                 "option_colors": [],
-                "option_sizes": [
-                    "M"
+                "option_sizes": [],
+                "option_color_choices": [
+                    {
+                        "value": "Matte Black",
+                        "label": "Matte Black",
+                        "kicker": "",
+                        "tone": "classic"
+                    }
                 ],
-                "option_color_choices": [],
                 "option_size_choices": [
                     {
                         "value": "M",
@@ -98,7 +92,15 @@
                         "tone": "classic"
                     }
                 ],
-                "option_metal_options": [],
+                "option_metal_options": [
+                    {
+                        "value": "steel",
+                        "label": "Steel",
+                        "description": "",
+                        "color_hex": "#8a8a8a",
+                        "image": ""
+                    }
+                ],
                 "option_band_claw_metal_options": [],
                 "option_delivery_options": [],
                 "selector_cards": [],
@@ -111,8 +113,8 @@
                 "diamond_intro_text": "",
                 "diamond_inventory": []
             },
-            "Engagement Rings": {
-                "type": "Engagement Rings",
+            "Ring": {
+                "type": "Ring",
                 "option_color_label": "",
                 "option_size_label": "",
                 "option_color_display": "",
@@ -169,136 +171,29 @@
                     {
                         "value": "gold",
                         "label": "Gold",
-                        "description": "",
-                        "color_hex": "#c9a96e",
+                        "description": "Classic gold craftsmanship with a warm, refined finish.",
+                        "color_hex": "#ffb83d",
                         "image": ""
-                    }
-                ],
-                "option_band_claw_metal_options": [],
-                "option_delivery_options": [],
-                "selector_cards": [],
-                "style_cards": [],
-                "style_cards_sections": {
-                    "engagement": [],
-                    "wedding": []
-                },
-                "diamond_intro_kicker": "",
-                "diamond_intro_text": "",
-                "diamond_inventory": []
-            },
-            "Wedding Rings": {
-                "type": "Wedding Rings",
-                "option_color_label": "",
-                "option_size_label": "",
-                "option_color_display": "",
-                "option_size_display": "",
-                "option_colors": [],
-                "option_sizes": [
-                    "4",
-                    "5",
-                    "6",
-                    "7",
-                    "8",
-                    "9"
-                ],
-                "option_color_choices": [],
-                "option_size_choices": [
-                    {
-                        "value": "4",
-                        "label": "4",
-                        "caption": "",
-                        "tone": "classic"
                     },
                     {
-                        "value": "5",
-                        "label": "5",
-                        "caption": "",
-                        "tone": "classic"
+                        "value": "platinum",
+                        "label": "Platinum",
+                        "description": "Naturally white premium metal with a substantial feel.",
+                        "color_hex": "#dccbcb",
+                        "image": ""
                     },
                     {
-                        "value": "6",
-                        "label": "6",
-                        "caption": "",
-                        "tone": "classic"
-                    },
-                    {
-                        "value": "7",
-                        "label": "7",
-                        "caption": "",
-                        "tone": "classic"
-                    },
-                    {
-                        "value": "8",
-                        "label": "8",
-                        "caption": "",
-                        "tone": "classic"
-                    },
-                    {
-                        "value": "9",
-                        "label": "9",
-                        "caption": "",
-                        "tone": "classic"
-                    }
-                ],
-                "option_metal_options": [],
-                "option_band_claw_metal_options": [],
-                "option_delivery_options": [],
-                "selector_cards": [],
-                "style_cards": [],
-                "style_cards_sections": {
-                    "engagement": [],
-                    "wedding": []
-                },
-                "diamond_intro_kicker": "",
-                "diamond_intro_text": "",
-                "diamond_inventory": []
-            },
-            "Earring": {
-                "type": "Earring",
-                "option_color_label": "",
-                "option_size_label": "",
-                "option_color_display": "",
-                "option_size_display": "",
-                "option_colors": [],
-                "option_sizes": [
-                    "0.6 ctw",
-                    "0.8 ctw",
-                    "1 ctw",
-                    "2.4 ctw"
-                ],
-                "option_color_choices": [],
-                "option_size_choices": [
-                    {
-                        "value": "0.6 ctw",
-                        "label": "0.6 ctw",
-                        "caption": "",
-                        "tone": "classic"
-                    },
-                    {
-                        "value": "0.8 ctw",
-                        "label": "0.8 ctw",
-                        "caption": "",
-                        "tone": "classic"
-                    },
-                    {
-                        "value": "1 ctw",
-                        "label": "1 ctw",
-                        "caption": "",
-                        "tone": "classic"
-                    },
-                    {
-                        "value": "2.4 ctw",
-                        "label": "2.4 ctw",
-                        "caption": "",
-                        "tone": "classic"
-                    }
-                ],
-                "option_metal_options": [
-                    {
-                        "value": "gold",
+                        "value": "pink",
                         "label": "pink",
+                        "description": "test metal",
+                        "color_hex": "#ff75b1",
+                        "image": ""
+                    },
+                    {
+                        "value": "black",
+                        "label": "black",
                         "description": "",
-                        "color_hex": "#c9a96e",
+                        "color_hex": "#0a0a0a",
                         "image": ""
                     }
                 ],

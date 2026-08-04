@@ -362,32 +362,30 @@ function catalog_expanded_products(bool $activeOnly = true): array
 }
 
 
-/**
- * The attribute-profile type backing a ring section. Engagement Rings and
- * Wedding Rings are separate categories with separate profiles, so each section
- * resolves to its own — that is what lets them offer different metals.
- */
-function ring_section_profile_type(string $ringCategory): string
-{
-    $protected = catalog_protected_categories();
-    $section = strtolower(trim($ringCategory)) === 'wedding' ? 'wedding' : 'engagement';
-
-    return $protected[$section]['title'];
-}
-
 function available_ring_style_cards(string $ringCategory = ''): array
 {
+    $profile = catalog_attribute_profile('Ring');
     $ringCategory = strtolower(trim($ringCategory));
-    $profile = catalog_attribute_profile(ring_section_profile_type($ringCategory));
 
-    // The section's own list wins; the flat style_cards list is the fallback for
-    // a profile saved before the per-section split.
+    // Section-specific cards win when they exist for this section. If the
+    // merchant configured cards only in the shared "style_cards" list, use
+    // those. Only fall back to default profiles when nothing has been
+    // configured yet (fresh install), so demo cards never pollute a real
+    // admin session.
     $profileCards = [];
-    if ($ringCategory !== '' && is_array($profile['style_cards_sections'][$ringCategory] ?? null)) {
+    if ($ringCategory !== '' && isset($profile['style_cards_sections'][$ringCategory]) && is_array($profile['style_cards_sections'][$ringCategory]) && $profile['style_cards_sections'][$ringCategory] !== []) {
         $profileCards = array_values($profile['style_cards_sections'][$ringCategory]);
     }
     if ($profileCards === []) {
         $profileCards = array_values((array) ($profile['style_cards'] ?? []));
+    }
+    if ($profileCards === []) {
+        $ringsProfile = catalog_attribute_profile('Rings');
+        if ($ringCategory !== '' && isset($ringsProfile['style_cards_sections'][$ringCategory]) && is_array($ringsProfile['style_cards_sections'][$ringCategory]) && $ringsProfile['style_cards_sections'][$ringCategory] !== []) {
+            $profileCards = array_values($ringsProfile['style_cards_sections'][$ringCategory]);
+        } elseif ((array) ($ringsProfile['style_cards'] ?? []) !== []) {
+            $profileCards = array_values($ringsProfile['style_cards']);
+        }
     }
 
     $cards = [];
@@ -515,28 +513,34 @@ function product_category_label(array $product): string
  */
 
 /**
- * The unified category choices offered on the product form, built from the real
- * categories the merchant created. Engagement Rings and Wedding Rings are two
- * separate entries; a wedding product's men's/women's split is a distinct
- * Gender field, not extra category rows. Ring entries keep product_type='Rings'
- * plus ring_category so existing products and every /shop/ URL keep working.
+ * The unified category choices offered on the product form. Built from the
+ * real categories the merchant created, so a newly added category appears
+ * automatically and a demo one never does. Ring-section cards resolve to the
+ * structural ring taxonomy; every other real category becomes its own entry.
  */
 function product_category_taxonomy_options(): array
 {
     $content = site_content();
-    $options = [];
+    $options = [
+        'engagement' => ['label' => 'Engagement Rings', 'product_type' => 'Rings', 'ring_category' => 'engagement', 'ring_gender' => ''],
+        'wedding-womens' => ['label' => "Wedding Rings — Women's", 'product_type' => 'Rings', 'ring_category' => 'wedding', 'ring_gender' => 'womens'],
+        'wedding-mens' => ['label' => "Wedding Rings — Men's", 'product_type' => 'Rings', 'ring_category' => 'wedding', 'ring_gender' => 'mens'],
+    ];
 
-    foreach (catalog_protected_categories() as $section => $definition) {
-        $options[$section] = [
-            'label' => $definition['title'],
-            'product_type' => 'Rings',
-            'ring_category' => $definition['ring_category'],
-            'ring_gender' => '',
-        ];
+    // A ring-section card renames the engagement entry rather than adding one.
+    foreach ((array) ($content['category_cards'] ?? []) as $card) {
+        if (!is_array($card)) {
+            continue;
+        }
+        $title = trim((string) ($card['title'] ?? ''));
+        if ($title !== '' && in_array(strtolower($title), catalog_ring_section_titles(), true)) {
+            $options['engagement']['label'] = $title;
+            break;
+        }
     }
 
     foreach (catalog_active_product_types($content) as $type) {
-        if (catalog_category_ring_section($type) !== '') {
+        if (in_array(strtolower($type), ['ring', 'rings'], true)) {
             continue;
         }
         $options['custom-' . strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $type))] = [
@@ -558,10 +562,13 @@ function product_category_taxonomy_options(): array
 function product_category_taxonomy_key(array $product): string
 {
     $taxonomy = product_ring_taxonomy($product);
-    // Gender is its own field now, so a wedding ring maps to one 'wedding' key
-    // whether it is a men's or women's band.
-    if (in_array($taxonomy['category'], ['engagement', 'wedding'], true)) {
-        return $taxonomy['category'];
+    if ($taxonomy['category'] === 'engagement') {
+        return 'engagement';
+    }
+    if ($taxonomy['category'] === 'wedding') {
+        // Untagged wedding rings preselect Women's (the common band case); there
+        // is no unisex choice — every wedding ring is filed under Men's or Women's.
+        return 'wedding-' . ($taxonomy['gender'] !== '' ? $taxonomy['gender'] : 'womens');
     }
 
     $type = clean_string((string) ($product['product_type'] ?? ''), 80);
@@ -634,27 +641,33 @@ function homepage_style_showcase_options(): array
             continue;
         }
 
-        $ringSection = catalog_category_ring_section($type);
+        $normalizedType = strtolower(trim($type));
+        $isRingType = in_array($normalizedType, ['ring', 'rings'], true);
 
-        if ($ringSection !== '') {
-            // Ring categories keep the 'ring::<section>::<style>' key shape so
-            // homepage Shop-by-Style assignments saved before the split still
-            // resolve after Engagement/Wedding became separate categories.
-            foreach (available_ring_style_cards($ringSection) as $styleValue => $card) {
-                $label = clean_string((string) ($card['label'] ?? $styleValue), 120);
-                if ($label === '') {
-                    continue;
+        if ($isRingType) {
+            // Emit each ring style once per section (engagement / wedding) so the
+            // homepage Shop-by-Style assignment can point at either collection.
+            // Key format '<type>::<section>::<style>' — one entry per style, no
+            // duplicates. Legacy 'ring::<style>' ids saved before the split are
+            // migrated to engagement keys on assignment save.
+            foreach (['engagement', 'wedding'] as $ringSection) {
+                foreach (available_ring_style_cards($ringSection) as $styleValue => $card) {
+                    $label = clean_string((string) ($card['label'] ?? $styleValue), 120);
+                    if ($label === '') {
+                        continue;
+                    }
+                    $sectionLabel = $ringSection === 'wedding' ? 'Wedding' : 'Engagement';
+                    $key = strtolower($type) . '::' . $ringSection . '::' . clean_string((string) $styleValue, 80);
+                    $options[$key] = [
+                        'id' => $key,
+                        'type' => $type,
+                        'type_label' => $sectionLabel . ' ' . homepage_style_type_label($type),
+                        'value' => clean_string((string) $styleValue, 80),
+                        'label' => $label,
+                        'image' => clean_image((string) ($card['image'] ?? '')),
+                        'url' => resolve_link('/shop/?' . http_build_query(['type' => 'Ring', 'ring_category' => $ringSection, 'style' => $styleValue])),
+                    ];
                 }
-                $key = 'ring::' . $ringSection . '::' . clean_string((string) $styleValue, 80);
-                $options[$key] = [
-                    'id' => $key,
-                    'type' => 'Ring',
-                    'type_label' => $type,
-                    'value' => clean_string((string) $styleValue, 80),
-                    'label' => $label,
-                    'image' => clean_image((string) ($card['image'] ?? '')),
-                    'url' => resolve_link('/shop/?' . http_build_query(['type' => 'Ring', 'ring_category' => $ringSection, 'style' => $styleValue])),
-                ];
             }
             continue;
         }

@@ -34,7 +34,7 @@
               // chip's circle uses the colour the admin picked (color_hex); when no
               // colour is set it falls back to a metallic tone by name so the
               // circle is never blank.
-              $ringProfile = catalog_attribute_profile(ring_section_profile_type($navRingSection));
+              $ringProfile = catalog_attribute_profile('Ring');
               $ringMetalOptions = $ringProfile['option_metal_options'] ?? [];
               $navMetalTone = static function (string $name): string {
                   $n = strtolower($name);

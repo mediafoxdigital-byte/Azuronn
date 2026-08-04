@@ -262,24 +262,6 @@ function syncProductEditorScopes(scope = document) {
       const hiddenType = form.querySelector('select[name="product[product_type]"]');
       if (hiddenType) type = (hiddenType.value || '').toLowerCase();
     }
-
-    // Gender applies to wedding rings only — reveal it when the chosen Category
-    // is that ring section, and disable it otherwise so it can't submit. Runs
-    // before the type guard below so clearing the Category also hides it.
-    if (categorySelect) {
-      let sectionMap = {};
-      try { sectionMap = JSON.parse(categorySelect.dataset.categoryStyleMap || '{}'); } catch (_e) { sectionMap = {}; }
-      const activeSection = sectionMap[categorySelect.value] || '';
-      form.querySelectorAll('[data-ring-section-scope]').forEach((node) => {
-        const isVisible = node.dataset.ringSectionScope === activeSection;
-        node.hidden = !isVisible;
-        node.style.display = isVisible ? '' : 'none';
-        node.querySelectorAll('input, select, textarea').forEach((control) => {
-          control.disabled = !isVisible;
-        });
-      });
-    }
-
     if (!type) return;
 
     form.querySelectorAll('[data-product-scope]').forEach((node) => {

@@ -1070,6 +1070,8 @@ function normalize_catalog(array $candidate, array $defaults): array
 function catalog_type_aliases(): array
 {
     return [
+        'rings' => 'Ring', 'ring' => 'Ring',
+        'engagement rings' => 'Ring', 'wedding rings' => 'Ring',
         'earrings' => 'Earring', 'earring' => 'Earring',
         'bracelets' => 'Bracelet', 'bracelet' => 'Bracelet',
         'bangles & bracelets' => 'Bracelet', 'bangles &amp; bracelets' => 'Bracelet',
@@ -1081,22 +1083,9 @@ function catalog_type_aliases(): array
     ];
 }
 
-/**
- * Collapse a type spelling onto its canonical catalogue type. Ring sections are
- * NOT collapsed here: "Engagement Rings" and "Wedding Rings" are separate
- * categories with separate attribute profiles, so folding them onto a shared
- * "Ring" key would make both resolve to whichever profile was stored first.
- * A bare "Ring"/"Rings" still maps to the engagement category so legacy data
- * keeps resolving.
- */
 function catalog_canonical_type(string $type): string
 {
-    $normalized = strtolower(trim($type));
-    if (in_array($normalized, ['ring', 'rings'], true)) {
-        return catalog_protected_categories()['engagement']['title'];
-    }
-
-    return catalog_type_aliases()[$normalized] ?? trim($type);
+    return catalog_type_aliases()[strtolower(trim($type))] ?? trim($type);
 }
 
 /**
@@ -1110,74 +1099,17 @@ function catalog_ring_section_titles(): array
 }
 
 /**
- * Engagement Rings and Wedding Rings are first-class categories, not sections of
- * a single "Rings" category. They back the main navigation, so normalize keeps
- * them present and the Categories admin refuses to delete or rename them. Each
- * carries its own attribute profile, which is what lets the two sections offer
- * different metals, sizes and styles.
- *
- * `ring_category` is the value products already store and every /shop/ URL
- * already uses, so this is an admin-model change only — no link or product data
- * changes shape.
- */
-function catalog_protected_categories(): array
-{
-    return [
-        'engagement' => [
-            'title' => 'Engagement Rings',
-            'ring_category' => 'engagement',
-            'url' => '/shop/?type=Ring&ring_category=engagement',
-            'header_icon' => 'fas fa-gem',
-        ],
-        'wedding' => [
-            'title' => 'Wedding Rings',
-            'ring_category' => 'wedding',
-            'url' => '/shop/?type=Ring&ring_category=wedding',
-            'header_icon' => 'fas fa-ring',
-        ],
-    ];
-}
-
-/**
- * The ring section a category-card title belongs to ('engagement' | 'wedding'),
- * or '' when the title is not a ring category at all. A bare "Ring"/"Rings"
- * title folds into engagement so a legacy card upgrades instead of duplicating.
- */
-function catalog_category_ring_section(string $title): string
-{
-    return match (strtolower(trim($title))) {
-        'wedding rings', "women's wedding rings", "men's wedding rings" => 'wedding',
-        'engagement rings', 'ring', 'rings' => 'engagement',
-        default => '',
-    };
-}
-
-/**
- * True when this category card must not be deleted or renamed.
- */
-function catalog_category_is_protected(string $title): bool
-{
-    foreach (catalog_protected_categories() as $protected) {
-        if (strtolower(trim($title)) === strtolower($protected['title'])) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-/**
  * The catalogue types the merchant actually has: the categories they created
  * plus any type already in use by a product. Deliberately does NOT read
  * catalog_meta.product_types — that list has no admin editor and was only ever
  * seeded from the demo defaults, which is how fake categories reached the
- * product form. Falls back to the two ring categories so a fresh install still
+ * product form. Falls back to a single neutral 'Ring' so a fresh install still
  * has a usable product form.
  */
 function catalog_active_product_types(?array $content = null): array
 {
     $content = $content ?? site_content();
-    $protected = catalog_protected_categories();
+    $ringSectionTitles = catalog_ring_section_titles();
     $types = [];
 
     foreach ((array) ($content['category_cards'] ?? []) as $card) {
@@ -1188,10 +1120,9 @@ function catalog_active_product_types(?array $content = null): array
         if ($title === '') {
             continue;
         }
-        // Ring-section cards resolve to their section's own type, so Engagement
-        // Rings and Wedding Rings each get a separate attribute profile.
-        $section = catalog_category_ring_section($title);
-        $types[] = $section !== '' ? $protected[$section]['title'] : catalog_canonical_type($title);
+        // A ring-section card ("Rings", "Engagement Rings", …) is not its own
+        // catalogue type — every ring section shares the single Ring profile.
+        $types[] = in_array(strtolower($title), $ringSectionTitles, true) ? 'Ring' : catalog_canonical_type($title);
     }
 
     foreach ((array) ($content['products']['items'] ?? []) as $product) {
@@ -1199,22 +1130,14 @@ function catalog_active_product_types(?array $content = null): array
             continue;
         }
         $type = clean_string((string) ($product['product_type'] ?? ''), 80);
-        if ($type === '') {
-            continue;
+        if ($type !== '') {
+            $types[] = catalog_canonical_type($type);
         }
-        // A stored ring product keeps product_type='Ring'; its section comes
-        // from ring_category, so map it onto the right ring category type.
-        if (in_array(strtolower($type), ['ring', 'rings'], true)) {
-            $ringCategory = strtolower(clean_string((string) ($product['ring_category'] ?? ''), 40));
-            $types[] = $protected[$ringCategory === 'wedding' ? 'wedding' : 'engagement']['title'];
-            continue;
-        }
-        $types[] = catalog_canonical_type($type);
     }
 
     $types = array_values(array_unique(array_filter($types, static fn (string $type): bool => $type !== '')));
 
-    return $types !== [] ? $types : array_column(catalog_protected_categories(), 'title');
+    return $types !== [] ? $types : ['Ring'];
 }
 
 /**
@@ -1233,48 +1156,6 @@ function content_strip_demo_images(array $candidate): array
     return $candidate;
 }
 
-/**
- * Guarantee exactly one card per protected ring category, keeping whatever the
- * merchant customised (image, icon, sub-text) on it. A legacy bare "Rings" card
- * is upgraded into the Engagement Rings card rather than being duplicated, and a
- * protected card can neither be renamed nor removed by a crafted POST.
- */
-function content_apply_protected_categories(array $cards): array
-{
-    $protectedCards = [];
-    $rest = [];
-
-    foreach ($cards as $card) {
-        if (!is_array($card)) {
-            continue;
-        }
-        $section = catalog_category_ring_section((string) ($card['title'] ?? ''));
-        if ($section === '') {
-            $rest[] = $card;
-            continue;
-        }
-        // First card wins per section; later duplicates collapse into it.
-        $protectedCards[$section] = $protectedCards[$section] ?? $card;
-    }
-
-    $ordered = [];
-    foreach (catalog_protected_categories() as $section => $definition) {
-        $existing = $protectedCards[$section] ?? [];
-        $ordered[] = [
-            'header_label' => (string) ($existing['header_label'] ?? ''),
-            'header_icon' => (string) ($existing['header_icon'] ?? '') !== '' ? $existing['header_icon'] : $definition['header_icon'],
-            'sub' => (string) ($existing['sub'] ?? ''),
-            'title' => $definition['title'],
-            'price' => (string) ($existing['price'] ?? ''),
-            'url' => $definition['url'],
-            'image' => (string) ($existing['image'] ?? ''),
-            'alt' => (string) ($existing['alt'] ?? '') !== '' ? $existing['alt'] : $definition['title'],
-        ];
-    }
-
-    return array_merge($ordered, $rest);
-}
-
 function normalize_site_content(array $candidate): array
 {
     $defaults = default_site_content();
@@ -1289,45 +1170,6 @@ function normalize_site_content(array $candidate): array
         unset($candidate['catalog_meta']['attribute_profiles'], $candidate['catalog_meta']['product_types']);
         $candidate = content_strip_demo_images($candidate);
     }
-
-    // Schema 3 splits the single "Rings" category into Engagement Rings and
-    // Wedding Rings. The old shared profile kept its two style lists inside
-    // style_cards_sections, so hand each section's cards to its new profile and
-    // retire the legacy key — otherwise the merchant's ring metals and styles
-    // would look wiped after the split.
-    if ((int) ($candidate['content_schema_version'] ?? 1) < 3) {
-        $profiles = is_array($candidate['catalog_meta']['attribute_profiles'] ?? null) ? $candidate['catalog_meta']['attribute_profiles'] : [];
-        $legacyRing = null;
-        foreach (['Ring', 'Rings'] as $legacyKey) {
-            if (is_array($profiles[$legacyKey] ?? null)) {
-                $legacyRing = $profiles[$legacyKey];
-                unset($profiles[$legacyKey]);
-            }
-        }
-        if ($legacyRing !== null) {
-            foreach (catalog_protected_categories() as $section => $definition) {
-                if (isset($profiles[$definition['title']])) {
-                    continue;
-                }
-                $sectionProfile = $legacyRing;
-                $sectionCards = (array) ($legacyRing['style_cards_sections'][$section] ?? []);
-                if ($sectionCards === [] && $section === 'engagement') {
-                    $sectionCards = (array) ($legacyRing['style_cards'] ?? []);
-                }
-                $sectionProfile['type'] = $definition['title'];
-                $sectionProfile['style_cards'] = $sectionCards;
-                $sectionProfile['style_cards_sections'] = [$section => $sectionCards];
-                $profiles[$definition['title']] = $sectionProfile;
-            }
-        }
-        $candidate['catalog_meta']['attribute_profiles'] = $profiles;
-    }
-
-    // Engagement Rings and Wedding Rings are always present, whatever was posted
-    // or stored, because the main navigation links to both sections.
-    $candidate['category_cards'] = content_apply_protected_categories(
-        is_array($candidate['category_cards'] ?? null) ? $candidate['category_cards'] : []
-    );
 
     $catalog = normalize_catalog($candidate, $defaults);
     $profileSource = is_array($candidate['catalog_meta']['attribute_profiles'] ?? null) ? $candidate['catalog_meta']['attribute_profiles'] : [];
@@ -1353,7 +1195,7 @@ function normalize_site_content(array $candidate): array
     $heroDefaultImage = $defaults['hero']['image'] ?? '';
 
     return [
-        'content_schema_version' => 3,
+        'content_schema_version' => 2,
         'settings' => [
             'site_name' => clean_string($settingsInput['site_name'] ?? $settingsDefault['site_name'], 120),
             'site_tagline' => clean_string($settingsInput['site_tagline'] ?? $settingsDefault['site_tagline'], 160),

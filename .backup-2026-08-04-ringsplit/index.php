@@ -338,23 +338,18 @@ function admin_editor_list(array $product, array $profile, string $key): array
 
 function admin_product_type_is_ring(string $type): bool
 {
-    return catalog_category_ring_section(clean_string($type, 80)) !== '';
+    return in_array(strtolower(clean_string($type, 80)), ['ring', 'rings'], true);
 }
 
-/**
- * A category uses the metal matrix once it actually has metals — per-metal
- * pricing, sizes, bands and shapes only make sense when metals exist. Previously
- * a hardcoded type list decided this, so a merchant-created category could never
- * offer metals no matter what they configured.
- */
 function admin_product_type_is_matrix(string $type): bool
 {
-    $type = clean_string($type, 80);
-    if ($type === '') {
-        return false;
-    }
-
-    return (array) (catalog_attribute_profile($type)['option_metal_options'] ?? []) !== [];
+    return in_array(strtolower(clean_string($type, 80)), [
+        'ring', 'rings',
+        'earring', 'earrings',
+        'bracelet', 'bangles & bracelets',
+        'necklace', 'necklaces',
+        'pendant', 'pendants'
+    ], true);
 }
 
 /**
@@ -844,31 +839,20 @@ function admin_build_product_from_post(array $existing = [], int $index = 0): ar
         $taxonomyChoice = $taxonomyOptions[$taxonomyKey];
         $productType = $taxonomyChoice['product_type'];
         $ringCategory = $taxonomyChoice['ring_category'];
-        // Gender is its own field on the form and only means anything inside the
-        // wedding section, mirroring the whitelist shop/index.php applies.
-        $ringGender = $ringCategory === 'wedding'
-            ? strtolower(clean_string((string) ($data['ring_gender'] ?? ''), 40))
-            : '';
-        if (!in_array($ringGender, ['mens', 'womens'], true)) {
-            $ringGender = '';
-        }
+        $ringGender = $taxonomyChoice['ring_gender'];
     } else {
         $productType = clean_string((string) ($data['product_type'] ?? ($existing['product_type'] ?? '')), 80);
         $ringCategory = array_key_exists('ring_category', $data) ? (string) ($data['ring_category'] ?? '') : ($existing['ring_category'] ?? '');
         $ringGender = array_key_exists('ring_gender', $data) ? (string) ($data['ring_gender'] ?? '') : ($existing['ring_gender'] ?? '');
     }
-    // Two different type names are in play. The product STORES the structural
-    // type ('Ring' for both ring sections) because every /shop/ URL and filter
-    // keys off type=Ring + ring_category. The attribute PROFILE is keyed by the
-    // category name ('Engagement Rings' / 'Wedding Rings') so each section can
-    // carry its own metals, sizes and styles. Resolve both explicitly — using
-    // the profile name as the stored type would break every ring shop link.
-    $profileType = $ringCategory !== ''
-        ? ring_section_profile_type($ringCategory)
-        : admin_canonical_attribute_type($productType);
-    $productType = $ringCategory !== '' ? 'Ring' : $profileType;
-    $profile = $profileType !== '' ? catalog_attribute_profile($profileType, site_content()) : [];
-    $isMatrixType = admin_product_type_is_matrix($profileType);
+    // Canonicalise (Rings -> Ring, etc.) so the metal_variations_<type> key read
+    // below matches the key the Metal Matrix posted, and so the saved product
+    // type agrees with the attribute profile the matrix was built from. Without
+    // this, ring uploads posted metal_variations_ring but we read
+    // metal_variations_rings and every ticked metal was silently dropped.
+    $productType = admin_canonical_attribute_type($productType);
+    $profile = $productType !== '' ? catalog_attribute_profile($productType, site_content()) : [];
+    $isMatrixType = admin_product_type_is_matrix($productType);
     // Resolve choices: prefer index-based selection from profile, fallback to repeater data, then existing/profile
     $colorChoices = admin_resolve_indices_from_profile(
         $data, 'selected_color_indices',
@@ -888,7 +872,7 @@ function admin_build_product_from_post(array $existing = [], int $index = 0): ar
     );
     
     // Try namespaced key first (new format), fallback to generic key (legacy format)
-    $mvFieldKey = 'metal_variations_' . preg_replace('/[^a-z0-9]/', '_', strtolower($profileType));
+    $mvFieldKey = 'metal_variations_' . preg_replace('/[^a-z0-9]/', '_', strtolower($productType));
     $rawMetalData = null;
     if (is_array($data[$mvFieldKey] ?? null)) {
         $rawMetalData = $data[$mvFieldKey];
@@ -4387,21 +4371,10 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
           <div class="admin-repeater" data-repeater data-index-token="__CARD_INDEX__" data-next-index="<?= count($content['category_cards']) ?>" style="margin-bottom: 24px;">
             <div class="admin-repeater-list">
               <?php foreach ($content['category_cards'] as $index => $card): ?>
-                <?php $cardIsProtected = catalog_category_is_protected((string) ($card['title'] ?? '')); ?>
                 <div class="admin-repeater-item compact-item">
-                  <div class="admin-item-head">
-                    <h4>Category<?= $cardIsProtected ? ' <span class="status-pill">Required</span>' : '' ?></h4>
-                    <?php if ($cardIsProtected): ?>
-                      <button class="admin-remove" type="button" disabled title="This category powers the main navigation and cannot be deleted.">Delete</button>
-                    <?php else: ?>
-                      <button class="admin-remove" type="button" data-remove-item>Delete</button>
-                    <?php endif; ?>
-                  </div>
-                  <?php if ($cardIsProtected): ?>
-                    <p class="admin-table-note">Required category — the main navigation links to it. The name is fixed, but you can still change its image, icon and text.</p>
-                  <?php endif; ?>
+                  <div class="admin-item-head"><h4>Category</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
                   <div class="admin-grid three-up">
-                    <?php admin_input('category_cards[' . $index . '][title]', 'Category Name (Title)', $card['title'], 'text', $cardIsProtected ? 'readonly' : ''); ?>
+                    <?php admin_input('category_cards[' . $index . '][title]', 'Category Name (Title)', $card['title']); ?>
                     <?php admin_input('category_cards[' . $index . '][header_icon]', 'Icon Classes', $card['header_icon']); ?>
                     <?php admin_input('category_cards[' . $index . '][sub]', 'Other Text', $card['sub']); ?>
                     <?php admin_input('category_cards[' . $index . '][image]', 'Image URL', $card['image'], 'text', '', 'Paste URL or upload below'); ?>
@@ -4489,13 +4462,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                   // Category into the hidden product_type field (the matrix keys off it).
                   $categoryTypeMap = [];
                   foreach (product_category_taxonomy_options() as $mapKey => $mapOption) {
-                      // Ring entries resolve to their section's own profile type
-                      // (Engagement Rings / Wedding Rings) so the metal matrix and
-                      // attribute options follow the chosen section, not a shared one.
-                      $mapSection = (string) ($mapOption['ring_category'] ?? '');
-                      $categoryTypeMap[$mapKey] = $mapSection !== ''
-                          ? ring_section_profile_type($mapSection)
-                          : admin_canonical_attribute_type((string) ($mapOption['product_type'] ?? ''));
+                      $categoryTypeMap[$mapKey] = admin_canonical_attribute_type((string) ($mapOption['product_type'] ?? ''));
                   }
                   // Category key -> ring section (engagement / wedding / '') so the
                   // Style picker below can show the matching attribute styles as the
@@ -4518,8 +4485,8 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                   // categories, so switching Category re-scopes the form without a reload.
                   $nonMatrixScopeValues = [];
                   $matrixScopeValues = [];
-                  foreach (product_category_taxonomy_options() as $taxKey => $taxOption) {
-                      $ptCanon = (string) ($categoryTypeMap[$taxKey] ?? '');
+                  foreach (product_category_taxonomy_options() as $taxOption) {
+                      $ptCanon = admin_canonical_attribute_type((string) ($taxOption['product_type'] ?? ''));
                       if ($ptCanon === '') {
                           continue;
                       }
@@ -4537,15 +4504,6 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                     <?php admin_input('product[name]', 'Product Name', $editingProduct['name'] ?? '', 'text', 'required', 'Use the exact storefront title.'); ?>
                     <?php admin_select('product[category_taxonomy]', 'Category', $categoryTaxonomySelected, $categoryTaxonomyOptions, 'required data-category-type-map="' . htmlspecialchars((string) json_encode($categoryTypeMap, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') . '" data-category-style-map="' . htmlspecialchars((string) json_encode($categoryStyleMap, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') . '" data-category-flat-types="' . htmlspecialchars((string) json_encode($flatStyleTypes, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') . '"', 'Where this product appears on the storefront. Choosing a category sets this product\'s type and shows the matching metal / size / band options from that category\'s attributes below.'); ?>
                     <?php admin_input('product[category]', 'Collection Label (optional)', $editingProduct['category'] ?? '', 'text', '', 'Optional merchandising tag, e.g. Bridal, Everyday, Statement.'); ?>
-                    <?php
-                      // Gender only applies to wedding rings. Rendered always and
-                      // revealed by admin.js when the chosen Category is the wedding
-                      // section, so switching Category doesn't need a page reload.
-                      $editingRingSection = $editingProduct !== null ? product_ring_taxonomy($editingProduct)['category'] : '';
-                    ?>
-                    <div data-ring-section-scope="wedding"<?= $editingRingSection === 'wedding' ? '' : ' hidden style="display:none;"' ?>>
-                      <?php admin_select('product[ring_gender]', 'Gender', $editingProduct['ring_gender'] ?? '', ['' => '— Any —', 'womens' => "Women's", 'mens' => "Men's"], '', 'Which wedding ring collection this band belongs to.'); ?>
-                    </div>
                     <?php // Base Color applies to non-matrix categories only. Rendered
                           // always and scoped client-side so switching Category reveals it
                           // without a reload (server-side hiding froze it to the initial type). ?>
@@ -5237,12 +5195,9 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                       <button class="admin-add" type="button" data-add-item data-template="tpl-product-size-choice">Add Size Choice</button>
                     </div>
                   </section>
-                  <?php // Metal Options is available to every category — it is the
-                        // bootstrap that turns a category into a metal-matrix one,
-                        // so it must render even when no metals exist yet. ?>
+                  <?php if ($attributeTypeIsMatrix): ?>
                     <section class="admin-field admin-field-full admin-attr-group">
                       <span><span class="admin-attr-group-num"><?= str_pad((string) $adminAttrGroupNum++, 2, '0', STR_PAD_LEFT) ?></span>Metal Options</span>
-                      <p class="admin-table-note">Add the metals this category is offered in. Once a category has metals, products in it get per-metal pricing, sizes and shapes instead of a single base colour.</p>
                       <?php $profileMetalOptions = array_values($attributeProfile['option_metal_options'] ?? []); ?>
                       <input type="hidden" name="product[sections_present][]" value="option_metal_options">
                       <div class="admin-repeater" data-repeater data-index-token="__PRODUCT_METAL_INDEX__" data-next-index="<?= count($profileMetalOptions) ?>">
@@ -5262,6 +5217,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                         <button class="admin-add" type="button" data-add-item data-template="tpl-product-detail-option">Add Metal Option</button>
                       </div>
                     </section>
+                  <?php endif; ?>
                   <?php if ($attributeTypeIsRing): ?>
                     <section class="admin-field admin-field-full admin-attr-group">
                       <span><span class="admin-attr-group-num"><?= str_pad((string) $adminAttrGroupNum++, 2, '0', STR_PAD_LEFT) ?></span>Band / Claw Metal Options</span>
