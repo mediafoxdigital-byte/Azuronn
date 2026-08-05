@@ -39,6 +39,7 @@
             "price": "",
             "url": "/shop/?type=Ring&ring_category=engagement",
             "image": "",
+            "hero_image": "",
             "alt": "Engagement Rings"
         },
         {
@@ -49,16 +50,29 @@
             "price": "",
             "url": "/shop/?type=Ring&ring_category=wedding",
             "image": "",
+            "hero_image": "",
             "alt": "Wedding Rings"
         },
         {
             "header_label": "",
             "header_icon": "fas fa-gem",
-            "sub": "",
+            "sub": "other text",
             "title": "earrings",
             "price": "",
             "url": "#",
             "image": "",
+            "hero_image": "",
+            "alt": ""
+        },
+        {
+            "header_label": "",
+            "header_icon": "fas fa-gem",
+            "sub": "",
+            "title": "test categoreis",
+            "price": "",
+            "url": "#",
+            "image": "/assets/uploads/admin/admin-20260805-124509-7e55b689.jpg",
+            "hero_image": "",
             "alt": ""
         }
     ],
@@ -66,7 +80,8 @@
         "product_types": [
             "Engagement Rings",
             "Wedding Rings",
-            "Earring"
+            "Earring",
+            "test categoreis"
         ],
         "colors": [
             "Yellow Gold",
@@ -247,7 +262,15 @@
                         "tone": "classic"
                     }
                 ],
-                "option_metal_options": [],
+                "option_metal_options": [
+                    {
+                        "value": "rose-gold",
+                        "label": "rose gold",
+                        "description": "",
+                        "color_hex": "#dd0e91",
+                        "image": ""
+                    }
+                ],
                 "option_band_claw_metal_options": [],
                 "option_delivery_options": [],
                 "selector_cards": [],
@@ -331,6 +354,52 @@
                 "option_band_claw_metal_options": [],
                 "option_delivery_options": [],
                 "selector_cards": [],
+                "style_cards": [],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": []
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            },
+            "test categoreis": {
+                "type": "test categoreis",
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [
+                    "S / small"
+                ],
+                "option_color_choices": [],
+                "option_size_choices": [
+                    {
+                        "value": "S / small",
+                        "label": "S",
+                        "caption": "small",
+                        "tone": "classic"
+                    }
+                ],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "gold",
+                        "description": "",
+                        "color_hex": "#c9a96e",
+                        "image": ""
+                    }
+                ],
+                "option_band_claw_metal_options": [],
+                "option_delivery_options": [],
+                "selector_cards": [
+                    {
+                        "value": "test-style",
+                        "label": "test style",
+                        "image": ""
+                    }
+                ],
                 "style_cards": [],
                 "style_cards_sections": {
                     "engagement": [],
@@ -731,7 +800,291 @@
     },
     "products": {
         "title": "Product Library",
-        "items": []
+        "items": [
+            {
+                "id": "prd-2mm-basket",
+                "product_type": "Ring",
+                "color": "Yellow Gold",
+                "category": "",
+                "ring_category": "wedding",
+                "ring_gender": "womens",
+                "name": "2mm basket",
+                "old_price": "300",
+                "new_price": "200",
+                "default_image": "",
+                "hover_image": "",
+                "popup_image": "",
+                "description": "",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [
+                    "eternity"
+                ],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "S",
+                    "XL"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_tracked": false,
+                        "inventory_quantity": 0,
+                        "metal": "rose gold",
+                        "price": 250,
+                        "old_price": "£350.00",
+                        "image": "",
+                        "hover_image": "",
+                        "gallery": [],
+                        "description": "",
+                        "features": [],
+                        "shapes": [
+                            "emerald"
+                        ],
+                        "sizes": [
+                            "4",
+                            "5"
+                        ],
+                        "band_options": []
+                    }
+                ],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-test",
+                "product_type": "test categoreis",
+                "color": "Yellow Gold",
+                "category": "",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "test",
+                "old_price": "200",
+                "new_price": "500",
+                "default_image": "/assets/uploads/admin/admin-20260805-101724-5cbffc54.jpg",
+                "hover_image": "/assets/uploads/admin/admin-20260805-101725-8d95c57f.jpg",
+                "popup_image": "/assets/uploads/admin/admin-20260805-101724-5cbffc54.jpg",
+                "description": "",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "metal_variations": [],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-test-2",
+                "product_type": "test categoreis",
+                "color": "Yellow Gold",
+                "category": "",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "test 2",
+                "old_price": "900",
+                "new_price": "800",
+                "default_image": "/assets/uploads/admin/admin-20260805-103141-21597020.jpg",
+                "hover_image": "",
+                "popup_image": "/assets/uploads/admin/admin-20260805-103141-21597020.jpg",
+                "description": "",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [
+                    "test-style"
+                ],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [
+                    "S / small"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_tracked": false,
+                        "inventory_quantity": 0,
+                        "metal": "gold",
+                        "price": 0,
+                        "old_price": "",
+                        "image": "",
+                        "hover_image": "",
+                        "gallery": [],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [],
+                        "band_options": []
+                    }
+                ],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-test-3",
+                "product_type": "Ring",
+                "color": "Yellow Gold",
+                "category": "",
+                "ring_category": "engagement",
+                "ring_gender": "",
+                "name": "test",
+                "old_price": "2000",
+                "new_price": "900",
+                "default_image": "",
+                "hover_image": "",
+                "popup_image": "",
+                "description": "",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_tracked": false,
+                        "inventory_quantity": 0,
+                        "metal": "Gold",
+                        "price": 0,
+                        "old_price": "",
+                        "image": "",
+                        "hover_image": "",
+                        "gallery": [],
+                        "description": "",
+                        "features": [],
+                        "shapes": [
+                            "oval",
+                            "radiant"
+                        ],
+                        "sizes": [],
+                        "band_options": []
+                    },
+                    {
+                        "active": false,
+                        "inventory_tracked": false,
+                        "inventory_quantity": 0,
+                        "metal": "silver",
+                        "price": 0,
+                        "old_price": "",
+                        "image": "",
+                        "hover_image": "",
+                        "gallery": [],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [],
+                        "band_options": []
+                    }
+                ],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-test-4",
+                "product_type": "Earring",
+                "color": "Yellow Gold",
+                "category": "",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "test",
+                "old_price": "",
+                "new_price": "",
+                "default_image": "",
+                "hover_image": "",
+                "popup_image": "",
+                "description": "",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [
+                    "0.6 ctw",
+                    "0.8 ctw",
+                    "1 ctw",
+                    "2.4 ctw"
+                ],
+                "metal_variations": [
+                    {
+                        "active": false,
+                        "inventory_tracked": false,
+                        "inventory_quantity": 0,
+                        "metal": "pink",
+                        "price": 0,
+                        "old_price": "",
+                        "image": "",
+                        "hover_image": "",
+                        "gallery": [],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [],
+                        "band_options": []
+                    },
+                    {
+                        "active": false,
+                        "inventory_tracked": false,
+                        "inventory_quantity": 0,
+                        "metal": "blue",
+                        "price": 0,
+                        "old_price": "",
+                        "image": "",
+                        "hover_image": "",
+                        "gallery": [],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [],
+                        "band_options": []
+                    }
+                ],
+                "option_delivery_options": []
+            }
+        ]
     },
     "product_tabs": {
         "tabs": [
@@ -1146,6 +1499,27 @@
                 "last_order_at": "2026-08-02 09:44",
                 "total_orders": "1",
                 "total_spent": "£550.00",
+                "wishlist_product_ids": [],
+                "saved_addresses": [],
+                "notes": "Registered from storefront"
+            },
+            {
+                "id": "cus-489e81a4",
+                "name": "abdul",
+                "email": "test12@gmail.com",
+                "password_hash": "$2y$10$RIn8HtyHrI8wdow4FSF4dOPpb7DNBRH3GiljZGUHbFaChu22mWf9y",
+                "phone": "1234567890",
+                "city": "surat",
+                "state": "",
+                "country": "India",
+                "postal_code": "",
+                "address_line_1": "",
+                "address_line_2": "",
+                "status": "active",
+                "joined_at": "2026-08-05",
+                "last_order_at": "",
+                "total_orders": "0",
+                "total_spent": "£0.00",
                 "wishlist_product_ids": [],
                 "saved_addresses": [],
                 "notes": "Registered from storefront"

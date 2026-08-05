@@ -1268,6 +1268,7 @@ function content_apply_protected_categories(array $cards): array
             'price' => (string) ($existing['price'] ?? ''),
             'url' => $definition['url'],
             'image' => (string) ($existing['image'] ?? ''),
+            'hero_image' => (string) ($existing['hero_image'] ?? ''),
             'alt' => (string) ($existing['alt'] ?? '') !== '' ? $existing['alt'] : $definition['title'],
         ];
     }
@@ -1393,6 +1394,7 @@ function normalize_site_content(array $candidate): array
                 'price' => clean_string($item['price'] ?? '', 120),
                 'url' => clean_link($item['url'] ?? '#'),
                 'image' => clean_image($item['image'] ?? ''),
+                'hero_image' => clean_image($item['hero_image'] ?? ''),
                 'alt' => clean_string($item['alt'] ?? '', 120),
             ];
         }),

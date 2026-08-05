@@ -1665,6 +1665,7 @@ function admin_request_snapshot_category_cards(array $cards): array
         'Title' => clean_string((string) ($card['title'] ?? ''), 120),
         'Subtext' => clean_string((string) ($card['sub'] ?? ''), 160),
         'Image' => admin_request_media_label((string) ($card['image'] ?? '')),
+        'Hero Image' => admin_request_media_label((string) ($card['hero_image'] ?? '')),
         'URL' => clean_string((string) ($card['url'] ?? ''), 240),
     ]), array_filter($cards, 'is_array')));
 }
@@ -1922,6 +1923,8 @@ function admin_prepare_request_payload(string $action, array $content): ?array
             foreach ($cards as $idx => &$card) {
                 $uploaded = admin_handle_image_upload('category_image_file_' . $idx, clean_image($card['image'] ?? ''));
                 $card['image'] = $uploaded !== '' ? $uploaded : clean_image($card['image'] ?? '');
+                $uploadedHero = admin_handle_image_upload('category_hero_image_file_' . $idx, clean_image($card['hero_image'] ?? ''));
+                $card['hero_image'] = $uploadedHero !== '' ? $uploadedHero : clean_image($card['hero_image'] ?? '');
             }
             unset($card);
             return admin_request_pack('Categories', 'update', 'Homepage Categories', 'Homepage category cards', [
@@ -3164,6 +3167,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                     $card['image'] = $uploaded;
                 } else {
                     $card['image'] = clean_image($card['image'] ?? '');
+                }
+
+                $uploadedHero = admin_handle_image_upload("category_hero_image_file_" . $idx, '');
+                if ($uploadedHero !== '') {
+                    $card['hero_image'] = $uploadedHero;
+                } else {
+                    $card['hero_image'] = clean_image($card['hero_image'] ?? '');
                 }
             }
             $content['category_cards'] = $cards;
@@ -4441,6 +4451,8 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                     <?php admin_input('category_cards[' . $index . '][image]', 'Image URL', $card['image'], 'text', '', 'Paste URL or upload below'); ?>
                     <?php admin_input('category_image_file_' . $index, 'Upload Image', '', 'file', 'accept="image/*"'); ?>
                     <?php admin_input('category_cards[' . $index . '][alt]', 'Image Alt', $card['alt']); ?>
+                    <?php admin_input('category_cards[' . $index . '][hero_image]', 'Hero Image URL', $card['hero_image'], 'text', '', 'Used on the category page hero'); ?>
+                    <?php admin_input('category_hero_image_file_' . $index, 'Upload Hero Image', '', 'file', 'accept="image/*"'); ?>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -6854,6 +6866,8 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
         <?php admin_input('category_cards[__CARD_INDEX__][image]', 'Image URL', '', 'text', '', 'Paste URL or upload below'); ?>
         <?php admin_input('category_image_file___CARD_INDEX__', 'Upload Image', '', 'file', 'accept="image/*"'); ?>
         <?php admin_input('category_cards[__CARD_INDEX__][alt]', 'Image Alt', ''); ?>
+        <?php admin_input('category_cards[__CARD_INDEX__][hero_image]', 'Hero Image URL', '', 'text', '', 'Used on the category page hero'); ?>
+        <?php admin_input('category_hero_image_file___CARD_INDEX__', 'Upload Hero Image', '', 'file', 'accept="image/*"'); ?>
       </div>
     </div>
   </template>

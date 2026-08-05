@@ -634,67 +634,10 @@ function product_option_data(array $product): array
                 }
             }
         }
-        
-        // Fallback if no per-product variations were set yet: build the metal
-        // selector from the Attributes profile metals, carrying their configured
-        // price so the live-price engine can recompute when the customer switches.
-        // Do NOT force $matrixShapes here — the product's own diamondShapes (set at
-        // upload) must drive the shape picker, not a hardcoded default.
-        if ($metalOptions === [] && $profileMetalOptions !== []) {
-            // Band / claw options shared by every profile metal, so the live-price
-            // engine can re-render them (an empty data-band-options would wipe the
-            // server-rendered band cards on load). Only the merchant's own band
-            // options are offered — a category with none simply shows none.
-            $fallbackBandSource = $profileBandClawOptions;
-            $fallbackBandOptions = [];
-            $fallbackBandSlugs = [];
-            foreach ($fallbackBandSource as $fb) {
-                $fbLabel = clean_string((string) ($fb['label'] ?? ''), 120);
-                if ($fbLabel === '') {
-                    continue;
-                }
-                $fbValue = clean_string((string) ($fb['value'] ?? ''), 80);
-                if ($fbValue === '') {
-                    $fbValue = content_slug($fbLabel, 'band');
-                }
-                $fbSurcharge = max(0, (float) ($fb['surcharge'] ?? 0));
-                $fallbackBandOptions[] = [
-                    'value' => $fbValue,
-                    'label' => $fbLabel,
-                    'description' => $fbSurcharge > 0 ? '+' . money_format($fbSurcharge) : '',
-                    'surcharge' => $fbSurcharge,
-                    'image' => clean_image((string) ($fb['image'] ?? '')),
-                ];
-                $fallbackBandSlugs[] = $fbValue;
-            }
 
-            foreach ($profileMetalOptions as $profMetal) {
-                $profMetalValue = clean_string((string) ($profMetal['value'] ?? ''), 80);
-                $profMetalLabel = clean_string((string) ($profMetal['label'] ?? ''), 120);
-                if ($profMetalValue === '' || $profMetalLabel === '') {
-                    continue;
-                }
-                $profMetalPrice = (float) ($profMetal['price'] ?? 0);
-                $metalOptions[] = [
-                    'value' => $profMetalValue,
-                    'label' => $profMetalLabel,
-                    'description' => clean_multiline((string) ($profMetal['description'] ?? ''), 220),
-                    'base_price' => $profMetalPrice,
-                    'shapes' => [],
-                    'sizes' => [],
-                    'bands' => $fallbackBandSlugs,
-                    'band_options' => $fallbackBandOptions,
-                    'metal_desc' => clean_multiline((string) ($profMetal['description'] ?? ''), 220),
-                    'gallery' => $gallery,
-                    'features' => [],
-                    'color_hex' => clean_string((string) ($profMetal['color_hex'] ?? ''), 7),
-                ];
-            }
-        }
-
-        // No product variations and no profile metals means the merchant has not
-        // configured this category's metals yet. Show nothing rather than
-        // inventing metals or a band that the merchant never created.
+        // Metals come only from the metals ticked on this product. A product with
+        // none ticked offers none — falling back to the category's whole metal
+        // list here made every unticked product look available in every metal.
     }
 
     $availableShapes = available_diamond_shapes();

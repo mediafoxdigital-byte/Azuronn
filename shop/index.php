@@ -209,6 +209,24 @@ $isSearch = $filters['q'] !== '';
 $showPremiumHero = true;
 $premiumHeroCategory = $filters['type'] !== '' ? $filters['type'] : ($isSearch ? 'Search' : 'Shop');
 
+// The category card behind this listing, when the merchant created one. Its
+// title, "Other Text" and image drive the hero so a new category gets a real
+// hero instead of the generic "Shop Jewellery" one. Matched on the canonical
+// type so /shop/?type=Earring finds a card titled "earrings".
+$heroCategoryCard = null;
+if ($filters['type'] !== '' && !$showRingJourney) {
+    foreach (site_content()['category_cards'] as $shopCard) {
+        $shopCardTitle = trim((string) ($shopCard['title'] ?? ''));
+        if ($shopCardTitle === '' || catalog_category_ring_section($shopCardTitle) !== '') {
+            continue;
+        }
+        if (strcasecmp(catalog_canonical_type($shopCardTitle), $filters['type']) === 0) {
+            $heroCategoryCard = $shopCard;
+            break;
+        }
+    }
+}
+
 $premiumHeroBgs = [
     'Ring' => '/assets/uploads/ring_collection_bg.png',
     'Earring' => '/assets/uploads/earring_collection_bg.png',
@@ -220,6 +238,14 @@ $premiumHeroBgs = [
     'Shop' => '/assets/uploads/shop_collection_bg.png',
 ];
 $premiumBgUrl = $premiumHeroBgs[$premiumHeroCategory] ?? $premiumHeroBgs['Shop'];
+// The category's own hero image wins outright. Without one the built-in
+// collection background stands, falling back to the generic shop image. The
+// card image is deliberately not used here — it is the small square thumbnail
+// for the homepage strip, not a wide hero backdrop.
+$heroCardImage = clean_image((string) ($heroCategoryCard['hero_image'] ?? ''));
+if ($heroCardImage !== '') {
+    $premiumBgUrl = $heroCardImage;
+}
 
 if ($showRingJourney && $filters['style'] !== '') {
     $filteredProducts = array_values(array_filter($filteredProducts, static function (array $product) use ($filters): bool {
@@ -386,6 +412,12 @@ if ($showRingJourney) {
     $heroTitle = $collectionMeta[$filters['type']]['title'];
     $heroDescription = $collectionMeta[$filters['type']]['description'];
     $breadcrumbLabel = $heroTitle;
+} elseif ($heroCategoryCard !== null) {
+    // A merchant-created category with no built-in copy: its own name is the
+    // hero title, so the page stops reading "Shop Jewellery".
+    $heroCardTitle = trim((string) ($heroCategoryCard['title'] ?? ''));
+    $heroTitle = $heroCardTitle === strtolower($heroCardTitle) ? ucwords($heroCardTitle) : $heroCardTitle;
+    $breadcrumbLabel = $heroTitle;
 } elseif ($filters['q'] !== '' && isset($namedQueryCollections[$normalizedQuery])) {
     $heroTitle = $namedQueryCollections[$normalizedQuery]['title'];
     $heroDescription = $namedQueryCollections[$normalizedQuery]['description'];
@@ -394,6 +426,13 @@ if ($showRingJourney) {
     $heroTitle = 'Search Results for "' . $filters['q'] . '"';
     $heroDescription = 'Explore the pieces matching your search and refine the results with the available filters.';
     $breadcrumbLabel = 'Search';
+}
+
+// The category's "Other Text" is the merchant's own hero copy, so it overrides
+// whatever default description the branches above picked.
+$heroCardSub = clean_string((string) ($heroCategoryCard['sub'] ?? ''), 400);
+if ($heroCardSub !== '') {
+    $heroDescription = $heroCardSub;
 }
 
 $pageTitle = $heroTitle . ' - ' . SITE_NAME;

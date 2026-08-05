@@ -746,8 +746,11 @@ function available_diamond_shapes(): array
         if ($slug === '') {
             continue;
         }
-        $label = trim((string) ($item['label'] ?? ''));
-        $shapes[$slug] = $label !== '' ? $label : $name;
+        // The shape's own name ("Round", "Emerald") is what every caller means by
+        // a shape label. `label` is the marketing tagline shown on the homepage
+        // card ("Classic Brilliance"), so using it here renamed every shape in
+        // the admin selects, the shop filter and the search index.
+        $shapes[$slug] = $name;
     }
 
     // Seed defaults only when nothing real exists yet.
@@ -1108,6 +1111,47 @@ function product_price_value(array $product): float
     return (float) $normalized;
 }
 
+/**
+ * Diamond shapes a product actually offers, as stored.
+ *
+ * Products whose category prices per metal keep their shapes on each metal
+ * variation rather than in the product-level list, so a filter that reads only
+ * `diamondShapes` never matches them. Mirrors the product page's own order:
+ * active metal variations first, product-level list as the fallback.
+ *
+ * @return list<string>
+ */
+function product_stored_diamond_shapes(array $product): array
+{
+    $shapes = [];
+
+    foreach ((array) ($product['metal_variations'] ?? []) as $variation) {
+        if (!is_array($variation) || empty($variation['active']) || trim((string) ($variation['metal'] ?? '')) === '') {
+            continue;
+        }
+
+        foreach ((array) ($variation['shapes'] ?? []) as $shape) {
+            $shape = trim((string) $shape);
+            if ($shape !== '' && !in_array($shape, $shapes, true)) {
+                $shapes[] = $shape;
+            }
+        }
+    }
+
+    if ($shapes !== []) {
+        return $shapes;
+    }
+
+    foreach ((array) ($product['diamondShapes'] ?? []) as $shape) {
+        $shape = trim((string) $shape);
+        if ($shape !== '' && !in_array($shape, $shapes, true)) {
+            $shapes[] = $shape;
+        }
+    }
+
+    return $shapes;
+}
+
 function filter_catalog_products(array $products, array $filters): array
 {
     $type = sanitize_text((string) ($filters['type'] ?? ''));
@@ -1137,7 +1181,7 @@ function filter_catalog_products(array $products, array $filters): array
         }
 
         $shapeNames = [];
-        foreach ((array) ($product['diamondShapes'] ?? []) as $shapeKey) {
+        foreach (product_stored_diamond_shapes($product) as $shapeKey) {
             $shapeKey = (string) $shapeKey;
             $shapeNames[] = available_diamond_shapes()[$shapeKey] ?? $shapeKey;
         }
@@ -1162,7 +1206,12 @@ function filter_catalog_products(array $products, array $filters): array
             $requestedShape = strtolower(trim($shape));
             $shapeValues = [];
 
-            foreach ((array) ($product['diamondShapes'] ?? []) as $shapeKey) {
+            // Shape matching uses ONLY shapes actually stored on the product. The
+            // option-data fallback is intentionally NOT consulted here: it injects
+            // default shapes that would make every ring match every shape filter.
+            // Resolution order mirrors the product page: per-metal shapes from the
+            // active metal variations first, then the product-level list.
+            foreach (product_stored_diamond_shapes($product) as $shapeKey) {
                 $normalizedShape = strtolower(trim((string) $shapeKey));
                 if ($normalizedShape === '') {
                     continue;
@@ -1173,11 +1222,6 @@ function filter_catalog_products(array $products, array $filters): array
                     $shapeValues[] = strtolower($availableShapes[$normalizedShape]);
                 }
             }
-
-            // Shape matching uses ONLY the product's stored diamond shapes (the
-            // shapes chosen at upload / in the Attributes override). The option-data
-            // fallback is intentionally NOT consulted here: it injects default shapes
-            // that would make every ring match every shape filter.
 
             $shapeValues = array_values(array_unique(array_filter($shapeValues, static fn (string $value): bool => $value !== '')));
             if (!in_array($requestedShape, $shapeValues, true)) {
@@ -1325,8 +1369,11 @@ function render_shop_listing_card(array $product): void
         $swatchItems[] = ['tone' => $cardToneFor($label, $tone), 'hex' => $hex];
     };
 
-    if (!empty($cardOptions['is_matrix_product']) && !empty($cardOptions['metal_options'])) {
-        foreach ((array) $cardOptions['metal_options'] as $metalOption) {
+    // A matrix product's dots are its ticked metals and nothing else. Falling
+    // through to the colour list here showed every catalogue colour on a product
+    // that had no metal ticked, contradicting its own product page.
+    if (!empty($cardOptions['is_matrix_product'])) {
+        foreach ((array) ($cardOptions['metal_options'] ?? []) as $metalOption) {
             $pushSwatch((string) ($metalOption['label'] ?? ''), (string) ($metalOption['color_hex'] ?? ''), '');
             if (count($swatchItems) >= 6) {
                 break;
@@ -1341,9 +1388,9 @@ function render_shop_listing_card(array $product): void
         }
     }
 
-    // Last resort: a product with neither metals nor colour choices still gets the
+    // Last resort: a non-matrix product with no colour choices still gets the
     // single ball it had before, coloured by its base colour.
-    if ($swatchItems === [] && (string) ($product['color'] ?? '') !== '') {
+    if ($swatchItems === [] && empty($cardOptions['is_matrix_product']) && (string) ($product['color'] ?? '') !== '') {
         $pushSwatch((string) $product['color'], '', '');
     }
 

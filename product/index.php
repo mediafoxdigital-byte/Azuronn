@@ -448,6 +448,7 @@ foreach ((array) ($options['delivery_options'] ?? []) as $do) {
           <?php endif; ?>
 
           <?php if ($isMatrixProduct): ?>
+          <?php if (!empty($options['metal_options'])): ?>
           <div class="pp-opt">
             <div class="pp-opt-head"><span class="pp-opt-label">Metal</span><span class="pp-opt-value"><?= h($selectedMetalLabel) ?></span></div>
             <div class="pp-grid-opt">
@@ -465,6 +466,7 @@ foreach ((array) ($options['delivery_options'] ?? []) as $do) {
               <?php endforeach; ?>
             </div>
           </div>
+          <?php endif; ?>
 
             <?php if ($isRingProduct): ?>
             <div class="pp-opt">

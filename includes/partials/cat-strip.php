@@ -23,10 +23,13 @@
           <?php foreach ($categoryCards as $index => $card): ?>
             <?php
               // Prefer the card's stored URL so cards like "Engagement Rings" can
-              // link to a ring section; fall back to the legacy type-by-title link.
+              // link to a ring section. Merchant-created categories are stored with
+              // '#' because the Categories admin has no URL field, so treat that as
+              // "no link" too and route them to their own shop listing.
               $cardHref = trim((string) ($card['url'] ?? ''));
-              if ($cardHref === '') {
-                  $cardHref = '/shop/?type=' . urlencode($card['title'] ?? '');
+              if ($cardHref === '' || $cardHref === '#') {
+                  $cardType = catalog_canonical_type(trim((string) ($card['title'] ?? '')));
+                  $cardHref = $cardType !== '' ? '/shop/?type=' . urlencode($cardType) : '/shop/';
               }
             ?>
             <a

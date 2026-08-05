@@ -143,35 +143,47 @@
               </div>
             </div>
           <?php elseif (strtoupper($item['label']) === 'JEWELLERY' || strtoupper($item['label']) === 'JEWELRY'): ?>
-            <?php 
-              $jewelleryCategories = [
-                [
-                  'label' => 'NECKLACES',
-                  'url' => '/shop/?type=Necklace',
-                  'image' => '/assets/uploads/necklace_collection_bg.png'
-                ],
-                [
-                  'label' => 'PENDANTS',
-                  'url' => '/shop/?type=Pendant',
-                  'image' => '/assets/uploads/pendant_collection_bg.png'
-                ],
-                [
-                  'label' => 'EARRINGS',
-                  'url' => '/shop/?type=Earring',
-                  'image' => '/assets/uploads/earring_collection_bg.png'
-                ],
-                [
-                  'label' => 'BRACELETS & BANGLES',
-                  'url' => '/shop/?type=Bracelet',
-                  'image' => '/assets/uploads/bracelet_collection_bg.png'
-                ],
-                [
-                  'label' => 'MANGALSUTRA',
-                  'url' => '/shop/?type=Mangalsutra',
-                  'image' => '/assets/uploads/mangalsutra_collection_bg.png'
-                ]
+            <?php
+              // The Jewellery menu is every category the merchant actually has
+              // except the two protected ring categories, which have their own
+              // nav items. Built from category_cards so a newly created category
+              // appears here with no code change.
+              $jewelleryFallbackImages = [
+                'necklace' => '/assets/uploads/necklace_collection_bg.png',
+                'pendant' => '/assets/uploads/pendant_collection_bg.png',
+                'earring' => '/assets/uploads/earring_collection_bg.png',
+                'bracelet' => '/assets/uploads/bracelet_collection_bg.png',
+                'mangalsutra' => '/assets/uploads/mangalsutra_collection_bg.png',
               ];
+              $jewelleryCategories = [];
+              foreach (site_content()['category_cards'] as $jCard) {
+                  $jTitle = trim((string) ($jCard['title'] ?? ''));
+                  if ($jTitle === '' || catalog_category_ring_section($jTitle) !== '') {
+                      continue;
+                  }
+
+                  $jType = catalog_canonical_type($jTitle);
+                  // Merchant-created categories are stored with '#' because the
+                  // Categories admin has no URL field, so route those to their
+                  // own shop listing.
+                  $jUrl = trim((string) ($jCard['url'] ?? ''));
+                  if ($jUrl === '' || $jUrl === '#') {
+                      $jUrl = $jType !== '' ? '/shop/?type=' . urlencode($jType) : '/shop/';
+                  }
+
+                  $jImage = clean_image((string) ($jCard['image'] ?? ''));
+                  if ($jImage === '') {
+                      $jImage = $jewelleryFallbackImages[strtolower($jType)] ?? '/assets/uploads/shop_collection_bg.png';
+                  }
+
+                  $jewelleryCategories[] = [
+                    'label' => strtoupper($jTitle),
+                    'url' => $jUrl,
+                    'image' => $jImage,
+                  ];
+              }
             ?>
+            <?php if ($jewelleryCategories !== []): ?>
             <div class="mega-drop mega-drop-wide">
               <div class="mega-inner luxury-mega-menu jewellery-grid-menu" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; padding: 32px 36px;">
                 <?php foreach ($jewelleryCategories as $jcat): ?>
@@ -184,6 +196,7 @@
                 <?php endforeach; ?>
               </div>
             </div>
+            <?php endif; ?>
           <?php elseif (!empty($item['columns']) || !empty($item['feature']['title'])): ?>
             <div class="mega-drop <?= !empty($item['compact']) ? 'mega-drop-sm' : '' ?> mega-drop-wide">
               <?php 
