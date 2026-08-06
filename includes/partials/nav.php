@@ -1,14 +1,31 @@
 <?php $navItems = site_content()['navigation']['items']; ?>
-<nav class="mnav luxury-mnav" data-mobile-nav style="background:transparent; border:none; padding:0; width:100%;">
+<?php
+  // The burger and the scrim sit OUTSIDE <nav> on purpose: below 1025px the nav
+  // itself becomes an off-canvas panel that is translated off-screen, so a
+  // toggle nested inside it would be unreachable while closed. Both are
+  // display:none at desktop widths (see responsive.css) and therefore have no
+  // effect on the laptop/desktop header.
+?>
+<button class="mnav-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-nav" data-mobile-nav-toggle>
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+<div class="mnav-scrim" data-mobile-nav-scrim></div>
+<nav id="primary-nav" class="mnav luxury-mnav" data-mobile-nav style="background:transparent; border:none; padding:0; width:100%;">
+  <div class="mnav-drawer-head" aria-hidden="true">
+    <img src="<?php e(resolve_link(SITE_LOGO_PATH)); ?>" alt="<?php e(SITE_NAME . ' Logo'); ?>">
+  </div>
+  <form class="mnav-drawer-search" action="<?php e(resolve_link('/shop/')); ?>" method="get" role="search">
+    <input type="search" name="q" placeholder="Search jewellery..." autocomplete="off" aria-label="Search catalogue">
+    <button type="submit" aria-label="Search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
+  </form>
   <div class="d-flex-nav" style="width:100%; display:flex; justify-content:center;">
     <div class="luxury-mnav-pill" style="box-shadow:none; background:transparent; padding:0; border:none;">
-      <button class="mnav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-mobile-nav-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
 
-      
+
       <?php
       foreach ($navItems as $index => $item):
         $navLabelUpper = strtoupper((string) ($item['label'] ?? ''));
@@ -265,5 +282,14 @@
         </div>
       <?php endforeach; ?>
     </div>
+  </div>
+  <?php
+    // Links the compact tablet/phone header no longer has room for. Hidden at
+    // desktop widths, so this adds nothing to the laptop layout.
+  ?>
+  <div class="mnav-drawer-foot">
+    <a href="<?php e(resolve_link('/appointment/')); ?>"><i class="far fa-calendar-alt" aria-hidden="true"></i><span>Request an appointment</span></a>
+    <a href="<?php e(resolve_link('/wishlist/')); ?>"><i class="far fa-heart" aria-hidden="true"></i><span>Wishlist</span></a>
+    <a href="<?php e(resolve_link('/account/')); ?>"><i class="far fa-user" aria-hidden="true"></i><span>My account</span></a>
   </div>
 </nav>

@@ -6034,6 +6034,59 @@ nav.mnav .d-flex-nav {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.pp-addon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.pp-addon-grid .option-card-addon {
+  gap: 2px;
+  padding: 12px 10px;
+  border-radius: 14px;
+  justify-items: center;
+  align-content: center;
+  text-align: center;
+}
+
+.pp-addon-grid .option-card-addon-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #122018;
+}
+
+.pp-addon-grid .option-card-addon-badge {
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 700;
+  color: #7a6242;
+}
+
+.pp-addon-grid .option-card-addon.is-selected {
+  border-color: #1a2b23;
+  background: #fff;
+}
+
+.pp-addon-grid--wide {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pp-addon-grid--wide .option-card-addon {
+  padding: 16px 14px;
+  border-radius: 16px;
+}
+
+.pp-addon-grid--wide .option-card-addon.is-selected {
+  background: #1a2b23;
+  border-color: #1a2b23;
+}
+
+.pp-addon-grid--wide .option-card-addon.is-selected .option-card-addon-name,
+.pp-addon-grid--wide .option-card-addon.is-selected .option-card-addon-badge {
+  color: #fff;
+}
+
 .product-shell>.container {
   width: min(1540px, calc(100vw - 24px));
   max-width: min(1540px, calc(100vw - 24px));

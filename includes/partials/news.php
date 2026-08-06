@@ -1,6 +1,6 @@
 <?php $news = site_content()['news']; ?>
 <section class="news-section" id="azuronn-news" style="position: relative; max-width: 1400px; margin: 0 auto; padding: 60px 20px;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+  <div class="news-head-row" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
     <div class="sec-hdr-premium" style="margin-bottom: 0; text-align: center; width: 100%;">
       <span class="shop-style-kicker">Latest Updates</span>
       <div class="sec-hdr-title-row" style="justify-content: center;">
@@ -10,7 +10,7 @@
       </div>
       <div style="color: #666; font-size: 0.95rem; margin-top: 15px;">Discover stories, insights, and inspiration from the world of fine jewellery.</div>
     </div>
-    <div style="position: absolute; right: 20px; top: 120px;">
+    <div class="news-viewall" style="position: absolute; right: 20px; top: 120px;">
       <a href="<?= h(resolve_link('/news/')) ?>" style="display: inline-flex; align-items: center; color: #c9a96e; border: 1px solid rgba(200, 169, 110, 0.5); padding: 12px 24px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; transition: all 0.3s ease;">
         VIEW ALL NEWS <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
       </a>

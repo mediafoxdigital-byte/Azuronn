@@ -45,6 +45,7 @@ $headerSearchIndexJson = json_encode(
 <link rel="stylesheet" href="<?php e(asset_url('assets/css/style.css')); ?>">
 <?php if (isset($bodyClass) && $bodyClass === 'product-page'): ?><link rel="stylesheet" href="<?php e(asset_url('assets/css/product.css')); ?>"><?php endif; ?>
 <?php if (isset($bodyClass) && $bodyClass === 'shop-page'): ?><link rel="stylesheet" href="<?php e(asset_url('assets/css/shop-listing.css')); ?>"><?php endif; ?>
+<link rel="stylesheet" href="<?php e(asset_url('assets/css/responsive.css')); ?>">
 </head>
 <body class="<?php e(isset($bodyClass) && is_string($bodyClass) ? $bodyClass : ''); ?>">
 
@@ -52,6 +53,13 @@ $headerSearchIndexJson = json_encode(
 .header-luxury-wrapper, .site-header, #main-site-header, .promo-strip {
     background: #ffffff !important;
 }
+
+/* Everything below is the DESKTOP header/mega-menu layout. It is gated behind
+   min-width:1025px because the !important declarations (static positioning,
+   fixed paddings, absolutely-positioned mega panels) would otherwise beat the
+   tablet/mobile rules in responsive.css. Tablets and phones get their own
+   layout there; desktop output is byte-identical to before. */
+@media (min-width: 1025px) {
 
 /* Ensure navigation parents do not trap absolute positioning or create offset containing blocks */
 .mnav-item,
@@ -354,6 +362,8 @@ html, body, .header-luxury-wrapper, .new-header-overrides {
     min-width: 154px !important;
     white-space: nowrap !important;
 }
+
+} /* end @media (min-width: 1025px) — desktop header layout */
 </style>
 
 <div class="header-luxury-wrapper new-header-overrides" style="background:#ffffff !important;">
@@ -410,7 +420,7 @@ html, body, .header-luxury-wrapper, .new-header-overrides {
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4-4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </a>
             
-            <a href="<?php e(resolve_link('/cart/')); ?>" class="header-cart-link" style="background:#11261f; color:#fff; border-radius:30px; padding:8px 18px; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; font-family:var(--sans); font-weight:700; font-size:15px; margin-left: 5px;">
+            <a href="<?php e(resolve_link('/cart/')); ?>" class="header-cart-link" data-cart-count="<?php e((string) $headerCart['count']); ?>" style="background:#11261f; color:#fff; border-radius:30px; padding:8px 18px; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; font-family:var(--sans); font-weight:700; font-size:15px; margin-left: 5px;">
               <i class="fas fa-shopping-bag" style="color: #c9a96e; font-size: 18px;"></i>
               <span><?php e($headerCart['total_label']); ?> (<?php e((string) $headerCart['count']); ?>)</span>
             </a>
@@ -430,6 +440,15 @@ html, body, .header-luxury-wrapper, .new-header-overrides {
     if (!header || !placeholder) return;
     
     function checkHeaderScroll() {
+      // Sticky shrink is a desktop-only behaviour; the tablet/mobile header is a
+      // compact single row already and re-flowing it on scroll causes jumps.
+      if (!window.matchMedia('(min-width: 1025px)').matches) {
+        if (header.classList.contains('is-sticky')) {
+          header.classList.remove('is-sticky');
+          placeholder.style.height = '0px';
+        }
+        return;
+      }
       var scrollY = window.pageYOffset || document.documentElement.scrollTop;
       if (scrollY > 185) {
         if (!header.classList.contains('is-sticky')) {
@@ -445,6 +464,10 @@ html, body, .header-luxury-wrapper, .new-header-overrides {
     }
     window.addEventListener('scroll', checkHeaderScroll, { passive: true });
     window.addEventListener('resize', function() {
+      if (!window.matchMedia('(min-width: 1025px)').matches) {
+        checkHeaderScroll();
+        return;
+      }
       if (header.classList.contains('is-sticky')) {
         header.classList.remove('is-sticky');
         placeholder.style.height = header.offsetHeight + 'px';

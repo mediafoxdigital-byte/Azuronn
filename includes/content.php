@@ -519,6 +519,49 @@ function clean_product_choice_list(array $items, string $type): array
     return $clean;
 }
 
+/**
+ * Priced add-on option groups, keyed by the slug used in storage, POST names and
+ * DOM ids. Each group works exactly like Band / Claw: the merchant defines the
+ * labels once per category in the Attributes studio, then ticks them per metal
+ * on a product with a £ surcharge that raises the price when the shopper picks
+ * it. Unlike Band / Claw these are NOT gated on ring-ness — any category can use
+ * any group, and a group with no labels renders nothing.
+ *
+ * `display` picks the storefront layout: 'chips' is a compact grid, 'wide' is
+ * full-width buttons.
+ */
+function catalog_addon_groups(): array
+{
+    return [
+        'tcw' => ['label' => 'Total Carat Weight of Lab Grown Diamonds', 'display' => 'chips'],
+        'carat_weight' => ['label' => 'Carat Weight of Lab Grown Diamonds', 'display' => 'chips'],
+        'chain_length' => ['label' => 'Chain Length', 'display' => 'wide'],
+    ];
+}
+
+/**
+ * Per-metal add-on rows (active + label + surcharge) for one group, as stored on
+ * a metal variation. Shared by band_options and every add-on group so they can
+ * never drift apart.
+ */
+function clean_metal_addon_option_list(array $rows): array
+{
+    $clean = [];
+    foreach ($rows as $row) {
+        if (!is_array($row) || !clean_bool($row['active'] ?? false)) {
+            continue;
+        }
+
+        $surchargeRaw = preg_replace('/[^0-9.]/', '', (string) ($row['surcharge'] ?? '0')) ?? '0';
+        $clean[] = [
+            'active' => true,
+            'label' => clean_string((string) ($row['label'] ?? ''), 120),
+            'surcharge' => round(max(0, (float) $surchargeRaw), 2),
+        ];
+    }
+
+    return $clean;
+}
 
 function clean_attribute_profile_item(array $item, string $type = ''): array
 {
@@ -559,6 +602,14 @@ function clean_attribute_profile_item(array $item, string $type = ''): array
         'option_size_choices' => clean_product_choice_list((array) ($item['option_size_choices'] ?? []), 'choice-size'),
         'option_metal_options' => clean_product_choice_list((array) ($item['option_metal_options'] ?? []), 'option-detail'),
         'option_band_claw_metal_options' => clean_product_choice_list((array) ($item['option_band_claw_metal_options'] ?? []), 'option-detail'),
+        'option_addon_groups' => (static function (array $groups): array {
+            $clean = [];
+            foreach (array_keys(catalog_addon_groups()) as $groupKey) {
+                $clean[$groupKey] = clean_product_choice_list((array) ($groups[$groupKey] ?? []), 'option-detail');
+            }
+
+            return $clean;
+        })((array) ($item['option_addon_groups'] ?? [])),
         'option_delivery_options' => clean_product_choice_list((array) ($item['option_delivery_options'] ?? []), 'option-delivery'),
         'selector_cards' => clean_items((array) ($item['selector_cards'] ?? []), static function (array $card, int $index): array {
             $label = clean_string((string) ($card['label'] ?? ''), 120);
@@ -637,21 +688,13 @@ function clean_product_metal_variation_item(array $item, int $index = 0): array
         }
     }
     
-    $bandOptions = [];
-    foreach ((array)($item['band_options'] ?? []) as $band) {
-        $bActive = clean_bool($band['active'] ?? false);
-        if ($bActive) {
-            $bLabel = clean_string((string) ($band['label'] ?? ''), 120);
-            $bSurchargeRaw = preg_replace('/[^0-9.]/', '', (string) ($band['surcharge'] ?? '0')) ?? '0';
-            $bSurcharge = round(max(0, (float) $bSurchargeRaw), 2);
-            $bandOptions[] = [
-                'active' => true,
-                'label' => $bLabel,
-                'surcharge' => $bSurcharge,
-            ];
-        }
+    $bandOptions = clean_metal_addon_option_list((array) ($item['band_options'] ?? []));
+
+    $addonGroups = [];
+    foreach (array_keys(catalog_addon_groups()) as $groupKey) {
+        $addonGroups[$groupKey] = clean_metal_addon_option_list((array) ($item['addon_groups'][$groupKey] ?? []));
     }
-    
+
     return [
         'active' => $active,
         'inventory_tracked' => $inventoryTracked,
@@ -667,6 +710,7 @@ function clean_product_metal_variation_item(array $item, int $index = 0): array
         'shapes' => $shapes,
         'sizes' => $sizes,
         'band_options' => $bandOptions,
+        'addon_groups' => $addonGroups,
     ];
 }
 
@@ -831,6 +875,24 @@ function clean_newsletter_subscriber_item(array $item, int $index = 0): array
     ];
 }
 
+/**
+ * Add-on selections/labels on a stored order line, keyed by group slug. Unknown
+ * keys are dropped so a crafted order payload cannot smuggle arbitrary fields.
+ */
+function clean_cart_addon_map(mixed $value): array
+{
+    $value = is_array($value) ? $value : [];
+    $clean = [];
+    foreach (array_keys(catalog_addon_groups()) as $groupKey) {
+        $entry = clean_string((string) ($value[$groupKey] ?? ''), 120);
+        if ($entry !== '') {
+            $clean[$groupKey] = $entry;
+        }
+    }
+
+    return $clean;
+}
+
 function clean_order_line_item(array $item, int $index = 0): array
 {
     return [
@@ -850,6 +912,8 @@ function clean_order_line_item(array $item, int $index = 0): array
         'metal_label' => clean_string($item['metal_label'] ?? '', 80),
         'band_claw_metal' => clean_string($item['band_claw_metal'] ?? '', 80),
         'band_claw_metal_label' => clean_string($item['band_claw_metal_label'] ?? '', 80),
+        'addon_selections' => clean_cart_addon_map($item['addon_selections'] ?? []),
+        'addon_labels' => clean_cart_addon_map($item['addon_labels'] ?? []),
         'delivery_option' => clean_string($item['delivery_option'] ?? '', 40),
         'delivery_label' => clean_string($item['delivery_label'] ?? '', 80),
         'delivery_surcharge' => clean_string($item['delivery_surcharge'] ?? '', 40),
@@ -1135,7 +1199,50 @@ function catalog_protected_categories(): array
             'url' => '/shop/?type=Ring&ring_category=wedding',
             'header_icon' => 'fas fa-ring',
         ],
+        // Pendant and Earrings are fixed categories too, but they are NOT ring
+        // sections: they carry no ring_category and route through the ordinary
+        // /shop/?type= listing, so they still appear in the Jewellery menu.
+        'pendant' => [
+            'title' => 'Pendant',
+            'ring_category' => '',
+            'url' => '/shop/?type=Pendant',
+            'header_icon' => 'fas fa-award',
+        ],
+        'earrings' => [
+            'title' => 'Earrings',
+            'ring_category' => '',
+            'url' => '/shop/?type=Earring',
+            'header_icon' => 'far fa-dot-circle',
+        ],
     ];
+}
+
+/**
+ * The protected-category key a card title belongs to, or '' when the title is
+ * not a protected category. Ring sections resolve through their own taxonomy
+ * (so a legacy bare "Rings" card still upgrades into Engagement Rings); every
+ * other protected category matches on its canonical type, so "Earrings" and
+ * "Earring" both land on the same entry.
+ */
+function catalog_protected_category_key(string $title): string
+{
+    $section = catalog_category_ring_section($title);
+    if ($section !== '') {
+        return $section;
+    }
+
+    $canonical = strtolower(catalog_canonical_type($title));
+    if ($canonical === '') {
+        return '';
+    }
+
+    foreach (catalog_protected_categories() as $key => $definition) {
+        if ($definition['ring_category'] === '' && strtolower(catalog_canonical_type($definition['title'])) === $canonical) {
+            return $key;
+        }
+    }
+
+    return '';
 }
 
 /**
@@ -1248,7 +1355,7 @@ function content_apply_protected_categories(array $cards): array
         if (!is_array($card)) {
             continue;
         }
-        $section = catalog_category_ring_section((string) ($card['title'] ?? ''));
+        $section = catalog_protected_category_key((string) ($card['title'] ?? ''));
         if ($section === '') {
             $rest[] = $card;
             continue;
@@ -1307,7 +1414,9 @@ function normalize_site_content(array $candidate): array
         }
         if ($legacyRing !== null) {
             foreach (catalog_protected_categories() as $section => $definition) {
-                if (isset($profiles[$definition['title']])) {
+                // Ring sections only — the non-ring protected categories never
+                // shared the legacy Rings profile and must not inherit it.
+                if ($definition['ring_category'] === '' || isset($profiles[$definition['title']])) {
                     continue;
                 }
                 $sectionProfile = $legacyRing;
@@ -1320,6 +1429,37 @@ function normalize_site_content(array $candidate): array
                 $sectionProfile['style_cards_sections'] = [$section => $sectionCards];
                 $profiles[$definition['title']] = $sectionProfile;
             }
+        }
+        $candidate['catalog_meta']['attribute_profiles'] = $profiles;
+    }
+
+    // Schema 4 adds Pendant and Earrings as protected categories with their own
+    // priced add-on groups. Seeding only fills a group that is still empty, so a
+    // merchant who already edited the labels keeps their list. Surcharges are
+    // per-metal and stay the merchant's to enter on each product.
+    if ((int) ($candidate['content_schema_version'] ?? 1) < 4) {
+        $profiles = is_array($candidate['catalog_meta']['attribute_profiles'] ?? null) ? $candidate['catalog_meta']['attribute_profiles'] : [];
+        $addonSeeds = [
+            'Pendant' => [
+                'tcw' => ['0.50tcw', '0.75tcw', '1.00tcw', '1.25tcw', '1.50tcw'],
+                'chain_length' => ['16" Chain', '18" Chain'],
+            ],
+            'Earring' => [
+                'carat_weight' => ['0.50ct', '0.75ct', '1.00ct', '1.25ct', '1.50ct'],
+            ],
+        ];
+        foreach ($addonSeeds as $profileType => $groups) {
+            $profile = is_array($profiles[$profileType] ?? null) ? $profiles[$profileType] : ['type' => $profileType];
+            foreach ($groups as $groupKey => $labels) {
+                if ((array) ($profile['option_addon_groups'][$groupKey] ?? []) !== []) {
+                    continue;
+                }
+                $profile['option_addon_groups'][$groupKey] = array_map(
+                    static fn (string $label): array => ['label' => $label],
+                    $labels
+                );
+            }
+            $profiles[$profileType] = $profile;
         }
         $candidate['catalog_meta']['attribute_profiles'] = $profiles;
     }
@@ -1354,7 +1494,7 @@ function normalize_site_content(array $candidate): array
     $heroDefaultImage = $defaults['hero']['image'] ?? '';
 
     return [
-        'content_schema_version' => 3,
+        'content_schema_version' => 4,
         'settings' => [
             'site_name' => clean_string($settingsInput['site_name'] ?? $settingsDefault['site_name'], 120),
             'site_tagline' => clean_string($settingsInput['site_tagline'] ?? $settingsDefault['site_tagline'], 160),

@@ -1258,6 +1258,15 @@ function admin_build_attribute_profile_from_post(string $type, array $existing =
         'option_size_choices' => $sizeChoices,
         'option_metal_options' => $postedList('option_metal_options') ?? ($existing['option_metal_options'] ?? []),
         'option_band_claw_metal_options' => admin_resolve_band_image_options($postedList('option_band_claw_metal_options')),
+        'option_addon_groups' => (static function (callable $postedList, array $existing): array {
+            $groups = [];
+            foreach (array_keys(catalog_addon_groups()) as $groupKey) {
+                $groups[$groupKey] = $postedList('option_addon_groups.' . $groupKey)
+                    ?? ($existing['option_addon_groups'][$groupKey] ?? []);
+            }
+
+            return $groups;
+        })($postedList, $existing),
         'option_delivery_options' => $existing['option_delivery_options'] ?? [],
         'selector_cards' => $selectorCards,
         'style_cards' => $styleCards,
@@ -1507,7 +1516,7 @@ function admin_request_snapshot_product(array $product): array
         if (!is_array($variation)) {
             continue;
         }
-        $metalSummaries[] = admin_request_remove_empty([
+        $metalSummaries[] = admin_request_remove_empty(array_merge([
             'Metal' => clean_string((string) ($variation['metal'] ?? ''), 120),
             'Price' => clean_string((string) ($variation['price'] ?? ''), 40),
             'Old Price' => clean_string((string) ($variation['old_price'] ?? ''), 40),
@@ -1521,7 +1530,14 @@ function admin_request_snapshot_product(array $product): array
             'Diamond Shapes' => array_values((array) ($variation['shapes'] ?? [])),
             'Sizes' => array_values((array) ($variation['sizes'] ?? [])),
             'Band / Claw Options' => admin_request_snapshot_band_options((array) ($variation['band_options'] ?? [])),
-        ]);
+        ], (static function (array $variation): array {
+            $rows = [];
+            foreach (catalog_addon_groups() as $groupKey => $groupMeta) {
+                $rows[$groupMeta['label'] . ' Options'] = admin_request_snapshot_band_options((array) ($variation['addon_groups'][$groupKey] ?? []));
+            }
+
+            return $rows;
+        })($variation)));
     }
     if ($metalSummaries !== []) {
         $snapshot['Metal Variations'] = $metalSummaries;
@@ -1641,12 +1657,18 @@ function admin_request_snapshot_order(array $order): array
 
 function admin_request_snapshot_attribute_profile(string $type, array $profile): array
 {
-    return admin_request_remove_empty([
+    $addonSnapshots = [];
+    foreach (catalog_addon_groups() as $groupKey => $groupMeta) {
+        $addonSnapshots[$groupMeta['label']] = admin_request_snapshot_option_details((array) ($profile['option_addon_groups'][$groupKey] ?? []), $groupMeta['label']);
+    }
+
+    return admin_request_remove_empty(array_merge([
         'Category' => $type,
         'Size Label' => clean_string((string) ($profile['option_size_label'] ?? ''), 80),
         'Size Choices' => array_values(array_map(static fn (array $item): string => clean_string((string) ($item['label'] ?? ''), 120), array_filter((array) ($profile['option_size_choices'] ?? []), 'is_array'))),
         'Metal Options' => admin_request_snapshot_option_details((array) ($profile['option_metal_options'] ?? []), 'Metal'),
         'Band / Claw Options' => admin_request_snapshot_option_details((array) ($profile['option_band_claw_metal_options'] ?? []), 'Band / Claw'),
+    ], $addonSnapshots, [
         'Delivery Options' => admin_request_snapshot_delivery_options((array) ($profile['option_delivery_options'] ?? [])),
         'Style Showcase' => admin_request_snapshot_category_cards(array_map(static fn (array $item): array => [
             'title' => $item['label'] ?? '',
@@ -1656,7 +1678,7 @@ function admin_request_snapshot_attribute_profile(string $type, array $profile):
             'title' => $item['label'] ?? '',
             'image' => $item['image'] ?? '',
         ], array_filter((array) ($profile['selector_cards'] ?? []), 'is_array'))),
-    ]);
+    ]));
 }
 
 function admin_request_snapshot_category_cards(array $cards): array
@@ -4825,6 +4847,10 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                           $pTypeIsRing = admin_product_type_is_ring((string) $pType);
                           $globalMetals = $pProfile['option_metal_options'] ?? [];
                           $globalBands = $pTypeIsRing ? ($pProfile['option_band_claw_metal_options'] ?? []) : [];
+                          $globalAddonGroups = [];
+                          foreach (array_keys(catalog_addon_groups()) as $addonGroupKey) {
+                              $globalAddonGroups[$addonGroupKey] = array_values((array) ($pProfile['option_addon_groups'][$addonGroupKey] ?? []));
+                          }
                           $globalShapes = $pTypeIsRing ? available_diamond_shapes() : [];
                           $isCurrentType = strtolower((string) $pType) === strtolower($catalogEditorType);
                           // Use a profile-type-specific key so multiple profile blocks never collide in POST
@@ -4981,6 +5007,46 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                           </div>
                         </div>
                         <?php endif; ?>
+
+                        <?php // Priced add-on groups, ungated: a group with no labels
+                              // in the category's Attributes profile renders nothing. ?>
+                        <?php foreach ($globalAddonGroups as $addonKey => $addonRows): ?>
+                          <?php if ($addonRows === []) { continue; } ?>
+                        <div class="admin-grid" style="margin-top:16px;">
+                          <div class="admin-field">
+                            <span style="font-weight:600; font-size:0.9em; margin-bottom:8px; display:block;"><?= admin_html(catalog_addon_groups()[$addonKey]['label']) ?></span>
+                            <div class="admin-band-addons-list" style="display:flex; flex-direction:column; gap:8px;" data-matrix-addons="<?= admin_html($addonKey) ?>-<?= $mIdx ?>">
+                              <?php foreach ($addonRows as $aIdx => $addonOpt):
+                                  $addonLabel = $addonOpt['label'] ?? '';
+
+                                  $savedAddon = null;
+                                  foreach (($existingVar['addon_groups'][$addonKey] ?? []) as $a) {
+                                      if (($a['label'] ?? '') === $addonLabel) {
+                                          $savedAddon = $a;
+                                          break;
+                                      }
+                                  }
+                                  $aActive = $savedAddon['active'] ?? false;
+                              ?>
+                                <div class="admin-band-addon-row" style="display:flex; align-items:center; justify-content:space-between; background:#f9fafb; padding:8px 12px; border-radius:6px; border:1px solid #e5e7eb;">
+                                  <label class="admin-checkbox" style="margin:0;">
+                                    <input type="checkbox" name="product[<?= admin_html($mvFieldKey) ?>][<?= $mIdx ?>][addon_groups][<?= admin_html($addonKey) ?>][<?= $aIdx ?>][active]" value="1" <?= $aActive ? 'checked' : '' ?>>
+                                    <span style="font-size:0.9em;"><?= admin_html($addonLabel) ?></span>
+                                    <input type="hidden" name="product[<?= admin_html($mvFieldKey) ?>][<?= $mIdx ?>][addon_groups][<?= admin_html($addonKey) ?>][<?= $aIdx ?>][label]" value="<?= admin_html($addonLabel) ?>">
+                                  </label>
+                                  <div class="admin-field-inline" style="margin:0;">
+                                    <span style="font-size:0.85em; color:#6b7280; margin-right:6px;">Add-on:</span>
+                                    <div class="admin-input-wrap">
+                                      <span class="admin-input-prefix">£</span>
+                                      <input type="number" name="product[<?= admin_html($mvFieldKey) ?>][<?= $mIdx ?>][addon_groups][<?= admin_html($addonKey) ?>][<?= $aIdx ?>][surcharge]" value="<?= admin_html((string) ($savedAddon['surcharge'] ?? '0')) ?>" step="0.01" min="0" style="width:80px; padding:4px 8px 4px 28px;">
+                                    </div>
+                                  </div>
+                                </div>
+                              <?php endforeach; ?>
+                            </div>
+                          </div>
+                        </div>
+                        <?php endforeach; ?>
 
                         </div> <!-- End admin-metal-details-wrap -->
                       </div>
@@ -5365,6 +5431,31 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                         <button class="admin-add" type="button" data-add-item data-template="tpl-product-detail-option">Add Metal Option</button>
                       </div>
                     </section>
+                  <?php // Priced add-on groups (carat weight, chain length, …). Not
+                        // ring-gated: every category can offer any of them, and a
+                        // group the merchant leaves empty renders nothing anywhere. ?>
+                  <?php foreach (catalog_addon_groups() as $addonKey => $addonMeta): ?>
+                    <?php $profileAddonRows = array_values($attributeProfile['option_addon_groups'][$addonKey] ?? []); ?>
+                    <section class="admin-field admin-field-full admin-attr-group">
+                      <span><span class="admin-attr-group-num"><?= str_pad((string) $adminAttrGroupNum++, 2, '0', STR_PAD_LEFT) ?></span><?= admin_html($addonMeta['label']) ?></span>
+                      <p class="admin-table-note">Name the choices here, then tick the ones each metal offers — with a surcharge — in the product editor. Leave empty to hide this section from <?= admin_html($attributeTypeFilter) ?> products.</p>
+                      <input type="hidden" name="product[sections_present][]" value="option_addon_groups.<?= admin_html($addonKey) ?>">
+                      <div class="admin-repeater" data-repeater data-index-token="__PRODUCT_ADDON_INDEX__" data-next-index="<?= count($profileAddonRows) ?>">
+                        <div class="admin-repeater-list">
+                          <?php foreach ($profileAddonRows as $optionIndex => $option): ?>
+                            <div class="admin-repeater-item compact-item">
+                              <div class="admin-item-head"><h4><?= admin_html($addonMeta['label']) ?> Option</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+                              <div class="admin-grid one-up">
+                                <?php admin_input('product[option_addon_groups][' . $addonKey . '][' . $optionIndex . '][label]', 'Label', $option['label'] ?? ''); ?>
+                              </div>
+                              <input type="hidden" name="product[option_addon_groups][<?= admin_html($addonKey) ?>][<?= $optionIndex ?>][value]" value="<?= admin_html($option['value'] ?? '') ?>">
+                            </div>
+                          <?php endforeach; ?>
+                        </div>
+                        <button class="admin-add" type="button" data-add-item data-template="tpl-product-addon-<?= admin_html($addonKey) ?>">Add <?= admin_html($addonMeta['label']) ?> Option</button>
+                      </div>
+                    </section>
+                  <?php endforeach; ?>
                   <?php if ($attributeTypeIsRing): ?>
                     <section class="admin-field admin-field-full admin-attr-group">
                       <span><span class="admin-attr-group-num"><?= str_pad((string) $adminAttrGroupNum++, 2, '0', STR_PAD_LEFT) ?></span>Band / Claw Metal Options</span>
@@ -6678,6 +6769,17 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
     </div>
   </template>
 
+  <?php foreach (catalog_addon_groups() as $tplAddonKey => $tplAddonMeta): ?>
+  <template id="tpl-product-addon-<?= admin_html($tplAddonKey) ?>">
+    <div class="admin-repeater-item compact-item">
+      <div class="admin-item-head"><h4><?= admin_html($tplAddonMeta['label']) ?> Option</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
+      <div class="admin-grid one-up">
+        <?php admin_input('product[option_addon_groups][' . $tplAddonKey . '][__PRODUCT_ADDON_INDEX__][label]', 'Label', ''); ?>
+      </div>
+    </div>
+  </template>
+  <?php endforeach; ?>
+
   <template id="tpl-product-band-option">
     <div class="admin-repeater-item compact-item">
       <div class="admin-item-head"><h4>Band / Claw Option</h4><button class="admin-remove" type="button" data-remove-item>Delete</button></div>
@@ -6972,10 +7074,55 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                 }).join('');
             }
         });
+
+        // Sync priced add-on groups. The per-metal field prefix differs per
+        // category (product[metal_variations_<type>][...]), so read it off the
+        // metal block's own "active" checkbox instead of assuming a name.
+        document.querySelectorAll('[data-matrix-addons]').forEach(list => {
+            const token = list.getAttribute('data-matrix-addons') || '';
+            const sep = token.lastIndexOf('-');
+            const groupKey = token.slice(0, sep);
+            const mIdx = token.slice(sep + 1);
+            const block = list.closest('.admin-metal-matrix-block');
+            const activeInput = block ? block.querySelector('input[name$="][active]"][type="checkbox"]') : null;
+            const prefixMatch = activeInput ? activeInput.name.match(/^product\[([^\]]+)\]/) : null;
+            const fieldKey = prefixMatch ? prefixMatch[1] : 'metal_variations';
+
+            const labels = Array.from(document.querySelectorAll(`input[name^="product[option_addon_groups][${groupKey}]"][name$="[label]"]`)).map(el => el.value.trim()).filter(v => v);
+
+            const state = {};
+            list.querySelectorAll('.admin-band-addon-row').forEach(row => {
+                const label = row.querySelector('input[type="hidden"]').value;
+                state[label] = {
+                    checked: row.querySelector('input[type="checkbox"]').checked,
+                    surcharge: row.querySelector('input[type="number"]').value,
+                };
+            });
+
+            list.innerHTML = labels.map((lbl, aIdx) => {
+                const saved = state[lbl] || { checked: false, surcharge: '0' };
+                return `
+                    <div class="admin-band-addon-row" style="display:flex; align-items:center; justify-content:space-between; background:#f9fafb; padding:8px 12px; border-radius:6px; border:1px solid #e5e7eb;">
+                        <label class="admin-checkbox" style="margin:0;">
+                            <input type="checkbox" name="product[${fieldKey}][${mIdx}][addon_groups][${groupKey}][${aIdx}][active]" value="1" ${saved.checked ? 'checked' : ''}>
+                            <span style="font-size:0.9em;">${lbl}</span>
+                            <input type="hidden" name="product[${fieldKey}][${mIdx}][addon_groups][${groupKey}][${aIdx}][label]" value="${lbl}">
+                        </label>
+                        <div class="admin-field-inline" style="margin:0;">
+                            <span style="font-size:0.85em; color:#6b7280; margin-right:6px;">Add-on:</span>
+                            <div class="admin-input-wrap">
+                                <span class="admin-input-prefix">£</span>
+                                <input type="number" name="product[${fieldKey}][${mIdx}][addon_groups][${groupKey}][${aIdx}][surcharge]" value="${saved.surcharge}" step="0.01" min="0" style="width:80px; padding:4px 8px 4px 28px;">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        });
     }
 
     document.addEventListener('input', (e) => {
-        if (e.target.matches('input[name^="product[option_size_choices]"], input[name^="product[option_band_claw_metal_options]"]')) {
+        if (e.target.matches('input[name^="product[option_size_choices]"], input[name^="product[option_band_claw_metal_options]"], input[name^="product[option_addon_groups]"]')) {
             adminSyncMetalMatrix();
         }
     });

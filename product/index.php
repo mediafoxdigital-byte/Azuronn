@@ -23,6 +23,13 @@ $requestSelection = [
     'diamond_shape' => $_POST['diamond_shape'] ?? $_GET['diamond_shape'] ?? $_GET['shape'] ?? '',
     'metal' => $_POST['metal'] ?? $_GET['metal'] ?? '',
     'band_claw_metal' => $_POST['band_claw_metal'] ?? $_GET['band_claw_metal'] ?? '',
+    'addons' => array_map(
+        static fn (mixed $value): string => clean_string((string) $value, 80),
+        array_intersect_key(
+            (array) ($_POST['addon'] ?? $_GET['addon'] ?? []),
+            catalog_addon_groups()
+        )
+    ),
     'delivery_option' => $_POST['delivery_option'] ?? $_GET['delivery_option'] ?? '',
 ];
 
@@ -48,6 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'diamond_shape' => clean_string($_POST['diamond_shape'] ?? '', 40),
                 'metal' => clean_string($_POST['metal'] ?? '', 40),
                 'band_claw_metal' => clean_string($_POST['band_claw_metal'] ?? '', 60),
+                'addons' => array_map(
+                    static fn (mixed $value): string => clean_string((string) $value, 80),
+                    array_intersect_key((array) ($_POST['addon'] ?? []), catalog_addon_groups())
+                ),
                 'delivery_option' => clean_string($_POST['delivery_option'] ?? '', 30),
             ];
             $result = cart_add_item((string) $product['id'], $quantity, $selection);
@@ -233,6 +244,13 @@ foreach ((array) $metaMetalOptions as $mo) {
 $selectedBandLabel = '';
 foreach ($selectedMetalBandOptions as $bo) {
     if ((string) ($bo['value'] ?? '') === (string) ($selectedVariant['band_claw_metal'] ?? '')) { $selectedBandLabel = (string) ($bo['label'] ?? ''); break; }
+}
+$selectedAddonOptions = [];
+$selectedAddonLabels = [];
+foreach (array_keys((array) ($options['addon_groups'] ?? [])) as $addonKey) {
+    $rows = product_addon_options_for_metal($options, (string) ($selectedVariant['metal'] ?? ''), $addonKey);
+    $selectedAddonOptions[$addonKey] = $rows;
+    $selectedAddonLabels[$addonKey] = product_option_label($rows, (string) ($selectedVariant['addons'][$addonKey] ?? ''));
 }
 $selectedShapeLabel = '';
 foreach ((array) ($options['diamond_shapes'] ?? []) as $sh) {
@@ -457,9 +475,18 @@ foreach ((array) ($options['delivery_options'] ?? []) as $do) {
                 <?php $metalGalleryJson = (string) json_encode(array_values(array_filter(array_map(static fn (mixed $item): string => clean_image((string) $item), (array) ($metal['gallery'] ?? [])), static fn (string $item): bool => $item !== '')), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
                 <?php $metalFeaturesJson = (string) json_encode(array_values(array_filter(array_map(static fn (mixed $item): string => clean_string((string) $item, 160), (array) (($metal['features'] ?? []) !== [] ? $metal['features'] : ($options['features'] ?? []))), static fn (string $item): bool => $item !== '')), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
                 <?php $metalBandOptionsJson = (string) json_encode(array_values(array_filter((array) ($metal['band_options'] ?? []), static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['value'] ?? ''), 80) !== '')), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
+                <?php $metalAddonOptionsJson = (string) json_encode((static function (array $metal, array $options): array {
+                    $map = [];
+                    foreach (array_keys((array) ($options['addon_groups'] ?? [])) as $groupKey) {
+                        $rows = array_values(array_filter((array) ($metal['addon_options'][$groupKey] ?? []), static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['value'] ?? ''), 80) !== ''));
+                        $map[$groupKey] = $rows !== [] ? $rows : (array) ($options['addon_groups'][$groupKey]['options'] ?? []);
+                    }
+
+                    return $map;
+                })($metal, $options), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
                 <?php $metalColorHex = !empty($metal['color_hex']) ? (string) $metal['color_hex'] : ''; ?>
                 <label class="option-card pp-metal tone-<?= h($metalTone) ?>">
-                  <input type="radio" name="metal" value="<?= h((string) $metal['value']) ?>" data-echo-label="<?= h((string) ($metal['label'] ?? '')) ?>" data-base-price="<?= h((string) ($metal['base_price'] ?? 0)) ?>" data-shapes="<?= h(implode(',', (array)($metal['shapes'] ?? []))) ?>" data-sizes="<?= h(implode(',', (array)($metal['sizes'] ?? []))) ?>" data-bands="<?= h(implode(',', (array)($metal['bands'] ?? []))) ?>" data-band-options="<?= h($metalBandOptionsJson) ?>" data-desc="<?= h((string) ($metal['metal_desc'] ?? '')) ?>" data-gallery="<?= h($metalGalleryJson) ?>" data-features="<?= h($metalFeaturesJson) ?>" data-inventory-tracked="<?= !empty($metal['inventory_tracked']) ? '1' : '0' ?>" data-inventory-quantity="<?= h((string) clean_int($metal['inventory_quantity'] ?? 0, 0, 1000000)) ?>" <?= $selectedVariant['metal'] === (string) $metal['value'] ? 'checked' : '' ?>>
+                  <input type="radio" name="metal" value="<?= h((string) $metal['value']) ?>" data-echo-label="<?= h((string) ($metal['label'] ?? '')) ?>" data-base-price="<?= h((string) ($metal['base_price'] ?? 0)) ?>" data-shapes="<?= h(implode(',', (array)($metal['shapes'] ?? []))) ?>" data-sizes="<?= h(implode(',', (array)($metal['sizes'] ?? []))) ?>" data-bands="<?= h(implode(',', (array)($metal['bands'] ?? []))) ?>" data-band-options="<?= h($metalBandOptionsJson) ?>" data-addon-groups="<?= h($metalAddonOptionsJson) ?>" data-desc="<?= h((string) ($metal['metal_desc'] ?? '')) ?>" data-gallery="<?= h($metalGalleryJson) ?>" data-features="<?= h($metalFeaturesJson) ?>" data-inventory-tracked="<?= !empty($metal['inventory_tracked']) ? '1' : '0' ?>" data-inventory-quantity="<?= h((string) clean_int($metal['inventory_quantity'] ?? 0, 0, 1000000)) ?>" <?= $selectedVariant['metal'] === (string) $metal['value'] ? 'checked' : '' ?>>
                   <span class="pp-metal-orb"<?= $metalColorHex !== '' ? ' style="background: ' . h($metalColorHex) . ';"' : '' ?>></span>
                   <span class="pp-metal-name"><?= h((string) ($metal['label'] ?? '')) ?></span>
                 </label>
@@ -491,6 +518,24 @@ foreach ((array) ($options['delivery_options'] ?? []) as $do) {
             </div>
             <?php endif; ?>
           <?php endif; ?>
+
+          <?php foreach (($options['addon_groups'] ?? []) as $addonKey => $addonGroup): ?>
+            <?php $addonRows = $selectedAddonOptions[$addonKey] ?? []; ?>
+            <?php if ($addonRows === []) { continue; } ?>
+            <div class="pp-opt">
+              <div class="pp-opt-head"><span class="pp-opt-label"><?= h((string) ($addonGroup['label'] ?? '')) ?>:</span><span class="pp-opt-value"><?= h((string) ($selectedAddonLabels[$addonKey] ?? '')) ?></span></div>
+              <div class="pp-addon-grid<?= ($addonGroup['display'] ?? 'chips') === 'wide' ? ' pp-addon-grid--wide' : '' ?>" id="addon-options-<?= h((string) $addonKey) ?>" data-addon-group="<?= h((string) $addonKey) ?>">
+                <?php foreach ($addonRows as $addonRow): ?>
+                  <?php $addonSurcharge = (float) ($addonRow['surcharge'] ?? 0); ?>
+                  <label class="option-card option-card-addon">
+                    <input type="radio" name="addon[<?= h((string) $addonKey) ?>]" value="<?= h((string) ($addonRow['value'] ?? '')) ?>" data-echo-label="<?= h((string) ($addonRow['label'] ?? '')) ?>" data-surcharge="<?= h((string) ($addonRow['surcharge'] ?? 0)) ?>" <?= (string) ($selectedVariant['addons'][$addonKey] ?? '') === (string) ($addonRow['value'] ?? '') ? 'checked' : '' ?>>
+                    <span class="option-card-addon-name"><?= h((string) ($addonRow['label'] ?? '')) ?></span>
+                    <?php if ($addonSurcharge > 0): ?><em class="option-card-addon-badge">+<?= h(money_format($addonSurcharge)) ?></em><?php endif; ?>
+                  </label>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
 
           <div class="pp-opt">
             <div class="pp-opt-head"><span class="pp-opt-label"><?= h((string) ($options['size_label'] ?? 'Size')) ?></span><span class="pp-opt-value"><?= h($selectedSizeLabel) ?></span></div>
@@ -696,6 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const highlightsWrap = document.querySelector('.product-highlights');
     const metaDelivery = document.getElementById('live-product-delivery');
     const bandOptionsGrid = document.getElementById('band-claw-options-grid');
+    const addonGrids = Array.from(document.querySelectorAll('[data-addon-group]'));
     const stockFlash = document.querySelector('[data-stock-flash]');
     const ringJourneyButton = document.querySelector('[data-ring-journey-button]');
     const baseFeatures = highlightsWrap ? parseJsonList(highlightsWrap.dataset.baseFeatures || '[]') : [];
@@ -963,7 +1009,94 @@ document.addEventListener('DOMContentLoaded', () => {
 
         syncOptionCards();
     }
-    
+
+    function parseAddonGroups(raw) {
+        try {
+            const parsed = JSON.parse(raw || '{}');
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+            const map = {};
+            Object.keys(parsed).forEach((key) => {
+                map[key] = Array.isArray(parsed[key])
+                    ? parsed[key]
+                        .filter((item) => item && typeof item === 'object' && String(item.value || '').trim() !== '')
+                        .map((item) => ({
+                            value: String(item.value || ''),
+                            label: String(item.label || ''),
+                            surcharge: Number.parseFloat(String(item.surcharge || 0)) || 0,
+                        }))
+                    : [];
+            });
+            return map;
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function renderAddonGroups(groups, forceDefaultSelection = false) {
+        addonGrids.forEach((grid) => {
+            const key = grid.dataset.addonGroup || '';
+            const options = Array.isArray(groups[key]) ? groups[key] : [];
+            const inputName = 'addon[' + key + ']';
+            const currentChecked = forceDefaultSelection ? '' : (document.querySelector('input[name="' + inputName + '"]:checked')?.value || '');
+            const hasCurrentChecked = currentChecked !== '' && options.some((item) => item.value === currentChecked);
+            let firstFreeIndex = options.findIndex((item) => item.surcharge <= 0);
+            if (firstFreeIndex < 0) firstFreeIndex = 0;
+
+            grid.replaceChildren();
+            options.forEach((option, index) => {
+                const label = document.createElement('label');
+                label.className = 'option-card option-card-addon';
+
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = inputName;
+                input.value = option.value;
+                input.dataset.echoLabel = option.label;
+                input.dataset.surcharge = String(option.surcharge);
+                if ((hasCurrentChecked && currentChecked === option.value) || (!hasCurrentChecked && index === firstFreeIndex)) {
+                    input.checked = true;
+                }
+
+                const name = document.createElement('span');
+                name.className = 'option-card-addon-name';
+                name.textContent = option.label;
+
+                label.appendChild(input);
+                label.appendChild(name);
+
+                if (option.surcharge > 0) {
+                    const badge = document.createElement('em');
+                    badge.className = 'option-card-addon-badge';
+                    badge.textContent = '+£' + option.surcharge.toFixed(2).replace(/\.00$/, '');
+                    label.appendChild(badge);
+                }
+
+                grid.appendChild(label);
+            });
+
+            const block = grid.closest('.pp-opt');
+            const valueEl = block ? block.querySelector('.pp-opt-value') : null;
+            const checked = grid.querySelector('input:checked');
+            if (valueEl) {
+                valueEl.textContent = checked ? (checked.dataset.echoLabel || checked.value) : '';
+            }
+        });
+
+        if (addonGrids.length > 0) {
+            syncOptionCards();
+        }
+    }
+
+    function addonSurchargeTotal() {
+        let total = 0;
+        addonGrids.forEach((grid) => {
+            const checked = grid.querySelector('input:checked');
+            const amount = checked ? Number.parseFloat(checked.dataset.surcharge || '0') || 0 : 0;
+            if (amount > 0) total += amount;
+        });
+        return total;
+    }
+
     function updateLivePrice(shouldResetBandSelection = false) {
         let basePrice = 0;
         let surcharge = 0;
@@ -994,6 +1127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 descEl.textContent = activeMetal.dataset.desc || descEl.dataset.baseDesc;
             }
             renderBandOptions(parseBandOptions(activeMetal.dataset.bandOptions), shouldResetBandSelection);
+            renderAddonGroups(parseAddonGroups(activeMetal.dataset.addonGroups), shouldResetBandSelection);
             const nextFeatures = parseJsonList(activeMetal.dataset.features);
             renderHighlights(nextFeatures.length > 0 ? nextFeatures : baseFeatures);
             if (activeMetal.dataset.gallery) {
@@ -1025,7 +1159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             surcharge = parseFloat(activeBand.dataset.surcharge);
         }
         
-        const total = basePrice + surcharge;
+        const total = basePrice + surcharge + addonSurchargeTotal();
         if (total > 0) {
             livePriceEl.textContent = '£' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         } else {
@@ -1136,7 +1270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 surcharge = 0;
             }
             
-            const newTotal = basePrice + surcharge;
+            const newTotal = basePrice + surcharge + addonSurchargeTotal();
             if (newTotal > 0) {
                 livePriceEl.textContent = '£' + newTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
             } else {
@@ -1160,7 +1294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     metalInputs.forEach((input) => input.addEventListener('change', () => updateLivePrice(true)));
     deliveryInputs.forEach(i => i.addEventListener('change', syncDeliveryMeta));
     document.addEventListener('change', (event) => {
-        if (event.target instanceof HTMLInputElement && event.target.name === 'band_claw_metal') {
+        if (event.target instanceof HTMLInputElement && (event.target.name === 'band_claw_metal' || event.target.name.startsWith('addon['))) {
             updateLivePrice(false);
         }
     });

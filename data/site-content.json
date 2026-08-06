@@ -56,17 +56,6 @@
         {
             "header_label": "",
             "header_icon": "fas fa-gem",
-            "sub": "other text",
-            "title": "earrings",
-            "price": "",
-            "url": "#",
-            "image": "",
-            "hero_image": "",
-            "alt": ""
-        },
-        {
-            "header_label": "",
-            "header_icon": "fas fa-gem",
             "sub": "",
             "title": "test categoreis",
             "price": "",
@@ -80,8 +69,8 @@
         "product_types": [
             "Engagement Rings",
             "Wedding Rings",
-            "Earring",
-            "test categoreis"
+            "test categoreis",
+            "Earring"
         ],
         "colors": [
             "Yellow Gold",
@@ -196,7 +185,15 @@
                         "image": ""
                     }
                 ],
-                "option_band_claw_metal_options": [],
+                "option_band_claw_metal_options": [
+                    {
+                        "value": "band",
+                        "label": "band",
+                        "description": "",
+                        "color_hex": "",
+                        "image": ""
+                    }
+                ],
                 "option_delivery_options": [],
                 "selector_cards": [],
                 "style_cards": [],

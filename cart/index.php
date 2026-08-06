@@ -527,6 +527,11 @@ require_once dirname(__DIR__) . '/includes/header.php';
                       <?php if ((string) ($line['band_claw_metal_label'] ?? '') !== ''): ?>
                         <div class="cart-line-spec is-wide"><i class="fas fa-ring"></i><span>Band / Claw</span><strong><?= h((string) ($line['band_claw_metal_label'] ?? '')) ?></strong></div>
                       <?php endif; ?>
+                      <?php foreach (catalog_addon_groups() as $cartAddonKey => $cartAddonMeta): ?>
+                        <?php $cartAddonLabel = clean_string((string) ($line['addon_labels'][$cartAddonKey] ?? ''), 120); ?>
+                        <?php if ($cartAddonLabel === '') { continue; } ?>
+                        <div class="cart-line-spec is-wide"><i class="fas fa-plus-circle"></i><span><?= h((string) $cartAddonMeta['label']) ?></span><strong><?= h($cartAddonLabel) ?></strong></div>
+                      <?php endforeach; ?>
                       <?php if ((string) ($line['diamond_title'] ?? '') !== ''): ?>
                         <div class="cart-line-spec"><i class="far fa-gem"></i><span>Diamond</span><strong><?= h((string) ($line['diamond_title'] ?? '')) ?></strong></div>
                       <?php endif; ?>

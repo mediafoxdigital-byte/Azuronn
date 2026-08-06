@@ -1134,12 +1134,43 @@ require_once dirname(__DIR__) . '/includes/header.php';
     .shop-shell { padding: 25px 20px 40px; margin: 0 10px 40px; border-radius: 20px; }
     .shop-results-header { font-size: 1.1rem; }
     .collection-filter-bar { flex-direction: column; align-items: flex-start; gap: 15px; }
-    .collection-hero.earring-collection-hero { padding: 40px 12px 20px; background-position: 70% center; }
-    .earring-hero-shell { padding: 10px 0 20px; }
-    .earring-hero-copy h1 { font-size: clamp(2.2rem, 11vw, 5.2rem); }
-    .earring-hero-kicker { font-size: 0.74rem; letter-spacing: 0.22em; }
-    .earring-hero-copy p { max-width: 100%; font-size: 0.98rem; }
-    .earring-hero-ornament::before { width: 72px; }
+    .collection-hero.earring-collection-hero { padding: 28px 12px 18px; background-position: 70% center; }
+    .earring-hero-shell { padding: 4px 0 14px; }
+
+    /* `.earring-hero-grid` is a flex row and `.earring-hero-copy` had
+       `max-width: none` from the 1024 block, so the copy sized to its widest
+       child. With `white-space: nowrap` on the h1, "Women's Wedding Rings" made
+       that child 452px — 62px past a 390px viewport, which is why the heading
+       ran off the screen. Cap the flex item and let the heading wrap. */
+    .earring-hero-grid { min-height: 0; display: block; }
+    .earring-hero-copy { max-width: 100%; width: 100%; min-width: 0; padding: 0; }
+    .earring-hero-copy h1 {
+      white-space: normal;
+      font-size: clamp(1.85rem, 8.6vw, 2.6rem);
+      line-height: 1.12;
+      overflow-wrap: break-word;
+    }
+    .earring-hero-kicker { font-size: 0.7rem; letter-spacing: 0.18em; margin-bottom: 12px; }
+    .earring-hero-copy p { max-width: 100%; font-size: 0.92rem; line-height: 1.55; }
+    .earring-hero-ornament { margin: 16px 0; gap: 10px; }
+    .earring-hero-ornament::before { width: 52px; }
+    .earring-hero-ornament::after { width: 52px; }
+
+    /* Breadcrumb trail is nowrap per-crumb and runs 5 levels deep on ring
+       pages; let it scroll sideways instead of pushing the hero wide. */
+    .hero-breadcrumbs {
+      display: flex;
+      max-width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 14px;
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+    }
+    .hero-breadcrumbs::-webkit-scrollbar { display: none; }
+    .hero-breadcrumbs .sep { margin: 0 7px; }
+
     .style-selector-row.earring-selector-row { gap: 12px; margin-top: 12px; }
     .style-selector-item.earring-selector-item { width: 82px; }
     .style-selector-item.earring-selector-item img { width: 68px; height: 68px; padding: 10px; }

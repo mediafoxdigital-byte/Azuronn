@@ -394,6 +394,16 @@ function product_option_data(array $product): array
     $profileSizeChoices = array_values(array_filter((array) ($profile['option_size_choices'] ?? []), static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['value'] ?? ''), 80) !== '' && clean_string((string) ($item['label'] ?? ''), 120) !== ''));
     $profileMetalOptions = array_values(array_filter((array) ($profile['option_metal_options'] ?? []), static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['value'] ?? ''), 80) !== '' && clean_string((string) ($item['label'] ?? ''), 120) !== ''));
     $profileBandClawOptions = array_values(array_filter((array) ($profile['option_band_claw_metal_options'] ?? []), static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['value'] ?? ''), 80) !== '' && clean_string((string) ($item['label'] ?? ''), 120) !== ''));
+    // Priced add-on groups (carat weight, chain length, …) work exactly like
+    // Band / Claw but are not ring-gated: the category's Attributes profile names
+    // the labels, each metal variation ticks the ones it offers with a surcharge.
+    $profileAddonGroups = [];
+    foreach (array_keys(catalog_addon_groups()) as $addonKey) {
+        $profileAddonGroups[$addonKey] = array_values(array_filter(
+            (array) ($profile['option_addon_groups'][$addonKey] ?? []),
+            static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['label'] ?? ''), 120) !== ''
+        ));
+    }
     $profileDeliveryOptions = array_values(array_filter((array) ($profile['option_delivery_options'] ?? []), static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['value'] ?? ''), 80) !== '' && clean_string((string) ($item['label'] ?? ''), 120) !== ''));
 
     if ($profileColors !== []) {
@@ -494,6 +504,10 @@ function product_option_data(array $product): array
 
     $metalOptions = [];
     $bandClawMetalOptions = [];
+    $addonMetalOptions = [];
+    foreach (array_keys(catalog_addon_groups()) as $addonKey) {
+        $addonMetalOptions[$addonKey] = [];
+    }
     $matrixShapes = [];
     $matrixSizes = [];
     
@@ -578,6 +592,25 @@ function product_option_data(array $product): array
                         }
                     }
                     
+                    $varAddonOptions = [];
+                    foreach (array_keys(catalog_addon_groups()) as $addonKey) {
+                        $rows = [];
+                        foreach ((array) ($var['addon_groups'][$addonKey] ?? []) as $addon) {
+                            $addonLabel = clean_string((string) ($addon['label'] ?? ''), 120);
+                            if (!($addon['active'] ?? false) || $addonLabel === '') {
+                                continue;
+                            }
+                            $addonSurcharge = max(0, (float) ($addon['surcharge'] ?? 0));
+                            $rows[] = [
+                                'value' => content_slug($addonLabel, $addonKey),
+                                'label' => $addonLabel,
+                                'description' => $addonSurcharge > 0 ? '+' . money_format($addonSurcharge) : '',
+                                'surcharge' => $addonSurcharge,
+                            ];
+                        }
+                        $varAddonOptions[$addonKey] = $rows;
+                    }
+
                     // Add to metal options
                     $metalOptions[] = [
                         'value' => $metalSlug,
@@ -588,11 +621,32 @@ function product_option_data(array $product): array
                         'sizes' => $varSizes,
                         'bands' => $varBands,
                         'band_options' => $varBandOptions,
+                        'addon_options' => $varAddonOptions,
                         'metal_desc' => $var['description'] ?? '',
                         'gallery' => $varGallery,
                         'features' => clean_string_list((array) ($var['features'] ?? []), 160),
                         'color_hex' => $varColorHex,
                     ];
+
+                    // Collect add-on options across metals: a label appears once,
+                    // carrying the cheapest surcharge any metal charges for it.
+                    foreach ($varAddonOptions as $addonKey => $rows) {
+                        foreach ($rows as $row) {
+                            $existing = null;
+                            foreach ($addonMetalOptions[$addonKey] as $idx => $aOpt) {
+                                if ($aOpt['label'] === $row['label']) {
+                                    $existing = $idx;
+                                    break;
+                                }
+                            }
+                            if ($existing === null) {
+                                $addonMetalOptions[$addonKey][] = $row;
+                            } elseif ($row['surcharge'] < (float) ($addonMetalOptions[$addonKey][$existing]['surcharge'] ?? 0)) {
+                                $addonMetalOptions[$addonKey][$existing]['surcharge'] = $row['surcharge'];
+                                $addonMetalOptions[$addonKey][$existing]['description'] = $row['surcharge'] > 0 ? '+' . money_format($row['surcharge']) : '';
+                            }
+                        }
+                    }
                     
                     // Collect band options
                     foreach ((array)($var['band_options'] ?? []) as $band) {
@@ -859,6 +913,22 @@ function product_option_data(array $product): array
             ];
         }, $profileBandClawOptions);
     }
+    // A product with no per-metal add-on rows still shows the category's labels,
+    // all at zero surcharge, so the group is never silently missing.
+    foreach (array_keys(catalog_addon_groups()) as $addonKey) {
+        if ($addonMetalOptions[$addonKey] === [] && ($profileAddonGroups[$addonKey] ?? []) !== []) {
+            $addonMetalOptions[$addonKey] = array_map(static function (array $option) use ($addonKey): array {
+                $label = clean_string((string) ($option['label'] ?? ''), 120);
+                return [
+                    'value' => content_slug($label, $addonKey),
+                    'label' => $label,
+                    'description' => '',
+                    'surcharge' => 0.0,
+                ];
+            }, $profileAddonGroups[$addonKey]);
+        }
+    }
+
     if ($customDeliveryOptions !== []) {
         $deliveryOptions = array_map(static function (array $option): array {
             if (($option['price_label'] ?? '') === '') {
@@ -886,6 +956,19 @@ function product_option_data(array $product): array
         return strcasecmp((string) ($left['label'] ?? ''), (string) ($right['label'] ?? ''));
     });
 
+    $addonGroups = [];
+    foreach (catalog_addon_groups() as $addonKey => $addonMeta) {
+        if (($addonMetalOptions[$addonKey] ?? []) === []) {
+            continue;
+        }
+        $addonGroups[$addonKey] = [
+            'key' => $addonKey,
+            'label' => $addonMeta['label'],
+            'display' => $addonMeta['display'],
+            'options' => $addonMetalOptions[$addonKey],
+        ];
+    }
+
     return [
         'is_ring_product' => $isRingProduct,
         'is_matrix_product' => $isMatrixProduct,
@@ -905,6 +988,7 @@ function product_option_data(array $product): array
         'metal_options' => $metalOptions,
         'metal_description' => $metalDescription ?? '',
         'band_claw_metal_options' => $bandClawMetalOptions,
+        'addon_groups' => $addonGroups,
         'delivery_options' => $deliveryOptions,
     ];
 }
@@ -1067,6 +1151,33 @@ function product_diamond_inventory_item(array $product, string $diamondId, strin
     return null;
 }
 
+/**
+ * The rows one add-on group offers for a metal: the metal's own list when it has
+ * one, otherwise the product-wide aggregate. Mirrors how Band / Claw resolves.
+ */
+function product_addon_options_for_metal(array $options, string $metal, string $groupKey): array
+{
+    foreach ((array) ($options['metal_options'] ?? []) as $option) {
+        if ((string) ($option['value'] ?? '') !== $metal) {
+            continue;
+        }
+
+        $rows = array_values(array_filter(
+            (array) ($option['addon_options'][$groupKey] ?? []),
+            static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['value'] ?? ''), 80) !== ''
+        ));
+        if ($rows !== []) {
+            return $rows;
+        }
+        break;
+    }
+
+    return array_values(array_filter(
+        (array) ($options['addon_groups'][$groupKey]['options'] ?? []),
+        static fn (mixed $item): bool => is_array($item) && clean_string((string) ($item['value'] ?? ''), 80) !== ''
+    ));
+}
+
 function product_normalize_selection(array $product, array $selection = [], bool $bypassSizeValidation = false): array
 {
     $options = product_option_data($product);
@@ -1159,12 +1270,37 @@ function product_normalize_selection(array $product, array $selection = [], bool
         }
     }
 
+    // Add-on groups are resolved for every product, ring or not. Same default
+    // rule as Band / Claw: prefer the first option that costs nothing.
+    $addons = [];
+    foreach (array_keys((array) ($options['addon_groups'] ?? [])) as $groupKey) {
+        $rows = product_addon_options_for_metal($options, $metal, $groupKey);
+        $values = array_column($rows, 'value');
+        $picked = clean_string($selection['addons'][$groupKey] ?? '', 80);
+        if ($picked === '' || !in_array($picked, $values, true)) {
+            $picked = '';
+            foreach ($rows as $row) {
+                if (max(0, (float) ($row['surcharge'] ?? 0)) <= 0) {
+                    $picked = (string) ($row['value'] ?? '');
+                    break;
+                }
+            }
+            if ($picked === '') {
+                $picked = $values[0] ?? '';
+            }
+        }
+        if ($picked !== '') {
+            $addons[$groupKey] = $picked;
+        }
+    }
+
     return [
         'color' => $color,
         'size' => $size,
         'diamond_shape' => $diamondShape,
         'metal' => $metal,
         'band_claw_metal' => $bandClawMetal,
+        'addons' => $addons,
         'delivery_option' => $deliveryOption,
         'delivery_label' => $deliveryLabel,
         'delivery_surcharge' => $deliverySurcharge,
@@ -1228,7 +1364,21 @@ function product_selection_setting_price(array $product, array $selection): floa
         break;
     }
 
-    return $basePrice + $bandClawSurcharge;
+    $addonSurcharge = 0.0;
+    foreach (array_keys((array) ($optionData['addon_groups'] ?? [])) as $groupKey) {
+        $picked = clean_string((string) ($selection['addons'][$groupKey] ?? ''), 80);
+        if ($picked === '') {
+            continue;
+        }
+        foreach (product_addon_options_for_metal($optionData, $selectedMetal, $groupKey) as $option) {
+            if ((string) ($option['value'] ?? '') === $picked) {
+                $addonSurcharge += max(0, (float) ($option['surcharge'] ?? 0));
+                break;
+            }
+        }
+    }
+
+    return $basePrice + $bandClawSurcharge + $addonSurcharge;
 }
 
 function inventory_low_stock_threshold(): int
@@ -1475,7 +1625,7 @@ function product_selection_total_price(array $product, array $selection, float $
 
 function cart_variant_signature(array $selection): string
 {
-    return implode('|', [
+    $parts = [
         clean_string($selection['color'] ?? '', 80),
         clean_string($selection['size'] ?? '', 40),
         clean_string($selection['diamond_shape'] ?? '', 40),
@@ -1483,7 +1633,15 @@ function cart_variant_signature(array $selection): string
         clean_string($selection['metal'] ?? '', 40),
         clean_string($selection['band_claw_metal'] ?? '', 60),
         clean_string($selection['delivery_option'] ?? '', 30),
-    ]);
+    ];
+
+    // Add-on picks join the signature so the same pendant in two chain lengths
+    // is two cart lines, exactly as two Band / Claw picks are today.
+    foreach (array_keys(catalog_addon_groups()) as $groupKey) {
+        $parts[] = clean_string($selection['addons'][$groupKey] ?? '', 80);
+    }
+
+    return implode('|', $parts);
 }
 
 function cart_line_key(string $productId, array $selection): string
@@ -1523,6 +1681,13 @@ function line_variant_parts(array $line): array
     $bandClawMetal = clean_string((string) ($line['band_claw_metal_label'] ?? $line['band_claw_metal'] ?? ''), 80);
     if ($bandClawMetal !== '') {
         $parts[] = 'Band/Claw ' . $bandClawMetal;
+    }
+
+    foreach (catalog_addon_groups() as $groupKey => $groupMeta) {
+        $addonLabel = clean_string((string) ($line['addon_labels'][$groupKey] ?? ''), 120);
+        if ($addonLabel !== '') {
+            $parts[] = $groupMeta['label'] . ' ' . $addonLabel;
+        }
     }
 
     $deliveryLabel = clean_string((string) ($line['delivery_label'] ?? ''), 80);
@@ -1808,6 +1973,16 @@ function cart_state(): array
             'metal_color_hex' => product_option_field($optionData['metal_options'] ?? [], $selection['metal'], 'color_hex'),
             'band_claw_metal' => $selection['band_claw_metal'],
             'band_claw_metal_label' => product_option_label($optionData['band_claw_metal_options'] ?? [], $selection['band_claw_metal']),
+            'addon_selections' => (array) ($selection['addons'] ?? []),
+            'addon_labels' => (static function (array $optionData, array $selection): array {
+                $labels = [];
+                foreach ((array) ($selection['addons'] ?? []) as $groupKey => $value) {
+                    $rows = product_addon_options_for_metal($optionData, (string) ($selection['metal'] ?? ''), (string) $groupKey);
+                    $labels[$groupKey] = product_option_label($rows, (string) $value);
+                }
+
+                return $labels;
+            })($optionData, $selection),
             'delivery_option' => $selection['delivery_option'],
             'delivery_label' => $selection['delivery_label'],
             'delivery_surcharge' => $deliverySurcharge,
@@ -1947,6 +2122,7 @@ function cart_add_item(string $productId, int $quantity, array $selection = [], 
             'diamond_price' => $diamondPrice,
             'metal' => $selection['metal'],
             'band_claw_metal' => $selection['band_claw_metal'],
+            'addons' => (array) ($selection['addons'] ?? []),
             'delivery_option' => $selection['delivery_option'],
         ];
     }
@@ -2012,6 +2188,7 @@ function cart_update_items(array $quantities): array
             'diamond_price' => $line['diamond_price'] ?? 0,
             'metal' => $line['metal'] ?? '',
             'band_claw_metal' => $line['band_claw_metal'] ?? '',
+            'addons' => (array) ($line['addon_selections'] ?? []),
             'delivery_option' => $line['delivery_option'] ?? '',
         ];
     }
@@ -2049,6 +2226,7 @@ function cart_remove_item(string $key): void
             'diamond_price' => $line['diamond_price'] ?? 0,
             'metal' => $line['metal'] ?? '',
             'band_claw_metal' => $line['band_claw_metal'] ?? '',
+            'addons' => (array) ($line['addon_selections'] ?? []),
             'delivery_option' => $line['delivery_option'] ?? '',
         ];
     }
@@ -3347,6 +3525,8 @@ function checkout_place_order(array $input): array
                 'metal_label' => $line['metal_label'],
                 'band_claw_metal' => $line['band_claw_metal'],
                 'band_claw_metal_label' => $line['band_claw_metal_label'],
+                'addon_selections' => (array) ($line['addon_selections'] ?? []),
+                'addon_labels' => (array) ($line['addon_labels'] ?? []),
                 'delivery_option' => $line['delivery_option'],
                 'delivery_label' => $line['delivery_label'],
                 'delivery_surcharge' => $line['delivery_surcharge'] > 0 ? $line['delivery_surcharge_label'] : '',

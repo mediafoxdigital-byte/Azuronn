@@ -311,9 +311,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelectorAll('[data-mobile-nav]').forEach((nav) => {
-    const toggle = nav.querySelector('[data-mobile-nav-toggle]');
+    // The toggle and scrim are siblings of <nav>, not descendants: below 1025px
+    // the nav is translated off-screen, so a nested toggle could not be tapped.
+    const toggle = document.querySelector('[data-mobile-nav-toggle]');
+    const scrim = document.querySelector('[data-mobile-nav-scrim]');
     const items = Array.from(nav.querySelectorAll('.mnav-item.has-mega'));
-    const mobileMedia = window.matchMedia('(max-width: 860px)');
+    // Matches the responsive.css breakpoint where the drawer layout takes over.
+    const mobileMedia = window.matchMedia('(max-width: 1024px)');
 
     if (!toggle || !items.length) return;
 
@@ -325,11 +329,19 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     };
 
-    const closeNav = () => {
-      nav.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-      closeItems();
+    const setNavState = (open) => {
+      nav.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+      // Locking the body stops the page behind the drawer from scrolling.
+      document.body.classList.toggle('mnav-open', open);
+      if (scrim) {
+        scrim.classList.toggle('is-visible', open);
+      }
+      if (!open) closeItems();
     };
+
+    const closeNav = () => setNavState(false);
 
     const openItem = (item) => {
       items.forEach((candidate) => {
@@ -344,11 +356,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggle.addEventListener('click', () => {
       if (!mobileMedia.matches) return;
-      const nextState = !nav.classList.contains('is-open');
-      nav.classList.toggle('is-open', nextState);
-      toggle.setAttribute('aria-expanded', nextState ? 'true' : 'false');
-      if (!nextState) closeItems();
+      setNavState(!nav.classList.contains('is-open'));
     });
+
+    if (scrim) {
+      scrim.addEventListener('click', closeNav);
+    }
 
     items.forEach((item) => {
       const link = item.querySelector('[data-mobile-nav-link]');
@@ -367,8 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!item.classList.contains('is-open')) {
           event.preventDefault();
           if (!nav.classList.contains('is-open')) {
-            nav.classList.add('is-open');
-            toggle.setAttribute('aria-expanded', 'true');
+            setNavState(true);
           }
           openItem(item);
         }
@@ -376,8 +388,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('click', (event) => {
-      if (!mobileMedia.matches || nav.contains(event.target)) return;
+      if (!mobileMedia.matches) return;
+      if (nav.contains(event.target) || toggle.contains(event.target)) return;
       closeNav();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && nav.classList.contains('is-open')) closeNav();
     });
 
     window.addEventListener('resize', () => {
