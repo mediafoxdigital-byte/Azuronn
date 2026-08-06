@@ -537,9 +537,20 @@ foreach ((array) ($options['delivery_options'] ?? []) as $do) {
             </div>
           <?php endforeach; ?>
 
+          <?php
+            // Only render the Size group when there is something to choose. The
+            // two branches below read different sources, so the guard checks the
+            // same one the active branch will use — otherwise a product with no
+            // sizes shows a bare "SIZE" heading with no options under it.
+            $sizeUsesStoneWeights = ($options['size_display'] ?? 'compact') === 'stone-weights';
+            $hasSizeChoices = $sizeUsesStoneWeights
+                ? ($options['size_choices'] ?? []) !== []
+                : ($options['sizes'] ?? []) !== [];
+          ?>
+          <?php if ($hasSizeChoices): ?>
           <div class="pp-opt">
             <div class="pp-opt-head"><span class="pp-opt-label"><?= h((string) ($options['size_label'] ?? 'Size')) ?></span><span class="pp-opt-value"><?= h($selectedSizeLabel) ?></span></div>
-            <?php if (($options['size_display'] ?? 'compact') === 'stone-weights'): ?>
+            <?php if ($sizeUsesStoneWeights): ?>
               <div class="pp-grid-opt">
                 <?php foreach (($options['size_choices'] ?? []) as $choice): ?>
                   <label class="option-card pp-stone tone-<?= h((string) ($choice['tone'] ?? 'neutral')) ?>">
@@ -560,14 +571,15 @@ foreach ((array) ($options['delivery_options'] ?? []) as $do) {
               </div>
             <?php endif; ?>
           </div>
+          <?php endif; ?>
 
-          <?php if ($isMatrixProduct): ?>
+          <?php if (($options['delivery_options'] ?? []) !== []): ?>
           <div class="pp-opt">
             <div class="pp-opt-head"><span class="pp-opt-label">Delivery Timeline</span><span class="pp-opt-value"><?= h($selectedDeliveryLabel) ?></span></div>
             <div class="pp-grid-opt">
               <?php foreach ($options['delivery_options'] as $delivery): ?>
                 <label class="option-card option-card-delivery">
-                  <input type="radio" name="delivery_option" value="<?= h((string) $delivery['value']) ?>" data-echo-label="<?= h((string) ($delivery['label'] ?? '')) ?>" <?= $selectedVariant['delivery_option'] === (string) $delivery['value'] ? 'checked' : '' ?>>
+                  <input type="radio" name="delivery_option" value="<?= h((string) $delivery['value']) ?>" data-echo-label="<?= h((string) ($delivery['label'] ?? '')) ?>" data-surcharge="<?= h((string) ($delivery['price'] ?? 0)) ?>" <?= $selectedVariant['delivery_option'] === (string) $delivery['value'] ? 'checked' : '' ?>>
                   <span class="option-card-delivery-mark" aria-hidden="true"></span>
                   <div class="option-card-title-row"><span><?= h((string) ($delivery['label'] ?? '')) ?></span><em class="option-card-badge"><?= h((string) ($delivery['badge'] ?? '')) ?></em></div>
                   <small><?= h((string) ($delivery['description'] ?? '')) ?></small>
@@ -756,7 +768,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })();
     
-    if (metalInputs.length === 0) return;
+    // Products without metal variations skip the matrix logic below, but they
+    // still offer delivery, so the total and the summary line need their own
+    // wiring here.
+    if (metalInputs.length === 0) {
+        const plainBase = Number.parseFloat(String(livePriceEl.dataset.originalPrice || '').replace(/[^0-9.]/g, '')) || 0;
+        const syncPlainDelivery = () => {
+            const checked = document.querySelector('input[name="delivery_option"]:checked');
+            const extra = checked ? Number.parseFloat(checked.dataset.surcharge || '0') || 0 : 0;
+            if (plainBase > 0) {
+                livePriceEl.textContent = '£' + (plainBase + Math.max(0, extra)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            }
+            if (!metaDelivery) return;
+            const card = checked?.closest('.option-card');
+            const badge = card?.querySelector('.option-card-badge')?.textContent?.trim() || '';
+            const label = card?.querySelector('.option-card-title-row span')?.textContent?.trim() || '';
+            metaDelivery.textContent = [badge, label].filter(Boolean).join(' / ') || metaDelivery.textContent;
+        };
+        deliveryInputs.forEach((input) => input.addEventListener('change', syncPlainDelivery));
+        document.querySelectorAll('.option-card input[type="radio"]').forEach((input) => {
+            input.closest('.option-card')?.classList.toggle('is-selected', input.checked);
+            input.addEventListener('change', () => {
+                document.querySelectorAll('input[name="' + input.name + '"]').forEach((peer) => {
+                    peer.closest('.option-card')?.classList.toggle('is-selected', peer.checked);
+                });
+            });
+        });
+        syncPlainDelivery();
+        return;
+    }
 
     function mediaTypeFor(src) {
         const cleanSrc = String(src || '').split('?')[0].toLowerCase();
@@ -1097,6 +1137,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return total;
     }
 
+    function deliverySurchargeTotal() {
+        const checked = document.querySelector('input[name="delivery_option"]:checked');
+        const amount = checked ? Number.parseFloat(checked.dataset.surcharge || '0') || 0 : 0;
+        return amount > 0 ? amount : 0;
+    }
+
     function updateLivePrice(shouldResetBandSelection = false) {
         let basePrice = 0;
         let surcharge = 0;
@@ -1159,7 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             surcharge = parseFloat(activeBand.dataset.surcharge);
         }
         
-        const total = basePrice + surcharge + addonSurchargeTotal();
+        const total = basePrice + surcharge + addonSurchargeTotal() + deliverySurchargeTotal();
         if (total > 0) {
             livePriceEl.textContent = '£' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         } else {
@@ -1270,7 +1316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 surcharge = 0;
             }
             
-            const newTotal = basePrice + surcharge + addonSurchargeTotal();
+            const newTotal = basePrice + surcharge + addonSurchargeTotal() + deliverySurchargeTotal();
             if (newTotal > 0) {
                 livePriceEl.textContent = '£' + newTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
             } else {

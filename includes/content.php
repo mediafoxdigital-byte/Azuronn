@@ -812,6 +812,54 @@ function clean_product_library_item(array $item, int $index = 0): array
     ];
 }
 
+/**
+ * The store ships to the United Kingdom only, so the country is a fixed value
+ * rather than a user-supplied field. Stored addresses are rewritten to this on
+ * the next normalise pass.
+ */
+function uk_country_name(): string
+{
+    return 'United Kingdom';
+}
+
+/**
+ * Render a postcode the way Royal Mail expects it: uppercase, single space
+ * before the three-character inward code. Input is accepted in any spacing.
+ */
+function uk_postcode_normalize(string $postcode): string
+{
+    $compact = strtoupper(preg_replace('/[^A-Z0-9]/i', '', $postcode) ?? '');
+    if (strlen($compact) < 5 || strlen($compact) > 7) {
+        return $compact;
+    }
+
+    return substr($compact, 0, -3) . ' ' . substr($compact, -3);
+}
+
+/**
+ * Validate against the Royal Mail outward/inward pattern, plus the GIR 0AA
+ * special case that predates the scheme.
+ */
+function uk_postcode_is_valid(string $postcode): bool
+{
+    $compact = strtoupper(preg_replace('/[^A-Z0-9]/i', '', $postcode) ?? '');
+    if ($compact === 'GIR0AA') {
+        return true;
+    }
+
+    return (bool) preg_match('/^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][A-Z]{2}$/', $compact);
+}
+
+/**
+ * The same rule as uk_postcode_is_valid() expressed for an HTML pattern
+ * attribute, tolerating optional spacing and lower case so the browser hint
+ * fires on genuinely malformed input rather than on formatting.
+ */
+function uk_postcode_html_pattern(): string
+{
+    return '\s*([Gg][Ii][Rr]\s*0[Aa]{2}|[A-Za-z]{1,2}[0-9][A-Za-z0-9]?\s*[0-9][A-Za-z]{2})\s*';
+}
+
 function clean_customer_item(array $item, int $index = 0): array
 {
     $wishlistIds = [];
@@ -832,8 +880,8 @@ function clean_customer_item(array $item, int $index = 0): array
             'address_line_2' => clean_multiline($address['address_line_2'] ?? '', 160),
             'city' => clean_string($address['city'] ?? '', 80),
             'state' => clean_string($address['state'] ?? '', 80),
-            'postal_code' => clean_string($address['postal_code'] ?? '', 20),
-            'country' => clean_string($address['country'] ?? '', 80),
+            'postal_code' => uk_postcode_normalize(clean_string($address['postal_code'] ?? '', 20)),
+            'country' => uk_country_name(),
         ];
     });
 
@@ -845,8 +893,8 @@ function clean_customer_item(array $item, int $index = 0): array
         'phone' => clean_string($item['phone'] ?? '', 40),
         'city' => clean_string($item['city'] ?? '', 80),
         'state' => clean_string($item['state'] ?? '', 80),
-        'country' => clean_string($item['country'] ?? '', 80),
-        'postal_code' => clean_string($item['postal_code'] ?? '', 20),
+        'country' => uk_country_name(),
+        'postal_code' => uk_postcode_normalize(clean_string($item['postal_code'] ?? '', 20)),
         'address_line_1' => clean_multiline($item['address_line_1'] ?? '', 160),
         'address_line_2' => clean_multiline($item['address_line_2'] ?? '', 160),
         'status' => clean_string($item['status'] ?? 'active', 40),
@@ -923,14 +971,70 @@ function clean_order_line_item(array $item, int $index = 0): array
     ];
 }
 
+/**
+ * The fulfilment states an admin can set on an order, in flow order. Request
+ * outcomes ('cancel-approved', 'return-approved', 'returned') are reachable
+ * only through the customer-request workflow, so they live outside this list.
+ */
+function order_status_options(): array
+{
+    return [
+        'received' => 'Order received',
+        'processing' => 'Processing',
+        'shipped' => 'Shipped',
+        'out-for-delivery' => 'Out for delivery',
+        'delivered' => 'Delivered',
+        'cancelled' => 'Cancelled',
+    ];
+}
+
+/**
+ * Map a stored status onto the current vocabulary. Orders placed before this
+ * vocabulary existed carry 'pending'/'completed', which have no dropdown entry
+ * and would otherwise render as a blank pill.
+ */
+function order_status_normalize(string $status): string
+{
+    $status = strtolower(trim($status));
+    $status = match ($status) {
+        '', 'pending' => 'received',
+        'completed' => 'delivered',
+        default => $status,
+    };
+
+    return $status;
+}
+
+/**
+ * Statuses that carry a tracking ID. A number only exists once the parcel is
+ * handed to the courier, so the field starts at Shipped and stays visible for
+ * every later state rather than disappearing after it was captured.
+ */
+function order_tracking_statuses(): array
+{
+    return ['shipped', 'out-for-delivery', 'delivered'];
+}
+
+function order_status_label(string $status): string
+{
+    $status = order_status_normalize($status);
+    $options = order_status_options();
+    if (isset($options[$status])) {
+        return $options[$status];
+    }
+
+    return ucwords(str_replace('-', ' ', $status));
+}
+
 function clean_order_item(array $item, int $index = 0): array
 {
     return [
         'id' => content_id('ord', $item, $index, 'customer_name'),
         'customer_name' => clean_string($item['customer_name'] ?? '', 120),
         'customer_email' => clean_string($item['customer_email'] ?? '', 120),
-        'status' => clean_string($item['status'] ?? 'pending', 40),
-        'payment_method' => clean_string($item['payment_method'] ?? 'online', 40),
+        'status' => order_status_normalize(clean_string($item['status'] ?? 'received', 40)),
+        'tracking_id' => clean_string($item['tracking_id'] ?? '', 120),
+        'payment_method' => 'online',
         'payment_status' => clean_string($item['payment_status'] ?? 'awaiting', 40),
         'payment_reference' => clean_string($item['payment_reference'] ?? '', 120),
         'stripe_checkout_session_id' => clean_string($item['stripe_checkout_session_id'] ?? '', 120),
@@ -942,6 +1046,7 @@ function clean_order_item(array $item, int $index = 0): array
         'coupon_code' => clean_string($item['coupon_code'] ?? '', 40),
         'item_count' => clean_string($item['item_count'] ?? '', 20),
         'placed_at' => clean_string($item['placed_at'] ?? '', 40),
+        'delivered_at' => clean_string($item['delivered_at'] ?? '', 40),
         'customer_phone' => clean_string($item['customer_phone'] ?? '', 40),
         'customer_request_type' => clean_string($item['customer_request_type'] ?? '', 20),
         'customer_request_status' => clean_string($item['customer_request_status'] ?? '', 20),
@@ -953,8 +1058,8 @@ function clean_order_item(array $item, int $index = 0): array
             'address_line_2' => clean_multiline($item['shipping_address']['address_line_2'] ?? '', 160),
             'city' => clean_string($item['shipping_address']['city'] ?? '', 80),
             'state' => clean_string($item['shipping_address']['state'] ?? '', 80),
-            'postal_code' => clean_string($item['shipping_address']['postal_code'] ?? '', 20),
-            'country' => clean_string($item['shipping_address']['country'] ?? '', 80),
+            'postal_code' => uk_postcode_normalize(clean_string($item['shipping_address']['postal_code'] ?? '', 20)),
+            'country' => uk_country_name(),
         ],
         'items' => clean_items($item['items'] ?? [], 'clean_order_line_item'),
         'notes' => clean_multiline($item['notes'] ?? '', 500),
@@ -1514,6 +1619,32 @@ function normalize_site_content(array $candidate): array
                 'rss' => clean_link($settingsInput['social']['rss'] ?? $settingsDefault['social']['rss']),
                 'googleplus' => clean_link($settingsInput['social']['googleplus'] ?? $settingsDefault['social']['googleplus']),
                 'youtube' => clean_link($settingsInput['social']['youtube'] ?? $settingsDefault['social']['youtube']),
+            ],
+            // Global delivery timeline. Labels fall back to the defaults when an
+            // admin blanks them, so a product page can never render a nameless
+            // delivery card. The price is stored as a plain 2dp number and any
+            // currency symbol or stray text an admin types is stripped.
+            'delivery' => [
+                'basic_label' => clean_string(
+                    ($settingsInput['delivery']['basic_label'] ?? '') !== ''
+                        ? $settingsInput['delivery']['basic_label']
+                        : $settingsDefault['delivery']['basic_label'],
+                    80
+                ),
+                'basic_description' => clean_multiline($settingsInput['delivery']['basic_description'] ?? $settingsDefault['delivery']['basic_description'], 220),
+                'express_label' => clean_string(
+                    ($settingsInput['delivery']['express_label'] ?? '') !== ''
+                        ? $settingsInput['delivery']['express_label']
+                        : $settingsDefault['delivery']['express_label'],
+                    80
+                ),
+                'express_description' => clean_multiline($settingsInput['delivery']['express_description'] ?? $settingsDefault['delivery']['express_description'], 220),
+                'express_price' => number_format(
+                    max(0.0, (float) preg_replace('/[^0-9.]/', '', (string) ($settingsInput['delivery']['express_price'] ?? $settingsDefault['delivery']['express_price']))),
+                    2,
+                    '.',
+                    ''
+                ),
             ],
         ],
         'hero' => [

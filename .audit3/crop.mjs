@@ -1,0 +1,13 @@
+import { browser, ctx, open } from './lib.mjs';
+import fs from 'fs';
+fs.mkdirSync('shots', { recursive: true });
+const path = process.env.P, name = process.env.N;
+const w = Number(process.env.W), y0 = Number(process.env.Y || 0), hh = Number(process.env.H || 900);
+const b = await browser();
+const c = await ctx(b, w, 900);
+const p = await open(c, path);
+await p.evaluate((y) => window.scrollTo(0, y), y0);
+await p.waitForTimeout(500);
+await p.screenshot({ path: `shots/${name}.png`, clip: { x: 0, y: 0, width: w, height: hh } });
+console.log(`shots/${name}.png`);
+await b.close();

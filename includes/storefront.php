@@ -39,6 +39,45 @@ function money_format(float $value): string
     return '£' . number_format(max(0, $value), 2);
 }
 
+/**
+ * The two delivery choices shown on every product page, built from the global
+ * Admin > Settings values. A category attribute profile (or a product's own
+ * option_delivery_options) still overrides this — see product_display_options()
+ * — but this guarantees the section is never empty, so Delivery Timeline shows
+ * for every product in every category.
+ *
+ * The express price is per item: it is added to the unit price by
+ * product_selection_total_price(), which the cart then multiplies by quantity.
+ */
+function site_delivery_options(): array
+{
+    $settings = (array) (site_content()['settings']['delivery'] ?? []);
+    $expressPrice = max(0.0, (float) ($settings['express_price'] ?? 0));
+
+    $basicLabel = clean_string((string) ($settings['basic_label'] ?? ''), 80);
+    $expressLabel = clean_string((string) ($settings['express_label'] ?? ''), 80);
+
+    return [
+        [
+            'value' => 'standard',
+            'label' => $basicLabel !== '' ? $basicLabel : 'Basic Delivery',
+            'description' => clean_multiline((string) ($settings['basic_description'] ?? ''), 220),
+            'price' => 0.0,
+            'price_label' => 'Free',
+            'badge' => 'Basic',
+        ],
+        [
+            'value' => 'express',
+            'label' => $expressLabel !== '' ? $expressLabel : 'Express Delivery',
+            'description' => clean_multiline((string) ($settings['express_description'] ?? ''), 220),
+            'price' => $expressPrice,
+            // Per item, because the surcharge rides on the unit price.
+            'price_label' => $expressPrice > 0 ? '+' . money_format($expressPrice) . ' per item' : 'Free',
+            'badge' => 'Express',
+        ],
+    ];
+}
+
 function current_customer(): ?array
 {
     $customerId = clean_string($_SESSION['customer_auth']['customer_id'] ?? '', 80);
@@ -271,7 +310,7 @@ function customer_register(array $input): array
         'phone' => $phone,
         'city' => $city,
         'state' => '',
-        'country' => 'India',
+        'country' => uk_country_name(),
         'postal_code' => '',
         'address_line_1' => '',
         'address_line_2' => '',
@@ -436,8 +475,10 @@ function product_option_data(array $product): array
         $sizeChoices = $profileSizeChoices;
         $sizes = array_values(array_unique(array_column($profileSizeChoices, 'value')));
     }
-    // Delivery options come only from this category's own profile.
-    $deliveryOptions = [];
+    // Every product starts with the global Basic/Express pair from Admin >
+    // Settings, so the Delivery Timeline always renders. A category profile that
+    // defines its own delivery options replaces them.
+    $deliveryOptions = site_delivery_options();
     if ($profileDeliveryOptions !== []) {
         $deliveryOptions = array_map(static function (array $option): array {
             if (($option['price_label'] ?? '') === '') {
@@ -1254,18 +1295,25 @@ function product_normalize_selection(array $product, array $selection = [], bool
             }
         }
 
-        $deliveryValues = array_column($options['delivery_options'], 'value');
+    }
+
+    // Delivery is offered on every product, ring or not, so it resolves outside
+    // the ring branch. Without this the express surcharge would render but never
+    // reach the price.
+    $deliveryChoices = (array) ($options['delivery_options'] ?? []);
+    if ($deliveryChoices !== []) {
+        $deliveryValues = array_column($deliveryChoices, 'value');
         $deliveryOption = clean_string($selection['delivery_option'] ?? '', 30);
         if ($deliveryOption === '' || !in_array($deliveryOption, $deliveryValues, true)) {
             $deliveryOption = $deliveryValues[0] ?? 'standard';
         }
 
-        foreach ($options['delivery_options'] as $option) {
+        foreach ($deliveryChoices as $option) {
             if (($option['value'] ?? '') !== $deliveryOption) {
                 continue;
             }
             $deliveryLabel = (string) ($option['label'] ?? '');
-            $deliverySurcharge = (float) ($option['price'] ?? 0.0);
+            $deliverySurcharge = max(0.0, (float) ($option['price'] ?? 0.0));
             break;
         }
     }
@@ -1899,6 +1947,7 @@ function cart_state(): array
     $count = 0;
     $subtotal = 0.0;
     $deliveryTotal = 0.0;
+    $deliveryLabels = [];
 
     foreach ($cart['items'] as $line) {
         if (!is_array($line)) {
@@ -2010,6 +2059,10 @@ function cart_state(): array
         $count += $quantity;
         $subtotal += $lineItemTotal;
         $deliveryTotal += $lineDeliveryTotal;
+        $lineDeliveryLabel = clean_string((string) ($selection['delivery_label'] ?? ''), 80);
+        if ($lineDeliveryLabel !== '') {
+            $deliveryLabels[$lineDeliveryLabel] = true;
+        }
     }
 
     $couponCode = clean_string($cart['coupon_code'] ?? '', 40);
@@ -2029,7 +2082,9 @@ function cart_state(): array
         'subtotal_label' => money_format($subtotal),
         'delivery_total' => $deliveryTotal,
         'delivery_total_label' => $deliveryTotal > 0 ? money_format($deliveryTotal) : 'Free',
-        'delivery_summary_label' => $deliveryTotal > 0 ? 'Priority Delivery' : 'Basic Delivery',
+        'delivery_summary_label' => $deliveryLabels === []
+            ? ($deliveryTotal > 0 ? 'Express Delivery' : 'Basic Delivery')
+            : implode(' + ', array_keys($deliveryLabels)),
         'discount' => $discount,
         'discount_label' => money_format($discount),
         'shipping' => $shipping,
@@ -2303,8 +2358,8 @@ function customer_update_profile(array $input): array
     $phone = clean_string($input['phone'] ?? ($customer['phone'] ?? ''), 40);
     $city = clean_string($input['city'] ?? ($customer['city'] ?? ''), 80);
     $state = clean_string($input['state'] ?? ($customer['state'] ?? ''), 80);
-    $country = clean_string($input['country'] ?? ($customer['country'] ?? 'India'), 80);
-    $postal = clean_string($input['postal_code'] ?? ($customer['postal_code'] ?? ''), 20);
+    $country = uk_country_name();
+    $postal = uk_postcode_normalize(clean_string($input['postal_code'] ?? ($customer['postal_code'] ?? ''), 20));
     $address1 = clean_multiline($input['address_line_1'] ?? ($customer['address_line_1'] ?? ''), 160);
     $address2 = clean_multiline($input['address_line_2'] ?? ($customer['address_line_2'] ?? ''), 160);
 
@@ -2312,9 +2367,15 @@ function customer_update_profile(array $input): array
         return ['ok' => false, 'message' => 'Name and phone are required.'];
     }
 
+    // County is genuinely optional in UK addressing — Royal Mail drops it when a
+    // postcode is present — so it is excluded from the required set.
     $hasAddressData = $address1 !== '' || $address2 !== '' || $city !== '' || $state !== '' || $postal !== '';
-    if ($hasAddressData && ($address1 === '' || $city === '' || $state === '' || $postal === '' || $country === '')) {
-        return ['ok' => false, 'message' => 'Complete the full address block or leave it empty.'];
+    if ($hasAddressData && ($address1 === '' || $city === '' || $postal === '')) {
+        return ['ok' => false, 'message' => 'Address line 1, town/city and postcode are required, or leave the address block empty.'];
+    }
+
+    if ($postal !== '' && !uk_postcode_is_valid($postal)) {
+        return ['ok' => false, 'message' => 'Enter a valid UK postcode, for example SW1A 1AA.'];
     }
 
     $currentPassword = (string) ($input['current_password'] ?? '');
@@ -2454,32 +2515,90 @@ function order_customer_request_summary(array $order): ?array
     ];
 }
 
+/**
+ * Days a delivered order stays eligible for a return request.
+ */
+function order_return_window_days(): int
+{
+    return 30;
+}
+
+/**
+ * Describe the return window for a delivered order: when it closes, how many
+ * days are left and whether it is still open. Returns null when the order was
+ * never marked delivered, or was delivered before delivered_at was recorded —
+ * those orders have no clock to measure against.
+ */
+function order_return_window(array $order): ?array
+{
+    if (order_status_normalize(clean_string($order['status'] ?? '', 40)) !== 'delivered') {
+        return null;
+    }
+
+    $deliveredAt = clean_string($order['delivered_at'] ?? '', 40);
+    if ($deliveredAt === '') {
+        return null;
+    }
+
+    $deliveredTs = strtotime($deliveredAt);
+    if ($deliveredTs === false) {
+        return null;
+    }
+
+    $expiresTs = strtotime('+' . order_return_window_days() . ' days', $deliveredTs);
+    $now = time();
+
+    return [
+        'delivered_at' => $deliveredAt,
+        'delivered_at_formatted' => date('d M Y', $deliveredTs),
+        'expires_at' => date('Y-m-d H:i:s', $expiresTs),
+        'expires_at_formatted' => date('d M Y', $expiresTs),
+        'days_remaining' => max(0, (int) ceil(($expiresTs - $now) / 86400)),
+        'is_open' => $now <= $expiresTs,
+    ];
+}
+
 function order_available_customer_action(array $order): ?array
 {
     if (order_customer_request_summary($order) !== null) {
         return null;
     }
 
-    $status = strtolower(clean_string($order['status'] ?? 'pending', 40));
-    return match (true) {
-        in_array($status, ['pending', 'processing'], true) => [
+    $status = order_status_normalize(clean_string($order['status'] ?? 'received', 40));
+    if ($status === 'delivered') {
+        $window = order_return_window($order);
+        if ($window === null || !$window['is_open']) {
+            return null;
+        }
+
+        return [
+            'type' => 'return',
+            'label' => 'Request Return',
+            'headline' => 'Request Return',
+            'description' => sprintf(
+                'Returns are accepted within %d days of delivery. This order can be returned until %s (%d day%s left).',
+                order_return_window_days(),
+                $window['expires_at_formatted'],
+                $window['days_remaining'],
+                $window['days_remaining'] === 1 ? '' : 's'
+            ),
+            'button_label' => 'Send Return Request',
+            'reason_label' => 'Why do you want to return this order?',
+        ];
+    }
+
+    if (in_array($status, ['received', 'processing'], true)) {
+        return [
             'type' => 'cancel',
             'label' => 'Request Cancellation',
             'headline' => 'Request Cancellation',
             'description' => 'Send a cancellation request before the order is fully dispatched.',
             'button_label' => 'Send Cancellation Request',
             'reason_label' => 'Why are you cancelling?',
-        ],
-        $status === 'completed' => [
-            'type' => 'return',
-            'label' => 'Request Return',
-            'headline' => 'Request Return',
-            'description' => 'Send a return request with the reason so the team can review the order.',
-            'button_label' => 'Send Return Request',
-            'reason_label' => 'Why do you want to return this order?',
-        ],
-        default => null,
-    };
+        ];
+    }
+
+    return null;
 }
 
 function order_presenter_data(array $order, array $customer): array
@@ -2532,9 +2651,9 @@ function order_presenter_data(array $order, array $customer): array
     $placedAtFormatted = $placedAtRaw !== '' && strtotime($placedAtRaw) !== false
         ? date('d M Y, h:i A', strtotime($placedAtRaw))
         : $placedAtRaw;
-    $paymentMethodLabel = strtolower((string) ($order['payment_method'] ?? 'online')) === 'cash' ? 'Cash on Delivery' : 'Online Payment';
+    $paymentMethodLabel = 'Online Payment';
     $paymentStatusLabel = ucfirst(strtolower((string) ($order['payment_status'] ?? 'pending')));
-    $statusLabel = ucfirst(strtolower((string) ($order['status'] ?? 'processing')));
+    $statusLabel = order_status_label((string) ($order['status'] ?? 'received'));
     $requestSummary = order_customer_request_summary($order);
 
     return [
@@ -2550,9 +2669,11 @@ function order_presenter_data(array $order, array $customer): array
         'placed_at_raw' => $placedAtRaw,
         'placed_at_formatted' => $placedAtFormatted,
         'payment_method_label' => $paymentMethodLabel,
+        'tracking_id' => clean_string($order['tracking_id'] ?? '', 120),
         'payment_status_label' => $paymentStatusLabel,
         'status_label' => $statusLabel,
         'request_summary' => $requestSummary,
+        'return_window' => order_return_window($order),
         'available_action' => order_available_customer_action($order),
         'invoice_file_name' => content_slug((string) ($order['id'] ?? 'invoice'), 'invoice') . '.pdf',
     ];
@@ -2582,6 +2703,10 @@ function customer_request_order_action(string $orderId, string $requestType, str
 
     $availableAction = order_available_customer_action($order);
     if ($availableAction === null || ($availableAction['type'] ?? '') !== $requestType) {
+        if ($requestType === 'return' && order_status_normalize(clean_string($order['status'] ?? '', 40)) === 'delivered') {
+            return ['ok' => false, 'message' => sprintf('The %d-day return window for this order has closed.', order_return_window_days())];
+        }
+
         return ['ok' => false, 'message' => 'This order can no longer accept that request.'];
     }
 
@@ -3030,6 +3155,9 @@ function order_build_invoice_pdf(array $presented): string
         ['Payment:   ' . $pay, 8.5, false, null],
         ['Reference:   ' . $ref, 8.5, false, null],
     ];
+    if ((string) ($presented['tracking_id'] ?? '') !== '') {
+        $rightCol[] = ['Tracking:   ' . (string) $presented['tracking_id'], 8.5, false, null];
+    }
     $colCount = max(count($leftCol), count($rightCol));
     $ensure($colCount * 12 + 10);
     $topY = $y;
@@ -3286,11 +3414,15 @@ function customer_save_address(array $input, ?int $addressIndex = null): array
     $address2 = clean_multiline($input['address_line_2'] ?? '', 160);
     $city = clean_string($input['city'] ?? '', 80);
     $state = clean_string($input['state'] ?? '', 80);
-    $postal = clean_string($input['postal_code'] ?? '', 20);
-    $country = clean_string($input['country'] ?? 'India', 80);
+    $postal = uk_postcode_normalize(clean_string($input['postal_code'] ?? '', 20));
+    $country = uk_country_name();
 
-    if ($label === '' || $recipientName === '' || $phone === '' || $address1 === '' || $city === '' || $state === '' || $postal === '' || $country === '') {
+    if ($label === '' || $recipientName === '' || $phone === '' || $address1 === '' || $city === '' || $postal === '') {
         return ['ok' => false, 'message' => 'Complete all required address fields.'];
+    }
+
+    if (!uk_postcode_is_valid($postal)) {
+        return ['ok' => false, 'message' => 'Enter a valid UK postcode, for example SW1A 1AA.'];
     }
 
     $savedAddresses = array_values(array_filter($customer['saved_addresses'] ?? [], 'is_array'));
@@ -3383,27 +3515,25 @@ function checkout_place_order(array $input): array
     $address2 = clean_multiline($input['address_line_2'] ?? $customer['address_line_2'] ?? '', 160);
     $city = clean_string($input['city'] ?? $customer['city'] ?? '', 80);
     $state = clean_string($input['state'] ?? $customer['state'] ?? '', 80);
-    $postal = clean_string($input['postal_code'] ?? $customer['postal_code'] ?? '', 20);
-    $country = clean_string($input['country'] ?? $customer['country'] ?? 'India', 80);
-    $paymentMethod = clean_string($input['payment_method'] ?? 'online', 20);
+    $postal = uk_postcode_normalize(clean_string($input['postal_code'] ?? $customer['postal_code'] ?? '', 20));
+    $country = uk_country_name();
+    $paymentMethod = 'online';
     $notes = clean_multiline($input['notes'] ?? '', 500);
 
-    if ($fullName === '' || $phone === '' || $address1 === '' || $city === '' || $state === '' || $postal === '' || $country === '') {
+    if ($fullName === '' || $phone === '' || $address1 === '' || $city === '' || $postal === '') {
         return ['ok' => false, 'message' => 'Complete all required shipping fields.'];
     }
 
-    if (!in_array($paymentMethod, ['online', 'cash'], true)) {
-        $paymentMethod = 'online';
+    if (!uk_postcode_is_valid($postal)) {
+        return ['ok' => false, 'message' => 'Enter a valid UK postcode, for example SW1A 1AA.'];
     }
 
-    // When Stripe is configured and the customer chose online payment, we
-    // create the order as pending/awaiting and redirect to Stripe's hosted
-    // Checkout page. The order is only flipped to paid/processing after Stripe
-    // confirms (webhook or success-page verify). When Stripe is NOT configured,
-    // online payment is unavailable — the customer must use COD.
-    $isStripeOrder = ($paymentMethod === 'online' && stripe_configured());
-    if ($paymentMethod === 'online' && !$isStripeOrder) {
-        return ['ok' => false, 'message' => 'Card payments are not configured yet. Please use Cash on Delivery or contact support.'];
+    // Card is the only payment route. The order is created as received/awaiting
+    // and redirected to Stripe's hosted Checkout page, then flipped to
+    // paid/processing once Stripe confirms (webhook or success-page verify).
+    $isStripeOrder = stripe_configured();
+    if (!$isStripeOrder) {
+        return ['ok' => false, 'message' => 'Card payments are not configured yet. Please contact support to complete your order.'];
     }
 
     return site_content_with_lock(static function () use (
@@ -3500,12 +3630,11 @@ function checkout_place_order(array $input): array
 
         $orderId = next_order_id($content['orders']['items'] ?? []);
         $placedAt = date('Y-m-d H:i');
-        // Stripe orders start as pending/awaiting — flipped to paid/processing
+        // Stripe orders start as received/awaiting — flipped to paid/processing
         // by the webhook or success-page verify after Stripe confirms the charge.
-        // COD orders stay pending/awaiting until the admin marks them.
         $paymentReference = '';
         $paymentStatus = 'awaiting';
-        $orderStatus = 'pending';
+        $orderStatus = 'received';
 
         $orderItems = array_map(static function (array $line): array {
             return [
@@ -3566,7 +3695,7 @@ function checkout_place_order(array $input): array
             'customer_request_requested_at' => '',
             'customer_request_resolved_at' => '',
             'items' => $orderItems,
-            'notes' => $notes !== '' ? $notes : ($paymentMethod === 'online' ? 'Secure card payment via Stripe.' : 'Cash on delivery order placed.'),
+            'notes' => $notes !== '' ? $notes : 'Secure card payment via Stripe.',
         ];
 
         // ── Stripe Checkout Session (redirect flow) ──────────────────────────
@@ -3583,7 +3712,7 @@ function checkout_place_order(array $input): array
                 // Don't save the order or clear the cart — let the customer retry.
                 return [
                     'ok' => false,
-                    'message' => 'Unable to start secure payment: ' . (string) ($stripeResult['error'] ?? 'Please try again or use Cash on Delivery.'),
+                    'message' => 'Unable to start secure payment: ' . (string) ($stripeResult['error'] ?? 'Please try again or contact support.'),
                 ];
             }
 

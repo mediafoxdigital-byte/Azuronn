@@ -1,13 +1,13 @@
 {
-    "content_schema_version": 3,
+    "content_schema_version": 4,
     "settings": {
         "site_name": "Azuronn",
         "site_tagline": "Jewelry Shop eCommerce",
         "site_url": "http://localhost",
         "logo_path": "/assets/final_logo.png",
         "store_address": "Your address goes here.",
-        "store_phone": "0123456789",
-        "store_email": "demo@example.com",
+        "store_phone": "9876543210",
+        "store_email": "Azuronn@example.com",
         "announcement_text": "Free shipping on all orders with coupon code",
         "announcement_code": "Rings2026",
         "announcement_url": "#",
@@ -19,6 +19,13 @@
             "rss": "#",
             "googleplus": "#",
             "youtube": "#"
+        },
+        "delivery": {
+            "basic_label": "Basic Delivery",
+            "basic_description": "Free insured shipping. Arrives in 5-7 working days.",
+            "express_label": "Express Delivery",
+            "express_description": "Priority dispatch. Arrives in 1-2 working days.",
+            "express_price": "25.00"
         }
     },
     "hero": {
@@ -55,6 +62,28 @@
         },
         {
             "header_label": "",
+            "header_icon": "fas fa-award",
+            "sub": "",
+            "title": "Pendant",
+            "price": "",
+            "url": "/shop/?type=Pendant",
+            "image": "",
+            "hero_image": "",
+            "alt": "Pendant"
+        },
+        {
+            "header_label": "",
+            "header_icon": "far fa-dot-circle",
+            "sub": "",
+            "title": "Earrings",
+            "price": "",
+            "url": "/shop/?type=Earring",
+            "image": "",
+            "hero_image": "",
+            "alt": "Earrings"
+        },
+        {
+            "header_label": "",
             "header_icon": "fas fa-gem",
             "sub": "",
             "title": "test categoreis",
@@ -69,8 +98,9 @@
         "product_types": [
             "Engagement Rings",
             "Wedding Rings",
-            "test categoreis",
-            "Earring"
+            "Pendant",
+            "Earring",
+            "test categoreis"
         ],
         "colors": [
             "Yellow Gold",
@@ -104,6 +134,11 @@
                 ],
                 "option_metal_options": [],
                 "option_band_claw_metal_options": [],
+                "option_addon_groups": {
+                    "tcw": [],
+                    "carat_weight": [],
+                    "chain_length": []
+                },
                 "option_delivery_options": [],
                 "selector_cards": [],
                 "style_cards": [],
@@ -194,6 +229,11 @@
                         "image": ""
                     }
                 ],
+                "option_addon_groups": {
+                    "tcw": [],
+                    "carat_weight": [],
+                    "chain_length": []
+                },
                 "option_delivery_options": [],
                 "selector_cards": [],
                 "style_cards": [],
@@ -269,6 +309,11 @@
                     }
                 ],
                 "option_band_claw_metal_options": [],
+                "option_addon_groups": {
+                    "tcw": [],
+                    "carat_weight": [],
+                    "chain_length": []
+                },
                 "option_delivery_options": [],
                 "selector_cards": [],
                 "style_cards": [
@@ -349,6 +394,47 @@
                     }
                 ],
                 "option_band_claw_metal_options": [],
+                "option_addon_groups": {
+                    "tcw": [],
+                    "carat_weight": [
+                        {
+                            "value": "0-50ct",
+                            "label": "0.50ct",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "0-75ct",
+                            "label": "0.75ct",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "1-00ct",
+                            "label": "1.00ct",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "1-25ct",
+                            "label": "1.25ct",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "1-50ct",
+                            "label": "1.50ct",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        }
+                    ],
+                    "chain_length": []
+                },
                 "option_delivery_options": [],
                 "selector_cards": [],
                 "style_cards": [],
@@ -389,6 +475,11 @@
                     }
                 ],
                 "option_band_claw_metal_options": [],
+                "option_addon_groups": {
+                    "tcw": [],
+                    "carat_weight": [],
+                    "chain_length": []
+                },
                 "option_delivery_options": [],
                 "selector_cards": [
                     {
@@ -397,6 +488,100 @@
                         "image": ""
                     }
                 ],
+                "style_cards": [],
+                "style_cards_sections": {
+                    "engagement": [],
+                    "wedding": []
+                },
+                "diamond_intro_kicker": "",
+                "diamond_intro_text": "",
+                "diamond_inventory": []
+            },
+            "Pendant": {
+                "type": "Pendant",
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "option_color_choices": [],
+                "option_size_choices": [],
+                "option_metal_options": [
+                    {
+                        "value": "gold",
+                        "label": "gold",
+                        "description": "",
+                        "color_hex": "#c9a96e",
+                        "image": ""
+                    }
+                ],
+                "option_band_claw_metal_options": [],
+                "option_addon_groups": {
+                    "tcw": [
+                        {
+                            "value": "0-50tcw",
+                            "label": "0.50tcw",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "0-75tcw",
+                            "label": "0.75tcw",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "1-00tcw",
+                            "label": "1.00tcw",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "1-25tcw",
+                            "label": "1.25tcw",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "1-50tcw",
+                            "label": "1.50tcw",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        }
+                    ],
+                    "carat_weight": [],
+                    "chain_length": [
+                        {
+                            "value": "16-chain",
+                            "label": "16\" Chain",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "18-chain",
+                            "label": "18\" Chain",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        },
+                        {
+                            "value": "20-chain",
+                            "label": "20\" Chain",
+                            "description": "",
+                            "color_hex": "",
+                            "image": ""
+                        }
+                    ]
+                },
+                "option_delivery_options": [],
+                "selector_cards": [],
                 "style_cards": [],
                 "style_cards_sections": {
                     "engagement": [],
@@ -854,7 +1039,12 @@
                             "4",
                             "5"
                         ],
-                        "band_options": []
+                        "band_options": [],
+                        "addon_groups": {
+                            "tcw": [],
+                            "carat_weight": [],
+                            "chain_length": []
+                        }
                     }
                 ],
                 "option_delivery_options": []
@@ -867,8 +1057,8 @@
                 "ring_category": "",
                 "ring_gender": "",
                 "name": "test",
-                "old_price": "200",
-                "new_price": "500",
+                "old_price": "900",
+                "new_price": "£500.00",
                 "default_image": "/assets/uploads/admin/admin-20260805-101724-5cbffc54.jpg",
                 "hover_image": "/assets/uploads/admin/admin-20260805-101725-8d95c57f.jpg",
                 "popup_image": "/assets/uploads/admin/admin-20260805-101724-5cbffc54.jpg",
@@ -876,7 +1066,9 @@
                 "status": "active",
                 "inventory_tracked": false,
                 "inventory_quantity": 0,
-                "styles": [],
+                "styles": [
+                    "test-style"
+                ],
                 "diamondShapes": [],
                 "subcategories": [],
                 "features": [],
@@ -885,8 +1077,34 @@
                 "option_color_display": "",
                 "option_size_display": "",
                 "option_colors": [],
-                "option_sizes": [],
-                "metal_variations": [],
+                "option_sizes": [
+                    "S / small"
+                ],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_tracked": false,
+                        "inventory_quantity": 0,
+                        "metal": "gold",
+                        "price": 500,
+                        "old_price": "£900.00",
+                        "image": "",
+                        "hover_image": "",
+                        "gallery": [],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [
+                            "S / small"
+                        ],
+                        "band_options": [],
+                        "addon_groups": {
+                            "tcw": [],
+                            "carat_weight": [],
+                            "chain_length": []
+                        }
+                    }
+                ],
                 "option_delivery_options": []
             },
             {
@@ -935,7 +1153,12 @@
                         "features": [],
                         "shapes": [],
                         "sizes": [],
-                        "band_options": []
+                        "band_options": [],
+                        "addon_groups": {
+                            "tcw": [],
+                            "carat_weight": [],
+                            "chain_length": []
+                        }
                     }
                 ],
                 "option_delivery_options": []
@@ -992,7 +1215,12 @@
                             "radiant"
                         ],
                         "sizes": [],
-                        "band_options": []
+                        "band_options": [],
+                        "addon_groups": {
+                            "tcw": [],
+                            "carat_weight": [],
+                            "chain_length": []
+                        }
                     },
                     {
                         "active": false,
@@ -1008,7 +1236,12 @@
                         "features": [],
                         "shapes": [],
                         "sizes": [],
-                        "band_options": []
+                        "band_options": [],
+                        "addon_groups": {
+                            "tcw": [],
+                            "carat_weight": [],
+                            "chain_length": []
+                        }
                     }
                 ],
                 "option_delivery_options": []
@@ -1060,7 +1293,12 @@
                         "features": [],
                         "shapes": [],
                         "sizes": [],
-                        "band_options": []
+                        "band_options": [],
+                        "addon_groups": {
+                            "tcw": [],
+                            "carat_weight": [],
+                            "chain_length": []
+                        }
                     },
                     {
                         "active": false,
@@ -1076,7 +1314,101 @@
                         "features": [],
                         "shapes": [],
                         "sizes": [],
-                        "band_options": []
+                        "band_options": [],
+                        "addon_groups": {
+                            "tcw": [],
+                            "carat_weight": [],
+                            "chain_length": []
+                        }
+                    }
+                ],
+                "option_delivery_options": []
+            },
+            {
+                "id": "prd-test-pendent",
+                "product_type": "Pendant",
+                "color": "Yellow Gold",
+                "category": "",
+                "ring_category": "",
+                "ring_gender": "",
+                "name": "test pendent",
+                "old_price": "1800",
+                "new_price": "£900.00",
+                "default_image": "",
+                "hover_image": "",
+                "popup_image": "",
+                "description": "",
+                "status": "active",
+                "inventory_tracked": false,
+                "inventory_quantity": 0,
+                "styles": [],
+                "diamondShapes": [],
+                "subcategories": [],
+                "features": [],
+                "option_color_label": "",
+                "option_size_label": "",
+                "option_color_display": "",
+                "option_size_display": "",
+                "option_colors": [],
+                "option_sizes": [],
+                "metal_variations": [
+                    {
+                        "active": true,
+                        "inventory_tracked": false,
+                        "inventory_quantity": 0,
+                        "metal": "gold",
+                        "price": 900,
+                        "old_price": "£1,800.00",
+                        "image": "",
+                        "hover_image": "",
+                        "gallery": [],
+                        "description": "",
+                        "features": [],
+                        "shapes": [],
+                        "sizes": [],
+                        "band_options": [],
+                        "addon_groups": {
+                            "tcw": [
+                                {
+                                    "active": true,
+                                    "label": "0.75tcw",
+                                    "surcharge": 0
+                                },
+                                {
+                                    "active": true,
+                                    "label": "1.00tcw",
+                                    "surcharge": 50
+                                },
+                                {
+                                    "active": true,
+                                    "label": "1.25tcw",
+                                    "surcharge": 100
+                                },
+                                {
+                                    "active": true,
+                                    "label": "1.50tcw",
+                                    "surcharge": 149.48
+                                }
+                            ],
+                            "carat_weight": [],
+                            "chain_length": [
+                                {
+                                    "active": true,
+                                    "label": "16\" Chain",
+                                    "surcharge": 0
+                                },
+                                {
+                                    "active": true,
+                                    "label": "18\" Chain",
+                                    "surcharge": 100
+                                },
+                                {
+                                    "active": true,
+                                    "label": "20\" Chain",
+                                    "surcharge": 200
+                                }
+                            ]
+                        }
                     }
                 ],
                 "option_delivery_options": []
@@ -1088,7 +1420,9 @@
             {
                 "key": "featured",
                 "label": "Featured",
-                "product_ids": []
+                "product_ids": [
+                    "prd-test"
+                ]
             },
             {
                 "key": "newarrivals",
@@ -1105,7 +1439,7 @@
     "shop_by_style": {
         "title": "Shop by Style",
         "style_ids": [
-            "ring::engagement::halo"
+            "ring::wedding::eternity"
         ]
     },
     "trending": {
@@ -1222,7 +1556,9 @@
     },
     "bestselling": {
         "title": "Bestselling Products",
-        "product_ids": []
+        "product_ids": [
+            "prd-test"
+        ]
     },
     "celebs": {
         "title": "Celebs at Azuroon",
@@ -1388,7 +1724,7 @@
                 "phone": "+91 98765 43210",
                 "city": "Mumbai",
                 "state": "",
-                "country": "",
+                "country": "United Kingdom",
                 "postal_code": "",
                 "address_line_1": "",
                 "address_line_2": "",
@@ -1409,7 +1745,7 @@
                 "phone": "+91 99887 76655",
                 "city": "Delhi",
                 "state": "",
-                "country": "",
+                "country": "United Kingdom",
                 "postal_code": "",
                 "address_line_1": "",
                 "address_line_2": "",
@@ -1430,7 +1766,7 @@
                 "phone": "+91 98111 22446",
                 "city": "Bengaluru",
                 "state": "",
-                "country": "",
+                "country": "United Kingdom",
                 "postal_code": "",
                 "address_line_1": "",
                 "address_line_2": "",
@@ -1451,8 +1787,8 @@
                 "phone": "1234567890",
                 "city": "surat",
                 "state": "Gujarat",
-                "country": "India",
-                "postal_code": "xyz",
+                "country": "United Kingdom",
+                "postal_code": "XYZ",
                 "address_line_1": "dd",
                 "address_line_2": "",
                 "status": "active",
@@ -1473,8 +1809,8 @@
                         "address_line_2": "",
                         "city": "surat",
                         "state": "Gujarat",
-                        "postal_code": "xyz",
-                        "country": "India"
+                        "postal_code": "XYZ",
+                        "country": "United Kingdom"
                     }
                 ],
                 "notes": "Registered from storefront"
@@ -1487,8 +1823,8 @@
                 "phone": "1234567890",
                 "city": "surat",
                 "state": "dsdcs",
-                "country": "India",
-                "postal_code": "scfsdf",
+                "country": "United Kingdom",
+                "postal_code": "SCF SDF",
                 "address_line_1": "sadasda",
                 "address_line_2": "",
                 "status": "active",
@@ -1508,7 +1844,7 @@
                 "phone": "1234567890",
                 "city": "surat",
                 "state": "",
-                "country": "India",
+                "country": "United Kingdom",
                 "postal_code": "",
                 "address_line_1": "",
                 "address_line_2": "",
@@ -1520,12 +1856,114 @@
                 "wishlist_product_ids": [],
                 "saved_addresses": [],
                 "notes": "Registered from storefront"
+            },
+            {
+                "id": "cus-4f9bb502",
+                "name": "abdul",
+                "email": "test12345@gmail.com",
+                "password_hash": "$2y$10$MaWg7n1eJ5bwCfT1c0tpveFY.tO9PsZVqjeAU5GjynjnFR/eeMkNi",
+                "phone": "1234567890",
+                "city": "surat",
+                "state": "asas",
+                "country": "United Kingdom",
+                "postal_code": "ADAD",
+                "address_line_1": "sss",
+                "address_line_2": "",
+                "status": "active",
+                "joined_at": "2026-08-06",
+                "last_order_at": "2026-08-06 09:48",
+                "total_orders": "1",
+                "total_spent": "£0.00",
+                "wishlist_product_ids": [],
+                "saved_addresses": [
+                    {
+                        "id": "addr-home",
+                        "label": "Home",
+                        "recipient_name": "abdul",
+                        "phone": "1234567890",
+                        "address_line_1": "e",
+                        "address_line_2": "",
+                        "city": "e",
+                        "state": "e",
+                        "postal_code": "SW1A 1KK",
+                        "country": "United Kingdom"
+                    }
+                ],
+                "notes": "Registered from storefront"
             }
         ]
     },
     "orders": {
         "title": "Order Management",
-        "items": []
+        "items": [
+            {
+                "id": "ord-24001",
+                "customer_name": "abdul",
+                "customer_email": "test12345@gmail.com",
+                "status": "delivered",
+                "tracking_id": "AZ-246000",
+                "payment_method": "online",
+                "payment_status": "paid",
+                "payment_reference": "",
+                "stripe_checkout_session_id": "",
+                "stripe_payment_intent_id": "",
+                "total": "£0.00",
+                "subtotal": "£0.00",
+                "discount_amount": "£0.00",
+                "shipping_amount": "Free",
+                "coupon_code": "",
+                "item_count": "1",
+                "placed_at": "2026-08-06 09:48",
+                "delivered_at": "2026-08-06 13:42:33",
+                "customer_phone": "1234567890",
+                "customer_request_type": "return",
+                "customer_request_status": "pending",
+                "customer_request_reason": "quality issue",
+                "customer_request_requested_at": "2026-08-06 13:43",
+                "customer_request_resolved_at": "",
+                "shipping_address": {
+                    "address_line_1": "sss",
+                    "address_line_2": "",
+                    "city": "surat",
+                    "state": "asas",
+                    "postal_code": "ADAD",
+                    "country": "United Kingdom"
+                },
+                "items": [
+                    {
+                        "id": "line-fbcc69f43b1ef680e591d5b8a72f949434acc19c",
+                        "product_id": "prd-test-4",
+                        "product_name": "test",
+                        "image": "",
+                        "quantity": 1,
+                        "size": "0.6 ctw",
+                        "color": "Yellow Gold",
+                        "diamond_shape": "",
+                        "diamond_shape_label": "",
+                        "diamond_id": "",
+                        "diamond_title": "",
+                        "diamond_price": "",
+                        "metal": "",
+                        "metal_label": "",
+                        "band_claw_metal": "",
+                        "band_claw_metal_label": "",
+                        "addon_selections": {
+                            "carat_weight": "0-50ct"
+                        },
+                        "addon_labels": {
+                            "carat_weight": "0.50ct"
+                        },
+                        "delivery_option": "",
+                        "delivery_label": "",
+                        "delivery_surcharge": "",
+                        "price": "£0.00",
+                        "base_price": "£0.00",
+                        "line_total": "£0.00"
+                    }
+                ],
+                "notes": "Cash on delivery order placed.\nCustomer requested return on 2026-08-06 13:43: quality issue"
+            }
+        ]
     },
     "coupons": {
         "title": "Coupons",

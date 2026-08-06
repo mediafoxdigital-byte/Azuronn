@@ -725,6 +725,44 @@ img { max-width: 100%; display: block; }
 .admin-action-wrap { display: inline-flex; }
 .admin-inline-form { display: inline-flex; margin: 0; }
 
+.admin-status-form {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 0;
+}
+
+.admin-status-select {
+  min-width: 150px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 9px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.admin-status-tracking { display: inline-flex; flex-direction: column; gap: 4px; }
+.admin-status-tracking[hidden] { display: none; }
+
+.admin-status-tracking span {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-status-tracking input {
+  width: 150px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 9px;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
 /* ── Flash messages ── */
 .admin-flash {
   padding: 14px 20px;
@@ -1358,9 +1396,64 @@ img { max-width: 100%; display: block; }
 
 [data-catalog-profile-editor] .admin-product-side-card { height: 100%; }
 
-[data-catalog-profile-editor] .admin-product-main { gap: 14px; }
+/* The product editor carries no sidebar, so the base two-column grid was
+   reserving an empty 330px track and squeezing every field. Run it full width
+   and give its cards the same white-card treatment as the Attributes groups. */
+[data-catalog-profile-editor] {
+  grid-template-columns: minmax(0, 1fr);
+}
 
-[data-catalog-profile-editor] .admin-choice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+[data-catalog-profile-editor] .admin-product-main {
+  gap: 22px;
+  max-width: none;
+}
+
+[data-catalog-profile-editor] .admin-product-card {
+  padding: 24px 26px 26px;
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(15, 30, 24, 0.04),
+              0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+[data-catalog-profile-editor] .admin-product-card:hover {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm),
+              0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+/* Inner repeaters and metal blocks read as inset panels against the white card,
+   mirroring .admin-attr-group .admin-repeater-item. */
+[data-catalog-profile-editor] .admin-repeater-item {
+  background: var(--panel-soft);
+  border-color: var(--line-soft);
+  box-shadow: none;
+}
+
+[data-catalog-profile-editor] .admin-repeater-item:hover {
+  background: #ffffff;
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-catalog-profile-editor] .admin-product-card-head h4 { font-size: 1.3rem; }
+
+/* Full width means the three-up rows now have room to breathe. */
+[data-catalog-profile-editor] .admin-grid.two-up { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+[data-catalog-profile-editor] .admin-grid.three-up { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+[data-catalog-profile-editor] .admin-choice-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+@media (max-width: 1200px) {
+  [data-catalog-profile-editor] .admin-choice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  [data-catalog-profile-editor] .admin-product-card { padding: 20px 20px 22px; }
+  [data-catalog-profile-editor] .admin-grid.two-up,
+  [data-catalog-profile-editor] .admin-grid.three-up { grid-template-columns: 1fr; }
+  [data-catalog-profile-editor] .admin-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 .admin-profile-selector-col {
   display: grid;

@@ -102,7 +102,7 @@ require_once dirname(__DIR__, 2) . '/includes/header.php';
               <span>ADDRESS LINE 1</span>
               <div class="input-icon-wrap">
                 <i class="fas fa-map-marker-alt"></i>
-                <input type="text" name="address_line_1" autocomplete="address-line1" value="<?= h((string) ($customer['address_line_1'] ?? '')) ?>" placeholder="House no., Building, Street">
+                <input type="text" name="address_line_1" autocomplete="address-line1" value="<?= h((string) ($customer['address_line_1'] ?? '')) ?>" placeholder="House number and street">
               </div>
             </label>
 
@@ -110,43 +110,40 @@ require_once dirname(__DIR__, 2) . '/includes/header.php';
               <span>ADDRESS LINE 2</span>
               <div class="input-icon-wrap">
                 <i class="fas fa-map-marker-alt"></i>
-                <input type="text" name="address_line_2" autocomplete="address-line2" value="<?= h((string) ($customer['address_line_2'] ?? '')) ?>" placeholder="Apartment, suite, unit, etc. (optional)">
+                <input type="text" name="address_line_2" autocomplete="address-line2" value="<?= h((string) ($customer['address_line_2'] ?? '')) ?>" placeholder="Flat, building, locality (optional)">
               </div>
             </label>
 
             <div class="form-grid-2">
               <label class="premium-field">
-                <span>CITY</span>
+                <span>TOWN / CITY</span>
                 <div class="input-icon-wrap">
                   <i class="far fa-building"></i>
-                  <input type="text" name="city" autocomplete="address-level2" value="<?= h((string) ($customer['city'] ?? '')) ?>" placeholder="surat">
+                  <input type="text" name="city" autocomplete="address-level2" value="<?= h((string) ($customer['city'] ?? '')) ?>" placeholder="London">
                 </div>
               </label>
               <label class="premium-field">
-                <span>STATE</span>
-                <select name="state" autocomplete="address-level1">
-                  <option value="" <?= (($customer['state'] ?? '') === '') ? 'selected' : '' ?>>Select state</option>
-                  <option value="Gujarat" <?= (($customer['state'] ?? '') === 'Gujarat') ? 'selected' : '' ?>>Gujarat</option>
-                  <option value="Maharashtra" <?= (($customer['state'] ?? '') === 'Maharashtra') ? 'selected' : '' ?>>Maharashtra</option>
-                </select>
+                <span>COUNTY</span>
+                <div class="input-icon-wrap">
+                  <i class="far fa-map"></i>
+                  <input type="text" name="state" autocomplete="address-level1" value="<?= h((string) ($customer['state'] ?? '')) ?>" placeholder="Greater London (optional)">
+                </div>
               </label>
             </div>
 
             <div class="form-grid-2">
               <label class="premium-field">
-                <span>POSTAL CODE</span>
+                <span>POSTCODE</span>
                 <div class="input-icon-wrap">
                   <i class="fas fa-map-pin"></i>
-                  <input type="text" name="postal_code" autocomplete="postal-code" value="<?= h((string) ($customer['postal_code'] ?? '')) ?>" placeholder="Enter postal code">
+                  <input type="text" name="postal_code" autocomplete="postal-code" value="<?= h((string) ($customer['postal_code'] ?? '')) ?>" placeholder="SW1A 1AA" maxlength="8" pattern="<?= h(uk_postcode_html_pattern()) ?>" title="Enter a valid UK postcode, for example SW1A 1AA">
                 </div>
               </label>
               <label class="premium-field">
                 <span>COUNTRY</span>
                 <div class="input-icon-wrap">
                   <i class="fas fa-globe"></i>
-                  <select name="country" autocomplete="country-name">
-                    <option value="India" <?= ((($customer['country'] ?? '') !== '' ? $customer['country'] : 'India') === 'India') ? 'selected' : '' ?>>India</option>
-                  </select>
+                  <input type="text" value="<?= h(uk_country_name()) ?>" readonly disabled>
                 </div>
               </label>
             </div>

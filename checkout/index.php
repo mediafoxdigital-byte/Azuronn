@@ -430,31 +430,31 @@ require_once dirname(__DIR__) . '/includes/header.php';
             </label>
             <label class="store-field">
               <span>Phone</span>
-              <input type="text" name="phone" required value="<?= h((string) ($_POST['phone'] ?? ($selectedSavedAddress['phone'] ?? $customer['phone']))) ?>">
+              <input type="tel" name="phone" required autocomplete="tel" placeholder="07700 900123" value="<?= h((string) ($_POST['phone'] ?? ($selectedSavedAddress['phone'] ?? $customer['phone']))) ?>">
             </label>
             <label class="store-field store-field-wide">
               <span>Address Line 1</span>
-              <input type="text" name="address_line_1" required value="<?= h((string) ($_POST['address_line_1'] ?? ($selectedSavedAddress['address_line_1'] ?? $customer['address_line_1']))) ?>">
+              <input type="text" name="address_line_1" required autocomplete="address-line1" placeholder="House number and street" value="<?= h((string) ($_POST['address_line_1'] ?? ($selectedSavedAddress['address_line_1'] ?? $customer['address_line_1']))) ?>">
             </label>
             <label class="store-field store-field-wide">
-              <span>Address Line 2</span>
-              <input type="text" name="address_line_2" value="<?= h((string) ($_POST['address_line_2'] ?? ($selectedSavedAddress['address_line_2'] ?? $customer['address_line_2']))) ?>">
+              <span>Address Line 2 <small>(optional)</small></span>
+              <input type="text" name="address_line_2" autocomplete="address-line2" placeholder="Flat, building, locality" value="<?= h((string) ($_POST['address_line_2'] ?? ($selectedSavedAddress['address_line_2'] ?? $customer['address_line_2']))) ?>">
             </label>
             <label class="store-field">
-              <span>City</span>
-              <input type="text" name="city" required value="<?= h((string) ($_POST['city'] ?? ($selectedSavedAddress['city'] ?? $customer['city']))) ?>">
+              <span>Town / City</span>
+              <input type="text" name="city" required autocomplete="address-level2" placeholder="London" value="<?= h((string) ($_POST['city'] ?? ($selectedSavedAddress['city'] ?? $customer['city']))) ?>">
             </label>
             <label class="store-field">
-              <span>State</span>
-              <input type="text" name="state" required value="<?= h((string) ($_POST['state'] ?? ($selectedSavedAddress['state'] ?? $customer['state']))) ?>">
+              <span>County <small>(optional)</small></span>
+              <input type="text" name="state" autocomplete="address-level1" placeholder="Greater London" value="<?= h((string) ($_POST['state'] ?? ($selectedSavedAddress['state'] ?? $customer['state']))) ?>">
             </label>
             <label class="store-field">
-              <span>Postal Code</span>
-              <input type="text" name="postal_code" required value="<?= h((string) ($_POST['postal_code'] ?? ($selectedSavedAddress['postal_code'] ?? $customer['postal_code']))) ?>">
+              <span>Postcode</span>
+              <input type="text" name="postal_code" required autocomplete="postal-code" placeholder="SW1A 1AA" maxlength="8" pattern="<?= h(uk_postcode_html_pattern()) ?>" title="Enter a valid UK postcode, for example SW1A 1AA" value="<?= h((string) ($_POST['postal_code'] ?? ($selectedSavedAddress['postal_code'] ?? $customer['postal_code']))) ?>">
             </label>
             <label class="store-field">
               <span>Country</span>
-              <input type="text" name="country" required value="<?= h((string) ($_POST['country'] ?? ($selectedSavedAddress['country'] ?? ($customer['country'] ?: 'India')))) ?>">
+              <input type="text" value="<?= h(uk_country_name()) ?>" readonly disabled>
             </label>
           </div>
         </div>
@@ -462,19 +462,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
         <div class="checkout-card">
           <div class="checkout-card-head">
             <span class="auth-kicker">Payment</span>
-            <h2>Choose Payment Method</h2>
+            <h2>Secure Card Payment</h2>
           </div>
           <div class="option-card-grid">
-            <label class="option-card">
-              <input type="radio" name="payment_method" value="online" <?= (string) ($_POST['payment_method'] ?? 'online') === 'online' ? 'checked' : '' ?>>
+            <div class="option-card option-card-static is-selected">
               <span>Online Payment</span>
               <small>Pay securely by card via Stripe. You'll be redirected to complete payment.</small>
-            </label>
-            <label class="option-card">
-              <input type="radio" name="payment_method" value="cash" <?= (string) ($_POST['payment_method'] ?? '') === 'cash' ? 'checked' : '' ?>>
-              <span>Cash on Delivery</span>
-              <small>Order is placed instantly and payment stays awaiting until delivered.</small>
-            </label>
+            </div>
           </div>
           <label class="store-field">
             <span>Order Notes</span>

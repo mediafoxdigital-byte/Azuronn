@@ -276,8 +276,8 @@ require_once dirname(__DIR__) . '/includes/header.php';
     color: var(--cart-mute); font-weight: 600;
   }
   .cart-page .cart-line-actions strong {
-    font-size: 1.4rem; color: var(--cart-ink); font-weight: 500;
-    font-family: var(--cart-serif);
+    font-size: 0.92rem; color: var(--cart-ink); font-weight: 500;
+    font-family: var(--cart-sans);
   }
   .cart-page .store-qty {
     display: flex; align-items: center;
@@ -346,9 +346,9 @@ require_once dirname(__DIR__) . '/includes/header.php';
     background: transparent;
     border: 0; border-top: 1px solid var(--cart-line); border-radius: 0;
     padding: 20px 0 4px; margin-top: 8px;
-    font-size: 1.4rem; font-family: var(--cart-serif);
+    font-size: 0.92rem; font-family: var(--cart-sans);
   }
-  .cart-page .summary-row-total span { color: var(--cart-ink-soft); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.16em; font-family: var(--cart-sans); font-weight: 600; }
+  .cart-page .summary-row-total span { color: var(--cart-ink-soft); font-size: 0.92rem; font-family: var(--cart-sans); font-weight: 400; }
   .cart-page .summary-row-total strong { color: var(--cart-ink); font-weight: 500; }
 
   /* Coupon row */
@@ -523,7 +523,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                     <span class="cart-line-type"><?= h($line['product']['product_type']) ?> / <?= h($line['product']['category']) ?></span>
                     <h2><a href="<?= h($line['url']) ?>"><?= h($line['product']['name']) ?></a></h2>
                     <div class="cart-line-specs">
-                      <div class="cart-line-spec"><?php $cartMetalHex = (string) ($line['metal_color_hex'] ?? ''); ?><i class="far fa-gem"></i><span>Ring Metal</span><strong><?php if ($cartMetalHex !== ''): ?><span class="cart-metal-dot" style="background:<?= h($cartMetalHex) ?>;" aria-hidden="true"></span><?php endif; ?><?= h((string) ($line['metal_label'] ?? '')) ?></strong></div>
+                      <div class="cart-line-spec"><?php $cartMetalHex = (string) ($line['metal_color_hex'] ?? ''); ?><i class="far fa-gem"></i><span>Metal</span><strong><?php if ($cartMetalHex !== ''): ?><span class="cart-metal-dot" style="background:<?= h($cartMetalHex) ?>;" aria-hidden="true"></span><?php endif; ?><?= h((string) ($line['metal_label'] ?? '')) ?></strong></div>
                       <?php if ((string) ($line['band_claw_metal_label'] ?? '') !== ''): ?>
                         <div class="cart-line-spec is-wide"><i class="fas fa-ring"></i><span>Band / Claw</span><strong><?= h((string) ($line['band_claw_metal_label'] ?? '')) ?></strong></div>
                       <?php endif; ?>
@@ -538,11 +538,14 @@ require_once dirname(__DIR__) . '/includes/header.php';
                       <?php if ((string) ($line['size'] ?? '') !== ''): ?>
                         <div class="cart-line-spec"><i class="fas fa-compress-arrows-alt"></i><span>Size</span><strong><?= h((string) ($line['size'] ?? '')) ?></strong></div>
                       <?php endif; ?>
-                      <div class="cart-line-spec"><i class="fas fa-truck"></i><span>Delivery</span><strong><?= h((string) (($line['delivery_surcharge'] ?? 0) > 0 ? 'Priority Delivery' : 'Basic Delivery')) ?></strong></div>
-                      <div class="cart-line-spec is-wide"><i class="fas fa-list-ul"></i><span>Variant</span><strong><?= h(line_variant_summary($line)) ?></strong></div>
+                      <?php $cartDeliveryLabel = trim((string) ($line['delivery_label'] ?? '')); ?>
+                      <?php if ($cartDeliveryLabel === ''): ?>
+                        <?php $cartDeliveryLabel = ($line['delivery_surcharge'] ?? 0) > 0 ? 'Express Delivery' : 'Basic Delivery'; ?>
+                      <?php endif; ?>
+                      <div class="cart-line-spec"><i class="fas fa-truck"></i><span>Delivery</span><strong><?= h($cartDeliveryLabel) ?></strong></div>
                     </div>
                     <?php if (($line['delivery_surcharge'] ?? 0) > 0): ?>
-                      <p class="cart-line-note">Priority delivery upgrade: <?= h((string) $line['delivery_surcharge_label']) ?> each</p>
+                      <p class="cart-line-note"><?= h($cartDeliveryLabel) ?>: <?= h((string) $line['delivery_surcharge_label']) ?> each</p>
                     <?php endif; ?>
                   </div>
                   <div class="cart-line-actions">

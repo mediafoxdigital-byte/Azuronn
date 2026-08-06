@@ -56,6 +56,43 @@ AddDefaultCharset UTF-8
 ServerSignature Off
 
 # ─────────────────────────────────────────────────────────────
+#  UPLOAD LIMITS
+#  Admin background media allows video up to 30MB, so PHP must accept at least
+#  that or it discards the file before any app code runs. These php_value lines
+#  only apply when PHP runs as an Apache module; on CGI/FastCGI/PHP-FPM hosts
+#  the identical settings in .user.ini take effect instead. The IfModule guards
+#  keep this a no-op (never a 500) when mod_php isn't loaded.
+#  post_max_size covers the entire request body — file plus all other fields —
+#  so it stays above upload_max_filesize.
+# ─────────────────────────────────────────────────────────────
+<IfModule mod_php.c>
+    php_value upload_max_filesize 32M
+    php_value post_max_size 40M
+    php_value memory_limit 128M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 32M
+    php_value post_max_size 40M
+    php_value memory_limit 128M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 32M
+    php_value post_max_size 40M
+    php_value memory_limit 128M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+
+# Apache's own request-body ceiling, independent of PHP. Left generous enough
+# for a 40M post body; without this some configs reject the request with a 413
+# before PHP ever sees it.
+LimitRequestBody 47185920
+
+# ─────────────────────────────────────────────────────────────
 #  PERFORMANCE (output-neutral: same bytes, faster delivery)
 #  All blocks are guarded by IfModule directives so they no-op gracefully
 #  if a module is missing — never a 500. Nothing here changes any

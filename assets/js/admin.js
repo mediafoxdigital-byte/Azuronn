@@ -988,3 +988,30 @@ function syncAdminAnchorNav() {
 }
 
 syncAdminAnchorNav();
+
+// Mirrors order_tracking_statuses() in includes/content.php — keep in sync.
+const ORDER_TRACKING_STATUSES = ['shipped', 'out-for-delivery', 'delivered'];
+
+function syncOrderStatusForms(scope = document) {
+  scope.querySelectorAll('[data-order-status-form]').forEach((form) => {
+    const select = form.querySelector('[data-order-status-select]');
+    const field = form.querySelector('[data-order-tracking-field]');
+    if (!select || !field) return;
+    field.hidden = !ORDER_TRACKING_STATUSES.includes(select.value);
+  });
+}
+
+document.addEventListener('change', (event) => {
+  const select = event.target.closest?.('[data-order-status-select]');
+  if (!select) return;
+  const form = select.closest('[data-order-status-form]');
+  const field = form?.querySelector('[data-order-tracking-field]');
+  if (!field) return;
+  field.hidden = !ORDER_TRACKING_STATUSES.includes(select.value);
+  if (!field.hidden) {
+    field.querySelector('input')?.focus();
+  }
+});
+
+syncOrderStatusForms();
+window.addEventListener('pageshow', () => syncOrderStatusForms());

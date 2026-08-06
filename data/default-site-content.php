@@ -24,6 +24,16 @@ return [
             'googleplus' => '#',
             'youtube' => '#',
         ],
+        // Delivery timeline shown on every product page. Editable from
+        // Admin > Settings; a category attribute profile may still override it
+        // with its own delivery options.
+        'delivery' => [
+            'basic_label' => 'Basic Delivery',
+            'basic_description' => 'Free insured shipping. Arrives in 5-7 working days.',
+            'express_label' => 'Express Delivery',
+            'express_description' => 'Priority dispatch. Arrives in 1-2 working days.',
+            'express_price' => '25.00',
+        ],
     ],
     'hero' => [
         'offer' => 'Exclusive Offer -10% Off This Week',
@@ -450,17 +460,17 @@ return [
     'customers' => [
         'title' => 'Customer Accounts',
         'items' => [
-            ['id' => 'CUS-1001', 'name' => 'Aarav Mehta', 'email' => 'aarav@example.com', 'phone' => '+91 98765 43210', 'city' => 'Mumbai', 'status' => 'active', 'joined_at' => '2026-03-08', 'total_orders' => '4', 'total_spent' => '£1,420.00', 'notes' => 'VIP bridal buyer'],
-            ['id' => 'CUS-1002', 'name' => 'Nisha Kapoor', 'email' => 'nisha@example.com', 'phone' => '+91 99887 76655', 'city' => 'Delhi', 'status' => 'active', 'joined_at' => '2026-02-18', 'total_orders' => '2', 'total_spent' => '£540.00', 'notes' => 'Interested in oval solitaires'],
-            ['id' => 'CUS-1003', 'name' => 'Rohan Batra', 'email' => 'rohan@example.com', 'phone' => '+91 98111 22446', 'city' => 'Bengaluru', 'status' => 'paused', 'joined_at' => '2026-01-11', 'total_orders' => '1', 'total_spent' => '£215.00', 'notes' => 'Requested ring resize follow-up'],
+            ['id' => 'CUS-1001', 'name' => 'Amelia Hartley', 'email' => 'amelia@example.com', 'phone' => '07700 900123', 'city' => 'London', 'state' => 'Greater London', 'postal_code' => 'SW1A 1AA', 'status' => 'active', 'joined_at' => '2026-03-08', 'total_orders' => '4', 'total_spent' => '£1,420.00', 'notes' => 'VIP bridal buyer'],
+            ['id' => 'CUS-1002', 'name' => 'Nisha Kapoor', 'email' => 'nisha@example.com', 'phone' => '07700 900456', 'city' => 'Manchester', 'state' => 'Greater Manchester', 'postal_code' => 'M1 1AE', 'status' => 'active', 'joined_at' => '2026-02-18', 'total_orders' => '2', 'total_spent' => '£540.00', 'notes' => 'Interested in oval solitaires'],
+            ['id' => 'CUS-1003', 'name' => 'Rohan Batra', 'email' => 'rohan@example.com', 'phone' => '07700 900789', 'city' => 'Edinburgh', 'state' => 'Midlothian', 'postal_code' => 'EH1 1YZ', 'status' => 'paused', 'joined_at' => '2026-01-11', 'total_orders' => '1', 'total_spent' => '£215.00', 'notes' => 'Requested ring resize follow-up'],
         ],
     ],
     'orders' => [
         'title' => 'Order Management',
         'items' => [
-            ['id' => 'ORD-24001', 'customer_name' => 'Aarav Mehta', 'customer_email' => 'aarav@example.com', 'status' => 'processing', 'payment_method' => 'online', 'payment_status' => 'paid', 'total' => '£860.00', 'item_count' => '2', 'placed_at' => '2026-04-16 10:30', 'notes' => 'Shipping with premium gift packaging'],
-            ['id' => 'ORD-24002', 'customer_name' => 'Nisha Kapoor', 'customer_email' => 'nisha@example.com', 'status' => 'completed', 'payment_method' => 'online', 'payment_status' => 'paid', 'total' => '£275.00', 'item_count' => '1', 'placed_at' => '2026-04-13 16:10', 'notes' => 'Tracking shared on WhatsApp'],
-            ['id' => 'ORD-24003', 'customer_name' => 'Rohan Batra', 'customer_email' => 'rohan@example.com', 'status' => 'pending', 'payment_method' => 'cash', 'payment_status' => 'awaiting', 'total' => '£215.00', 'item_count' => '1', 'placed_at' => '2026-04-19 09:05', 'notes' => 'Cash on delivery order awaiting confirmation'],
+            ['id' => 'ORD-24001', 'customer_name' => 'Amelia Hartley', 'customer_email' => 'amelia@example.com', 'status' => 'shipped', 'payment_method' => 'online', 'payment_status' => 'paid', 'tracking_id' => 'AZ-TRK-24001', 'total' => '£860.00', 'item_count' => '2', 'placed_at' => '2026-04-16 10:30', 'notes' => 'Shipping with premium gift packaging'],
+            ['id' => 'ORD-24002', 'customer_name' => 'Nisha Kapoor', 'customer_email' => 'nisha@example.com', 'status' => 'delivered', 'payment_method' => 'online', 'payment_status' => 'paid', 'tracking_id' => 'AZ-TRK-24002', 'delivered_at' => '2026-04-18 11:45', 'total' => '£275.00', 'item_count' => '1', 'placed_at' => '2026-04-13 16:10', 'notes' => 'Tracking shared by email'],
+            ['id' => 'ORD-24003', 'customer_name' => 'Rohan Batra', 'customer_email' => 'rohan@example.com', 'status' => 'received', 'payment_method' => 'online', 'payment_status' => 'awaiting', 'total' => '£215.00', 'item_count' => '1', 'placed_at' => '2026-04-19 09:05', 'notes' => 'Awaiting payment confirmation'],
         ],
     ],
     'social_gallery' => [

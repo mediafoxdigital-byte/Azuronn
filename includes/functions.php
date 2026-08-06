@@ -555,16 +555,21 @@ function product_category_taxonomy_options(): array
     $options = [];
 
     foreach (catalog_protected_categories() as $section => $definition) {
+        // Only the ring sections share product_type='Rings' + ring_category.
+        // Non-ring protected categories (Pendant, Earrings) carry their own
+        // canonical type, so their profile and metal matrix are their own.
         $options[$section] = [
             'label' => $definition['title'],
-            'product_type' => 'Rings',
+            'product_type' => $definition['ring_category'] !== '' ? 'Rings' : catalog_canonical_type($definition['title']),
             'ring_category' => $definition['ring_category'],
             'ring_gender' => '',
         ];
     }
 
     foreach (catalog_active_product_types($content) as $type) {
-        if (catalog_category_ring_section($type) !== '') {
+        // Skip anything a protected entry already covers, otherwise Pendant and
+        // Earrings would each appear twice in the dropdown.
+        if (catalog_protected_category_key($type) !== '') {
             continue;
         }
         $options['custom-' . strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $type))] = [
@@ -595,6 +600,13 @@ function product_category_taxonomy_key(array $product): string
     $type = clean_string((string) ($product['product_type'] ?? ''), 80);
     if ($type === '') {
         return '';
+    }
+
+    // Non-ring protected categories have their own option key, not a 'custom-'
+    // one, so a stored Pendant/Earring product preselects the right entry.
+    $protectedKey = catalog_protected_category_key($type);
+    if ($protectedKey !== '') {
+        return $protectedKey;
     }
 
     $slug = strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $type));

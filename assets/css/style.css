@@ -5928,6 +5928,16 @@ nav.mnav .d-flex-nav {
   box-shadow: 0 14px 28px rgba(2, 69, 48, 0.08);
 }
 
+.option-card-static {
+  grid-column: 1 / -1;
+  cursor: default;
+}
+
+.option-card-static:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .checkout-address-picker {
   margin-bottom: 18px;
 }
@@ -7170,6 +7180,13 @@ nav.mnav .d-flex-nav {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 18px;
+}
+
+.order-card-note {
+  margin: 10px 0 0;
+  text-align: right;
+  font-size: 0.82rem;
+  color: #8a8a8a;
 }
 
 .invoice-panel,

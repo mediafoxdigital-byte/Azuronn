@@ -112,7 +112,7 @@ function admin_requestable_actions(): array
         'save-navigation', 'save-footer', 'create-product', 'update-product', 'delete-product', 'save-inventory',
         'save-catalog-assignments', 'create-news', 'update-news', 'delete-news', 'create-shape',
         'update-shape', 'delete-shape', 'ban-customer', 'unban-customer', 'delete-customer',
-        'mark-order-status', 'resolve-order-request', 'delete-order', 'create-coupon', 'update-coupon',
+        'mark-order-status', 'resolve-order-request', 'create-coupon', 'update-coupon',
         'toggle-coupon', 'delete-coupon', 'save-social-gallery', 'save-faq'
     ];
 }
@@ -537,13 +537,21 @@ function admin_ini_bytes(string $value): int
     };
 }
 
-// Effective upload ceiling = the handler's 10MB hard cap, lowered by whichever
-// PHP ini limit (upload_max_filesize / post_max_size) is smaller. This is the
-// real number a browser can actually send, so the form hint + error messages
-// tell the truth instead of advertising "10MB" when the server caps at 2MB.
-function admin_upload_max_bytes(): int
+// Video files are allowed a bigger ceiling than stills — a short background
+// clip is legitimately several times the weight of a hero photo.
+function admin_upload_cap_bytes(string $mediaType = 'video'): int
 {
-    $cap = 10 * 1024 * 1024;
+    return ($mediaType === 'video' ? 30 : 10) * 1024 * 1024;
+}
+
+// Effective upload ceiling = the handler's hard cap for this media type,
+// lowered by whichever PHP ini limit (upload_max_filesize / post_max_size) is
+// smaller. This is the real number a browser can actually send, so the form
+// hint + error messages tell the truth instead of advertising "30MB" when the
+// server caps at 2MB.
+function admin_upload_max_bytes(string $mediaType = 'video'): int
+{
+    $cap = admin_upload_cap_bytes($mediaType);
     foreach (['upload_max_filesize', 'post_max_size'] as $iniKey) {
         $limit = admin_ini_bytes((string) ini_get($iniKey));
         if ($limit > 0 && $limit < $cap) {
@@ -553,9 +561,9 @@ function admin_upload_max_bytes(): int
     return $cap;
 }
 
-function admin_upload_max_label(): string
+function admin_upload_max_label(string $mediaType = 'video'): string
 {
-    $bytes = admin_upload_max_bytes();
+    $bytes = admin_upload_max_bytes($mediaType);
     if ($bytes >= 1024 * 1024) {
         return ((int) round($bytes / (1024 * 1024))) . ' MB';
     }
@@ -565,11 +573,21 @@ function admin_upload_max_label(): string
     return $bytes . ' B';
 }
 
+// One phrase covering both ceilings for form hints. When the server ini clamps
+// both to the same number there is nothing to distinguish, so it collapses to a
+// single figure rather than repeating it.
+function admin_upload_hint(): string
+{
+    $image = admin_upload_max_label('image');
+    $video = admin_upload_max_label('video');
+    return $image === $video ? 'max ' . $video : 'max ' . $video . ' video, ' . $image . ' image';
+}
+
 // Human reason for a PHP upload error code, so a rejected file reports honestly
 // instead of being masked by a generic "saved" message.
 function admin_upload_error_label(int $code): string
 {
-    $max = admin_upload_max_label();
+    $max = admin_upload_max_label('video');
     return match ($code) {
         UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'The file is larger than the ' . $max . ' this server accepts. Use a smaller image or video.',
         UPLOAD_ERR_PARTIAL => 'The upload didn\'t finish. Please try again.',
@@ -599,17 +617,20 @@ function admin_handle_image_upload(string $fieldName, string $current = ''): str
         return $current;
     }
 
-    if (($file['size'] ?? 0) > admin_upload_max_bytes()) {
-        admin_add_upload_notice('File size exceeds the ' . admin_upload_max_label() . ' this server accepts.');
-        return $current;
-    }
-
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime = (string) $finfo->file($file['tmp_name']);
     $mediaTypeMap = admin_allowed_media_types();
     $mediaType = $mediaTypeMap[$mime] ?? null;
     if (!is_array($mediaType)) {
         admin_add_upload_notice('That file type isn\'t supported here (use JPG, PNG, GIF, WebP, or MP4/WebM/MOV video).');
+        return $current;
+    }
+
+    // Size is checked against the cap for the detected type, so a video gets the
+    // full video allowance rather than the smaller image one.
+    $kind = (string) $mediaType['media_type'];
+    if (($file['size'] ?? 0) > admin_upload_max_bytes($kind)) {
+        admin_add_upload_notice('This ' . $kind . ' is larger than the ' . admin_upload_max_label($kind) . ' this server accepts.');
         return $current;
     }
 
@@ -839,11 +860,74 @@ function admin_resolve_indices_from_profile(array $data, string $indexKey, array
     return $fallback;
 }
 
+/**
+ * The "from" listing face for a matrix product, taken from its cheapest priced
+ * active metal variation. Shop grids and homepage rails read new_price/
+ * default_image/description off the product itself, but merchants now only
+ * enter those per metal, so they are derived here on every save. Each field is
+ * '' when the matrix has nothing usable to offer, letting the caller keep the
+ * stored value rather than blanking a live listing.
+ *
+ * A £0 metal counts as "not priced yet", not as free: several existing products
+ * carry active metals with price 0 alongside a real stored new_price, and
+ * treating 0 as the cheapest would overwrite that price with £0.00 on save.
+ *
+ * @return array{new_price:string,old_price:string,default_image:string,hover_image:string,description:string}
+ */
+function admin_listing_face_from_metals(array $metalVariations): array
+{
+    $face = ['new_price' => '', 'old_price' => '', 'default_image' => '', 'hover_image' => '', 'description' => ''];
+    $best = null;
+    $bestPrice = null;
+    $fallback = null;
+
+    foreach ($metalVariations as $variation) {
+        if (!is_array($variation) || !clean_bool($variation['active'] ?? false)) {
+            continue;
+        }
+        $fallback = $fallback ?? $variation;
+        $price = round(max(0, (float) (preg_replace('/[^0-9.]/', '', (string) ($variation['price'] ?? '0')) ?: '0')), 2);
+        if ($price <= 0) {
+            continue;
+        }
+        if ($bestPrice === null || $price < $bestPrice) {
+            $bestPrice = $price;
+            $best = $variation;
+        }
+    }
+
+    // Imagery and copy still come from an active metal even when none is priced.
+    $best = $best ?? $fallback;
+    if ($best === null) {
+        return $face;
+    }
+
+    if ($bestPrice !== null) {
+        $face['new_price'] = money_format((float) $bestPrice);
+        $face['old_price'] = clean_string((string) ($best['old_price'] ?? ''), 50);
+    }
+
+    $gallery = [];
+    foreach ((array) ($best['gallery'] ?? []) as $image) {
+        $clean = clean_image((string) $image);
+        if ($clean !== '') {
+            $gallery[] = $clean;
+        }
+    }
+    if ($gallery === [] && clean_image((string) ($best['image'] ?? '')) !== '') {
+        $gallery[] = clean_image((string) ($best['image'] ?? ''));
+    }
+
+    $face['default_image'] = $gallery[0] ?? '';
+    $face['hover_image'] = $gallery[1] ?? ($gallery[0] ?? '');
+    $face['description'] = clean_multiline((string) ($best['description'] ?? ''), 1000);
+
+    return $face;
+}
+
 function admin_build_product_from_post(array $existing = [], int $index = 0): array
 {
     $data = is_array($_POST['product'] ?? null) ? $_POST['product'] : [];
-    $defaultImage = admin_select_image_or_url('product_image_url', 'product_image_file', $existing['default_image'] ?? '');
-    $hoverImage = admin_select_image_or_url('product_hover_url', 'product_hover_file', $existing['hover_image'] ?? $defaultImage);
     // The unified Category dropdown decides product_type + ring taxonomy in one
     // choice; the advanced Product Type select is only a fallback when it is absent.
     $taxonomyKey = clean_string((string) ($data['category_taxonomy'] ?? ''), 80);
@@ -939,6 +1023,19 @@ function admin_build_product_from_post(array $existing = [], int $index = 0): ar
         $metalVariations = $existing['metal_variations'] ?? [];
     }
 
+    // The Merchandising "Pricing and media" card is gone: price, imagery and copy
+    // now live per metal in the Metal Matrix. The shop grid and homepage rails
+    // still read new_price/default_image/description straight off the product, so
+    // mirror the cheapest active metal onto the product as its "from" listing
+    // face. Nothing is posted for these fields any more, so this is the only
+    // writer — falling back to the stored values keeps non-matrix items intact.
+    $listing = admin_listing_face_from_metals($metalVariations);
+    $newPrice = $listing['new_price'] !== '' ? $listing['new_price'] : (string) ($existing['new_price'] ?? '');
+    $oldPrice = $listing['new_price'] !== '' ? $listing['old_price'] : (string) ($existing['old_price'] ?? '');
+    $defaultImage = $listing['default_image'] !== '' ? $listing['default_image'] : (string) ($existing['default_image'] ?? '');
+    $hoverImage = $listing['hover_image'] !== '' ? $listing['hover_image'] : (string) ($existing['hover_image'] ?? $defaultImage);
+    $description = $listing['description'] !== '' ? $listing['description'] : (string) ($existing['description'] ?? '');
+
     return clean_product_library_item([
         'id' => $existing['id'] ?? '',
         'name' => $data['name'] ?? '',
@@ -947,12 +1044,12 @@ function admin_build_product_from_post(array $existing = [], int $index = 0): ar
         'category' => $data['category'] ?? '',
         'ring_category' => $ringCategory,
         'ring_gender' => $ringGender,
-        'old_price' => $data['old_price'] ?? '',
-        'new_price' => $data['new_price'] ?? '',
+        'old_price' => $oldPrice,
+        'new_price' => $newPrice,
         'default_image' => $defaultImage,
         'hover_image' => $hoverImage,
         'popup_image' => $defaultImage,
-        'description' => $data['description'] ?? '',
+        'description' => $description,
         'status' => $data['status'] ?? ($existing['status'] ?? 'active'),
         'styles' => array_key_exists('styles', $data) && is_array($data['styles'])
             ? array_values(array_filter(array_map(static fn ($v) => clean_string((string) $v, 80), $data['styles']), static fn ($v) => $v !== ''))
@@ -1639,14 +1736,54 @@ function admin_request_snapshot_customer(array $customer): array
     ]);
 }
 
+/**
+ * Apply a fulfilment status to an order, keeping the tracking ID consistent.
+ * Shared by the direct POST handler and the request-approval apply path so the
+ * two can't drift.
+ */
+function admin_order_apply_status(array $order, string $status, string $trackingId): array
+{
+    $status = order_status_normalize($status);
+    if (!isset(order_status_options()[$status])) {
+        return $order;
+    }
+    $order['status'] = $status;
+
+    if (in_array($status, order_tracking_statuses(), true)) {
+        // A blank submit keeps whatever number is already on the order — the
+        // field is only rendered for these statuses, so an empty post means
+        // "unchanged", not "clear it".
+        if ($trackingId !== '') {
+            $order['tracking_id'] = $trackingId;
+        }
+    } elseif ($status === 'cancelled') {
+        $order['tracking_id'] = '';
+    }
+
+    if ($status === 'delivered') {
+        if (strtolower((string) ($order['payment_status'] ?? '')) === 'awaiting') {
+            $order['payment_status'] = 'paid';
+        }
+        // The return window is measured from this stamp, so re-saving a delivered
+        // order must not restart the clock.
+        if (clean_string((string) ($order['delivered_at'] ?? ''), 40) === '') {
+            $order['delivered_at'] = date('Y-m-d H:i:s');
+        }
+    } else {
+        $order['delivered_at'] = '';
+    }
+
+    return $order;
+}
+
 function admin_request_snapshot_order(array $order): array
 {
     return admin_request_remove_empty([
         'Order ID' => clean_string((string) ($order['id'] ?? ''), 80),
         'Customer' => clean_string((string) ($order['customer_name'] ?? ''), 120),
         'Email' => clean_string((string) ($order['customer_email'] ?? ''), 120),
-        'Status' => clean_string((string) ($order['status'] ?? ''), 40),
-        'Payment Method' => clean_string((string) ($order['payment_method'] ?? ''), 40),
+        'Status' => order_status_label((string) ($order['status'] ?? '')),
+        'Tracking ID' => clean_string((string) ($order['tracking_id'] ?? ''), 120),
         'Payment Status' => clean_string((string) ($order['payment_status'] ?? ''), 40),
         'Total' => clean_string((string) ($order['total'] ?? ''), 40),
         'Placed At' => clean_string((string) ($order['placed_at'] ?? ''), 40),
@@ -2220,17 +2357,13 @@ function admin_prepare_request_payload(string $action, array $content): ?array
         })(),
         'mark-order-status' => (function () use ($content) {
             $orderId = clean_string($_POST['order_id'] ?? '', 80);
-            $status = clean_string($_POST['status'] ?? 'pending', 40);
+            $status = order_status_normalize(clean_string($_POST['status'] ?? 'received', 40));
             $index = admin_array_find_index($content['orders']['items'], $orderId);
             if ($index === null) {
                 return null;
             }
             $before = $content['orders']['items'][$index];
-            $after = $before;
-            $after['status'] = $status;
-            if ($status === 'completed' && strtolower((string) ($after['payment_method'] ?? 'online')) === 'online') {
-                $after['payment_status'] = 'paid';
-            }
+            $after = admin_order_apply_status($before, $status, clean_string($_POST['tracking_id'] ?? '', 120));
             return admin_request_pack('Orders', 'update', 'Order', $orderId, [
                 'target_id' => $orderId,
                 'before' => admin_request_snapshot_order($before),
@@ -2252,18 +2385,6 @@ function admin_prepare_request_payload(string $action, array $content): ?array
                 'after' => ['Requested Resolution' => $resolution],
                 'raw_before' => $content['orders']['items'][$index],
                 'raw_after' => ['resolution' => $resolution],
-            ]);
-        })(),
-        'delete-order' => (function () use ($content) {
-            $orderId = clean_string($_POST['order_id'] ?? '', 80);
-            $index = admin_array_find_index($content['orders']['items'], $orderId);
-            if ($index === null) {
-                return null;
-            }
-            return admin_request_pack('Orders', 'delete', 'Order', $orderId, [
-                'target_id' => $orderId,
-                'before' => admin_request_snapshot_order($content['orders']['items'][$index]),
-                'raw_before' => $content['orders']['items'][$index],
             ]);
         })(),
         'create-coupon' => (function () use ($content) {
@@ -2585,15 +2706,16 @@ function admin_apply_request_payload(array &$content, array $request): string
             return 'User account deleted.';
         case 'mark-order-status':
             $orderId = clean_string((string) ($payload['target_id'] ?? ''), 80);
-            $status = clean_string((string) (($rawAfter['status'] ?? 'pending')), 40);
+            $status = clean_string((string) (($rawAfter['status'] ?? 'received')), 40);
             $index = admin_array_find_index($content['orders']['items'], $orderId);
             if ($index === null) {
                 return 'Order not found.';
             }
-            $content['orders']['items'][$index]['status'] = $status;
-            if ($status === 'completed' && strtolower((string) ($content['orders']['items'][$index]['payment_method'] ?? 'online')) === 'online') {
-                $content['orders']['items'][$index]['payment_status'] = 'paid';
-            }
+            $content['orders']['items'][$index] = admin_order_apply_status(
+                $content['orders']['items'][$index],
+                $status,
+                clean_string((string) (($rawAfter['tracking_id'] ?? '')), 120)
+            );
             save_site_content($content);
             return 'Order status updated.';
         case 'resolve-order-request':
@@ -2609,13 +2731,12 @@ function admin_apply_request_payload(array &$content, array $request): string
                 return 'Customer request not found.';
             }
             $now = date('Y-m-d H:i');
-            $paymentMethod = strtolower((string) ($content['orders']['items'][$index]['payment_method'] ?? 'online'));
             $paymentStatus = strtolower((string) ($content['orders']['items'][$index]['payment_status'] ?? 'awaiting'));
             if ($resolution === 'approve' && $requestStatus === 'pending') {
                 $content['orders']['items'][$index]['customer_request_status'] = 'approved';
                 $content['orders']['items'][$index]['customer_request_resolved_at'] = $now;
                 $content['orders']['items'][$index]['status'] = $requestType === 'cancel' ? 'cancel-approved' : 'return-approved';
-                if ($requestType === 'cancel' && $paymentMethod === 'online' && $paymentStatus === 'paid') {
+                if ($requestType === 'cancel' && $paymentStatus === 'paid') {
                     $content['orders']['items'][$index]['payment_status'] = 'refund-pending';
                 }
                 save_site_content($content);
@@ -2630,22 +2751,12 @@ function admin_apply_request_payload(array &$content, array $request): string
             if ($resolution === 'complete' && $requestStatus === 'approved') {
                 $content['orders']['items'][$index]['customer_request_status'] = 'completed';
                 $content['orders']['items'][$index]['customer_request_resolved_at'] = $now;
-                if ($requestType === 'cancel') {
-                    $content['orders']['items'][$index]['status'] = 'cancelled';
-                    $content['orders']['items'][$index]['payment_status'] = $paymentMethod === 'online' ? 'refunded' : 'cancelled';
-                } else {
-                    $content['orders']['items'][$index]['status'] = 'returned';
-                    $content['orders']['items'][$index]['payment_status'] = $paymentMethod === 'online' ? 'refunded' : 'returned';
-                }
+                $content['orders']['items'][$index]['status'] = $requestType === 'cancel' ? 'cancelled' : 'returned';
+                $content['orders']['items'][$index]['payment_status'] = $paymentStatus === 'awaiting' ? ($requestType === 'cancel' ? 'cancelled' : 'returned') : 'refunded';
                 save_site_content($content);
                 return 'Customer request completed.';
             }
             return 'No order request change was applied.';
-        case 'delete-order':
-            $orderId = clean_string((string) ($payload['target_id'] ?? ''), 80);
-            $content['orders']['items'] = array_values(array_filter($content['orders']['items'], static fn (array $item): bool => (string) ($item['id'] ?? '') !== $orderId));
-            save_site_content($content);
-            return 'Order deleted.';
         case 'create-coupon':
             $content['coupons']['items'][] = is_array($rawAfter) ? $rawAfter : [];
             save_site_content($content);
@@ -2710,7 +2821,7 @@ function admin_request_entity_from_action(string $action): string
         'create-news', 'update-news', 'delete-news' => 'News Post',
         'create-shape', 'update-shape', 'delete-shape' => 'Diamond Shape',
         'ban-customer', 'unban-customer', 'delete-customer' => 'Customer Account',
-        'mark-order-status', 'delete-order' => 'Order',
+        'mark-order-status' => 'Order',
         'resolve-order-request' => 'Customer Request',
         'create-coupon', 'update-coupon', 'toggle-coupon', 'delete-coupon' => 'Coupon',
         default => 'Admin Request',
@@ -2728,7 +2839,7 @@ function admin_request_area_from_action(string $action): string
         'create-product', 'update-product', 'delete-product', 'save-catalog-assignments' => 'Catalog',
         'create-news', 'update-news', 'delete-news' => 'Azuronn News',
         'ban-customer', 'unban-customer', 'delete-customer' => 'Customers',
-        'mark-order-status', 'resolve-order-request', 'delete-order' => 'Orders',
+        'mark-order-status', 'resolve-order-request' => 'Orders',
         'create-coupon', 'update-coupon', 'toggle-coupon', 'delete-coupon' => 'Coupons',
         default => 'Admin Requests',
     };
@@ -2979,6 +3090,17 @@ function admin_request_detail_value(array $payload, string $side): mixed
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    // A body larger than post_max_size makes PHP discard $_POST and $_FILES
+    // entirely — including the CSRF token. Without this check that surfaces as
+    // a bogus "security token is invalid" instead of the real cause, so detect
+    // it from CONTENT_LENGTH before the token is examined.
+    $postMax = admin_ini_bytes((string) ini_get('post_max_size'));
+    $contentLength = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
+    if ($postMax > 0 && $contentLength > $postMax && $_POST === []) {
+        admin_set_flash('error', 'That upload was too large for the server to accept (the whole form must stay under ' . admin_upload_max_label('video') . '). Nothing was saved — use a smaller file or paste a URL.');
+        redirect(admin_entry_url());
+    }
+
     if (!csrf_verify()) {
         admin_set_flash('error', 'The security token is invalid. Refresh and try again.');
         redirect(admin_entry_url());
@@ -3174,7 +3296,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             break;
 
         case 'save-settings':
-            $content['settings'] = $_POST['settings'] ?? $content['settings'];
+            // Settings are split across several forms, so each one posts only its
+            // own fields. Replacing the array outright would reset every key the
+            // submitting form does not render.
+            $content['settings'] = array_replace_recursive(
+                (array) $content['settings'],
+                is_array($_POST['settings'] ?? null) ? $_POST['settings'] : []
+            );
             save_site_content($content);
             admin_set_flash('success', 'Site settings updated.');
             admin_redirect($returnView);
@@ -3530,13 +3658,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
         case 'mark-order-status':
             $orderId = clean_string($_POST['order_id'] ?? '', 80);
-            $status = clean_string($_POST['status'] ?? 'pending', 40);
+            $status = clean_string($_POST['status'] ?? 'received', 40);
             $index = admin_array_find_index($content['orders']['items'], $orderId);
             if ($index !== null) {
-                $content['orders']['items'][$index]['status'] = $status;
-                if ($status === 'completed' && strtolower((string) ($content['orders']['items'][$index]['payment_method'] ?? 'online')) === 'online') {
-                    $content['orders']['items'][$index]['payment_status'] = 'paid';
-                }
+                $content['orders']['items'][$index] = admin_order_apply_status(
+                    $content['orders']['items'][$index],
+                    $status,
+                    clean_string($_POST['tracking_id'] ?? '', 120)
+                );
                 save_site_content($content);
                 admin_set_flash('success', 'Order status updated.');
             }
@@ -3552,7 +3681,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 $requestStatus = strtolower((string) ($content['orders']['items'][$index]['customer_request_status'] ?? 'pending'));
                 if (in_array($requestType, ['cancel', 'return'], true)) {
                     $now = date('Y-m-d H:i');
-                    $paymentMethod = strtolower((string) ($content['orders']['items'][$index]['payment_method'] ?? 'online'));
                     $paymentStatus = strtolower((string) ($content['orders']['items'][$index]['payment_status'] ?? 'awaiting'));
 
                     if ($resolution === 'approve' && $requestStatus === 'pending') {
@@ -3560,7 +3688,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                         $content['orders']['items'][$index]['customer_request_resolved_at'] = $now;
                         if ($requestType === 'cancel') {
                             $content['orders']['items'][$index]['status'] = 'cancel-approved';
-                            if ($paymentMethod === 'online' && $paymentStatus === 'paid') {
+                            if ($paymentStatus === 'paid') {
                                 $content['orders']['items'][$index]['payment_status'] = 'refund-pending';
                             }
                         } else {
@@ -3574,26 +3702,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                     } elseif ($resolution === 'complete' && $requestStatus === 'approved') {
                         $content['orders']['items'][$index]['customer_request_status'] = 'completed';
                         $content['orders']['items'][$index]['customer_request_resolved_at'] = $now;
-                        if ($requestType === 'cancel') {
-                            $content['orders']['items'][$index]['status'] = 'cancelled';
-                            $content['orders']['items'][$index]['payment_status'] = $paymentMethod === 'online' ? 'refunded' : 'cancelled';
-                        } else {
-                            $content['orders']['items'][$index]['status'] = 'returned';
-                            $content['orders']['items'][$index]['payment_status'] = $paymentMethod === 'online' ? 'refunded' : 'returned';
-                        }
+                        $content['orders']['items'][$index]['status'] = $requestType === 'cancel' ? 'cancelled' : 'returned';
+                        $content['orders']['items'][$index]['payment_status'] = $paymentStatus === 'awaiting' ? ($requestType === 'cancel' ? 'cancelled' : 'returned') : 'refunded';
                         admin_set_flash('success', 'Customer request completed.');
                     }
                     save_site_content($content);
                 }
             }
-            admin_redirect('orders');
-            break;
-
-        case 'delete-order':
-            $orderId = clean_string($_POST['order_id'] ?? '', 80);
-            $content['orders']['items'] = array_values(array_filter($content['orders']['items'], static fn (array $item): bool => (string) ($item['id'] ?? '') !== $orderId));
-            save_site_content($content);
-            admin_set_flash('success', 'Order deleted.');
             admin_redirect('orders');
             break;
 
@@ -4005,9 +4120,10 @@ $filteredCustomers = array_values(array_filter($content['customers']['items'] ??
 }));
 $orderStatusFilter = clean_string($_GET['order_status'] ?? '', 80);
 $orderRequestFilter = clean_string($_GET['request_status'] ?? '', 80);
+$orderRequestTypeFilter = clean_string($_GET['request_type'] ?? '', 40);
 $orderQuery = clean_string($_GET['order_q'] ?? '', 120);
-$filteredOrders = array_values(array_filter($content['orders']['items'] ?? [], static function (array $order) use ($orderStatusFilter, $orderRequestFilter, $orderQuery): bool {
-    if ($orderStatusFilter !== '' && strtolower((string) ($order['status'] ?? '')) !== strtolower($orderStatusFilter)) {
+$filteredOrders = array_values(array_filter($content['orders']['items'] ?? [], static function (array $order) use ($orderStatusFilter, $orderRequestFilter, $orderRequestTypeFilter, $orderQuery): bool {
+    if ($orderStatusFilter !== '' && order_status_normalize((string) ($order['status'] ?? '')) !== order_status_normalize($orderStatusFilter)) {
         return false;
     }
     if ($orderRequestFilter !== '') {
@@ -4015,6 +4131,9 @@ $filteredOrders = array_values(array_filter($content['orders']['items'] ?? [], s
         if ($requestStatus !== strtolower($orderRequestFilter)) {
             return false;
         }
+    }
+    if ($orderRequestTypeFilter !== '' && strtolower((string) ($order['customer_request_type'] ?? '')) !== strtolower($orderRequestTypeFilter)) {
+        return false;
     }
     if ($orderQuery !== '') {
         $haystack = strtolower(implode(' ', [
@@ -4030,6 +4149,18 @@ $filteredOrders = array_values(array_filter($content['orders']['items'] ?? [], s
     }
     return true;
 }));
+
+// Cancellations and returns get their own board: an order belongs here if the
+// customer raised a request of either kind, or if it already landed in a
+// cancelled/returned state through an admin status change.
+$cancelReturnOrders = array_values(array_filter($content['orders']['items'] ?? [], static function (array $order): bool {
+    if (in_array(strtolower((string) ($order['customer_request_type'] ?? '')), ['cancel', 'return'], true)) {
+        return true;
+    }
+
+    return in_array(order_status_normalize((string) ($order['status'] ?? '')), ['cancelled', 'returned'], true);
+}));
+$cancelReturnOpenCount = count(array_filter($cancelReturnOrders, static fn (array $order): bool => in_array(strtolower((string) ($order['customer_request_status'] ?? '')), ['pending', 'approved'], true)));
 // ── Appointments (bookings + availability) ────────────────────────────────
 $appointmentsStore = appointments_load();
 $apConfig = $appointmentsStore['config'];
@@ -4246,7 +4377,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                     <small><?= admin_html((string) ($order['customer_name'] ?? '')) ?> • <?= admin_html((string) ($order['placed_at'] ?? '')) ?></small>
                   </div>
                   <div class="admin-list-meta">
-                    <span class="status-pill"><?= admin_html((string) ($order['status'] ?? 'pending')) ?></span>
+                    <span class="status-pill"><?= admin_html(order_status_label((string) ($order['status'] ?? ''))) ?></span>
                     <strong><?= admin_html((string) ($order['total'] ?? '£0.00')) ?></strong>
                   </div>
                 </article>
@@ -4658,30 +4789,9 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                   </div>
                 </section>
 
-                <?php // Every category needs these: the shop grid and homepage rails
-                      // read new_price and default_image straight off the product, so
-                      // hiding this card for matrix categories saved rings with a blank
-                      // card and no price. For a matrix product the price here is the
-                      // "from" price shown in listings; the per-metal prices in the
-                      // Metal Matrix take over on the product page. ?>
-                <section class="admin-product-card">
-                  <div class="admin-product-card-head">
-                    <div>
-                      <p class="admin-kicker">Merchandising</p>
-                      <h4>Pricing and media</h4>
-                    </div>
-                  </div>
-                  <div class="admin-grid three-up">
-                    <?php admin_input('product[new_price]', 'Current Selling Price', $editingProduct['new_price'] ?? '', 'text', '', 'Shown as the "from" price in listings. Example: £95.00'); ?>
-                    <?php admin_input('product[old_price]', 'Compare At Price', $editingProduct['old_price'] ?? '', 'text', '', 'Optional struck-through price.'); ?>
-                    <?php admin_input('product_image_url', 'Primary Image URL', $editingProduct['default_image'] ?? '', 'text', '', 'Primary storefront image.'); ?>
-                    <?php admin_input('product_hover_url', 'Secondary / Hover Image URL', $editingProduct['hover_image'] ?? '', 'text', '', 'Optional hover or gallery image.'); ?>
-                    <?php admin_input('product_image_file', 'Upload Primary Image', '', 'file', 'accept="image/*"'); ?>
-                    <?php admin_input('product_hover_file', 'Upload Hover Image', '', 'file', 'accept="image/*"'); ?>
-                  </div>
-                  <?php admin_textarea('product[description]', 'Description', $editingProduct['description'] ?? '', 4, 'Storefront product summary and selling copy.'); ?>
-                </section>
-
+                <?php // Price, imagery and copy are entered per metal in the Metal Matrix
+                      // below; admin_listing_face_from_metals() mirrors the cheapest active
+                      // metal onto the product as its "from" listing face on save. ?>
                 <section class="admin-product-card" data-product-scope="<?= admin_html($matrixPseudoScope) ?>">
                   <div class="admin-product-card-head">
                     <div>
@@ -6015,7 +6125,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
           <?php admin_form_open('newsletter', 'save-newsletter', true); ?>
 
           <div class="admin-grid two-up">
-            <?php admin_input('newsletter_image_url', 'Background Media URL', '', 'text', '', 'Paste a URL or upload a file (max 10MB video/image).'); ?>
+            <?php admin_input('newsletter_image_url', 'Background Media URL', '', 'text', '', 'Paste a URL or upload a file (' . admin_upload_hint() . ').'); ?>
             <label class="admin-field">
               <span>Upload Media (replaces current)</span>
               <input type="file" name="newsletter_image_file" accept="image/*,video/mp4,video/webm,video/ogg,video/quicktime">
@@ -6137,13 +6247,14 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
           </div>
         </section>
       <?php elseif ($view === 'orders'): ?>
-        <section class="admin-page-hero"><div><p class="admin-kicker">Orders</p><h2>Order operations</h2><p>Filter the fulfilment queue by order state or request state, then process the exact records that need action.</p></div><div class="admin-mini-stats"><article><span>Total Orders</span><strong><?= count($content['orders']['items']) ?></strong></article><article><span>Pending</span><strong><?= count(array_filter($content['orders']['items'], static fn (array $item): bool => strtolower((string) ($item['status'] ?? '')) === 'pending')) ?></strong></article><article><span>Open Requests</span><strong><?= count(array_filter($content['orders']['items'], static fn (array $item): bool => in_array(strtolower((string) ($item['customer_request_status'] ?? '')), ['pending', 'approved'], true))) ?></strong></article><article><span>Filtered</span><strong><?= count($filteredOrders) ?></strong></article></div></section>
+        <section class="admin-page-hero"><div><p class="admin-kicker">Orders</p><h2>Order operations</h2><p>Filter the fulfilment queue by order state or request state, then process the exact records that need action.</p></div><div class="admin-mini-stats"><article><span>Total Orders</span><strong><?= count($content['orders']['items']) ?></strong></article><article><span>New</span><strong><?= count(array_filter($content['orders']['items'], static fn (array $item): bool => order_status_normalize((string) ($item['status'] ?? '')) === 'received')) ?></strong></article><article><span>Open Requests</span><strong><?= count(array_filter($content['orders']['items'], static fn (array $item): bool => in_array(strtolower((string) ($item['customer_request_status'] ?? '')), ['pending', 'approved'], true))) ?></strong></article><article><span>Filtered</span><strong><?= count($filteredOrders) ?></strong></article></div></section>
         <section class="admin-panel">
           <form method="get" action="<?= admin_html(admin_url('orders')) ?>" class="admin-filter-bar">
             <input type="hidden" name="view" value="orders">
             <?php admin_input('order_q', 'Search Orders', $orderQuery, 'text', 'placeholder="Search order id, customer, email"'); ?>
-            <?php admin_select('order_status', 'Order Status', $orderStatusFilter, ['' => 'All Statuses', 'pending' => 'Pending', 'processing' => 'Processing', 'completed' => 'Completed', 'cancelled' => 'Cancelled', 'returned' => 'Returned']); ?>
+            <?php admin_select('order_status', 'Order Status', $orderStatusFilter, ['' => 'All Statuses'] + order_status_options() + ['returned' => 'Returned']); ?>
             <?php admin_select('request_status', 'Request Status', $orderRequestFilter, ['' => 'All Requests', 'pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected', 'completed' => 'Completed']); ?>
+            <?php admin_select('request_type', 'Request Type', $orderRequestTypeFilter, ['' => 'All Types', 'cancel' => 'Cancellation', 'return' => 'Return']); ?>
             <div class="admin-filter-summary">
               <span><?= count($filteredOrders) ?> orders shown</span>
               <small>Use filters to isolate fulfilment work, refunds, cancellations, and return requests.</small>
@@ -6152,14 +6263,14 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
           </form>
           <div class="admin-table-wrap">
             <table class="admin-table">
-              <thead><tr><th>Order</th><th>Customer</th><th>Order Status</th><th>Request</th><th>Payment Method</th><th>Payment Status</th><th>Total</th><th>Placed</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Order</th><th>Customer</th><th>Order Status</th><th>Request</th><th>Tracking ID</th><th>Payment Status</th><th>Total</th><th>Placed</th><th>Actions</th></tr></thead>
               <tbody>
                 <?php foreach ($filteredOrders as $order): ?>
                   <?php $requestSummary = order_customer_request_summary($order); ?>
                   <tr>
                     <td><strong><?= admin_html($order['id']) ?></strong></td>
                     <td><?= admin_html($order['customer_name']) ?></td>
-                    <td><span class="status-pill"><?= admin_html($order['status']) ?></span></td>
+                    <td><span class="status-pill"><?= admin_html(order_status_label((string) ($order['status'] ?? ''))) ?></span></td>
                     <td>
                       <?php if (is_array($requestSummary)): ?>
                         <div class="admin-request-stack">
@@ -6170,7 +6281,13 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                         <span class="admin-muted">No request</span>
                       <?php endif; ?>
                     </td>
-                    <td><span class="status-pill"><?= admin_html(strtolower((string) ($order['payment_method'] ?? 'online')) === 'cash' ? 'cash on delivery' : 'online payment') ?></span></td>
+                    <td>
+                      <?php if ((string) ($order['tracking_id'] ?? '') !== ''): ?>
+                        <strong><?= admin_html((string) $order['tracking_id']) ?></strong>
+                      <?php else: ?>
+                        <span class="admin-muted">Not issued</span>
+                      <?php endif; ?>
+                    </td>
                     <td><span class="status-pill"><?= admin_html($order['payment_status']) ?></span></td>
                     <td><?= admin_html($order['total']) ?></td>
                     <td><?= admin_html($order['placed_at']) ?></td>
@@ -6183,11 +6300,27 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
                           <?php admin_table_button('Complete Request', 'resolve-order-request', ['order_id' => $order['id'], 'resolution' => 'complete']); ?>
                           <?php admin_table_button('Reject Request', 'resolve-order-request', ['order_id' => $order['id'], 'resolution' => 'reject'], 'admin-mini-btn warn'); ?>
                         <?php else: ?>
-                          <?php admin_table_button('Complete', 'mark-order-status', ['order_id' => $order['id'], 'status' => 'completed']); ?>
-                          <?php admin_table_button('Processing', 'mark-order-status', ['order_id' => $order['id'], 'status' => 'processing'], 'admin-mini-btn warn'); ?>
-                          <?php admin_table_button('Cancel', 'mark-order-status', ['order_id' => $order['id'], 'status' => 'cancelled'], 'admin-mini-btn danger'); ?>
+                          <?php $orderStatusValue = order_status_normalize((string) ($order['status'] ?? '')); ?>
+                          <form method="post" action="<?= admin_html(admin_url('orders')) ?>" class="admin-status-form" data-order-status-form>
+                            <?php csrf_field(); ?>
+                            <input type="hidden" name="action" value="mark-order-status">
+                            <input type="hidden" name="return_view" value="orders">
+                            <input type="hidden" name="order_id" value="<?= admin_html((string) $order['id']) ?>">
+                            <select name="status" class="admin-status-select" data-order-status-select aria-label="Order status for <?= admin_html((string) $order['id']) ?>">
+                              <?php foreach (order_status_options() as $statusValue => $statusLabel): ?>
+                                <option value="<?= admin_html($statusValue) ?>" <?= $orderStatusValue === $statusValue ? 'selected' : '' ?>><?= admin_html($statusLabel) ?></option>
+                              <?php endforeach; ?>
+                              <?php if (!isset(order_status_options()[$orderStatusValue])): ?>
+                                <option value="<?= admin_html($orderStatusValue) ?>" selected><?= admin_html(order_status_label($orderStatusValue)) ?></option>
+                              <?php endif; ?>
+                            </select>
+                            <label class="admin-status-tracking" data-order-tracking-field <?= in_array($orderStatusValue, order_tracking_statuses(), true) ? '' : 'hidden' ?>>
+                              <span>Tracking ID</span>
+                              <input type="text" name="tracking_id" value="<?= admin_html((string) ($order['tracking_id'] ?? '')) ?>" placeholder="e.g. AZ-TRK-24001" maxlength="120">
+                            </label>
+                            <button type="submit" class="admin-mini-btn">Update</button>
+                          </form>
                         <?php endif; ?>
-                        <?php admin_table_button('Delete', 'delete-order', ['order_id' => $order['id']], 'admin-mini-btn danger'); ?>
                       </div>
                     </td>
                   </tr>
@@ -6195,6 +6328,79 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
               </tbody>
             </table>
           </div>
+        </section>
+        <section class="admin-panel" id="cancellations-returns">
+          <div class="admin-panel-head">
+            <p class="admin-kicker">Aftersales</p>
+            <h3>Cancellations &amp; Returns</h3>
+            <p class="admin-table-note"><?= (int) $cancelReturnOpenCount ?> open request<?= $cancelReturnOpenCount === 1 ? '' : 's' ?> awaiting a decision. Completed and rejected records stay listed for reference.</p>
+          </div>
+          <?php if ($cancelReturnOrders === []): ?>
+            <p class="admin-muted">No cancellation or return activity yet.</p>
+          <?php else: ?>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead><tr><th>Order</th><th>Customer</th><th>Type</th><th>Request Status</th><th>Reason</th><th>Requested</th><th>Resolved</th><th>Order Status</th><th>Refund</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <?php foreach ($cancelReturnOrders as $order): ?>
+                    <?php
+                      $aftersaleSummary = order_customer_request_summary($order);
+                      $aftersaleStatus = is_array($aftersaleSummary) ? (string) ($aftersaleSummary['status'] ?? '') : '';
+                      $aftersaleType = is_array($aftersaleSummary)
+                          ? (string) ($aftersaleSummary['type'] ?? '')
+                          : (order_status_normalize((string) ($order['status'] ?? '')) === 'returned' ? 'return' : 'cancel');
+                    ?>
+                    <tr>
+                      <td><strong><?= admin_html((string) $order['id']) ?></strong></td>
+                      <td>
+                        <?= admin_html((string) ($order['customer_name'] ?? '')) ?>
+                        <?php if (($order['customer_email'] ?? '') !== ''): ?><br><small><?= admin_html((string) $order['customer_email']) ?></small><?php endif; ?>
+                      </td>
+                      <td><span class="status-pill"><?= $aftersaleType === 'return' ? 'Return' : 'Cancellation' ?></span></td>
+                      <td>
+                        <?php if (is_array($aftersaleSummary)): ?>
+                          <span class="status-pill"><?= admin_html((string) $aftersaleSummary['label']) ?></span>
+                        <?php else: ?>
+                          <span class="admin-muted">Admin action</span>
+                        <?php endif; ?>
+                      </td>
+                      <td>
+                        <?php if (is_array($aftersaleSummary) && ($aftersaleSummary['reason'] ?? '') !== ''): ?>
+                          <?= admin_html(clean_string((string) $aftersaleSummary['reason'], 200)) ?>
+                        <?php else: ?>
+                          <span class="admin-muted">Not provided</span>
+                        <?php endif; ?>
+                      </td>
+                      <td><?= admin_html(is_array($aftersaleSummary) ? (string) ($aftersaleSummary['requested_at_formatted'] ?? '') : '') ?></td>
+                      <td>
+                        <?php $resolvedLabel = is_array($aftersaleSummary) ? (string) ($aftersaleSummary['resolved_at_formatted'] ?? '') : ''; ?>
+                        <?php if ($resolvedLabel !== ''): ?>
+                          <?= admin_html($resolvedLabel) ?>
+                        <?php else: ?>
+                          <span class="admin-muted">Pending</span>
+                        <?php endif; ?>
+                      </td>
+                      <td><span class="status-pill"><?= admin_html(order_status_label((string) ($order['status'] ?? ''))) ?></span></td>
+                      <td><span class="status-pill"><?= admin_html((string) ($order['payment_status'] ?? '')) ?></span></td>
+                      <td>
+                        <div class="admin-action-row admin-action-wrap">
+                          <?php if ($aftersaleStatus === 'pending'): ?>
+                            <?php admin_table_button('Approve', 'resolve-order-request', ['order_id' => $order['id'], 'resolution' => 'approve']); ?>
+                            <?php admin_table_button('Reject', 'resolve-order-request', ['order_id' => $order['id'], 'resolution' => 'reject'], 'admin-mini-btn warn'); ?>
+                          <?php elseif ($aftersaleStatus === 'approved'): ?>
+                            <?php admin_table_button('Complete', 'resolve-order-request', ['order_id' => $order['id'], 'resolution' => 'complete']); ?>
+                            <?php admin_table_button('Reject', 'resolve-order-request', ['order_id' => $order['id'], 'resolution' => 'reject'], 'admin-mini-btn warn'); ?>
+                          <?php else: ?>
+                            <span class="admin-muted">Closed</span>
+                          <?php endif; ?>
+                        </div>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
+          <?php endif; ?>
         </section>
       <?php elseif ($view === 'appointments'): ?>
         <div class="ap-adm">
@@ -6570,6 +6776,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
         <section class="admin-anchor-nav">
           <a href="#site-brand">Brand</a>
           <a href="#site-hero">Hero Section</a>
+          <a href="#site-delivery">Delivery Timeline</a>
           <a href="#site-social-gallery">Social Gallery</a>
           <a href="#site-faq">FAQ</a>
           <a href="#site-navigation">Navigation</a>
@@ -6588,6 +6795,22 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
           <div class="admin-actions"><button class="admin-primary" type="submit">Save Settings</button></div>
           <?php admin_form_close(); ?>
         </section>
+        <section class="admin-panel" id="site-delivery"><div class="admin-panel-head"><div><p class="admin-kicker">Storefront</p><h3>Delivery Timeline</h3></div></div>
+          <?php admin_form_open('site', 'save-settings'); ?>
+          <div class="admin-grid two-up">
+            <?php admin_input('settings[delivery][basic_label]', 'Basic Option Label', $content['settings']['delivery']['basic_label'] ?? '', 'text', 'maxlength="80"'); ?>
+            <?php admin_input('settings[delivery][express_label]', 'Express Option Label', $content['settings']['delivery']['express_label'] ?? '', 'text', 'maxlength="80"'); ?>
+          </div>
+          <div class="admin-grid two-up">
+            <?php admin_textarea('settings[delivery][basic_description]', 'Basic Option Description', $content['settings']['delivery']['basic_description'] ?? '', 3, 'Shown under the Basic option on every product page.'); ?>
+            <?php admin_textarea('settings[delivery][express_description]', 'Express Option Description', $content['settings']['delivery']['express_description'] ?? '', 3, 'Shown under the Express option on every product page.'); ?>
+          </div>
+          <div class="admin-grid three-up">
+            <?php admin_input('settings[delivery][express_price]', 'Express Charge (£)', $content['settings']['delivery']['express_price'] ?? '', 'text', 'inputmode="decimal"', 'Charged per item, so quantity 3 pays this three times. Basic delivery is always free.'); ?>
+          </div>
+          <div class="admin-actions"><button class="admin-primary" type="submit">Save Delivery Timeline</button></div>
+          <?php admin_form_close(); ?>
+        </section>
         <section class="admin-panel" id="site-hero"><div class="admin-panel-head"><div><p class="admin-kicker">Homepage</p><h3>Hero Section</h3></div></div>
           <?php admin_form_open('site', 'save-hero', true); ?>
           <div class="admin-grid two-up">
@@ -6599,7 +6822,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
             <?php admin_input('hero[cta_url]', 'Button URL', $content['hero']['cta_url']); ?>
           </div>
           <div class="admin-grid two-up">
-            <?php admin_input('hero_image_url', 'Background Media URL', $content['hero']['image'] ?? '', 'text', '', 'Shows the current media. Paste a new URL or upload a file (max ' . admin_upload_max_label() . ' image/video) to replace it; leave it as-is to keep the current one. If an upload "succeeds" but the image doesn\'t change, the file is over this server limit — use a smaller one or paste a URL.'); ?>
+            <?php admin_input('hero_image_url', 'Background Media URL', $content['hero']['image'] ?? '', 'text', '', 'Shows the current media. Paste a new URL or upload a file (' . admin_upload_hint() . ') to replace it; leave it as-is to keep the current one. If an upload "succeeds" but the image doesn\'t change, the file is over this server limit — use a smaller one or paste a URL.'); ?>
             <label class="admin-field">
               <span>Upload Media (replaces current)</span>
               <input type="file" name="hero_image_file" accept="image/*,video/mp4,video/webm,video/ogg,video/quicktime">
