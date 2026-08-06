@@ -11,12 +11,24 @@ return [
         'store_address' => 'Your address goes here.',
         'store_phone' => '0123456789',
         'store_email' => 'demo@example.com',
-        'announcement_text' => 'Free shipping on all orders with coupon code',
+        'announcement_text' => 'Free shipping on every order',
         'announcement_code' => 'Rings2026',
         'announcement_url' => '#',
         'top_bar_text' => '<div class="promo-item" style="display:inline-block;"><i class="fas fa-gem" style="color: #c9a96e; margin-right:6px;"></i> FREE INSURED SHIPPING <small style="color:#888;">Worldwide</small></div> <span style="color:#ddd; margin:0 15px;">|</span> <div class="promo-item" style="display:inline-block;"><i class="fas fa-sync-alt" style="color: #c9a96e; margin-right:6px;"></i> 30 DAYS EASY RETURNS <small style="color:#888;">Hassle-Free</small></div> <span style="color:#ddd; margin:0 15px;">|</span> <div class="promo-item" style="display:inline-block;"><i class="fas fa-shield-alt" style="color: #c9a96e; margin-right:6px;"></i> LIFETIME WARRANTY <small style="color:#888;">On All Pieces</small></div>',
         'cart_count' => 2,
         'cart_total' => '£138.00',
+        // Trader identity. UK law (Companies Act 2006, the Ecommerce Regulations
+        // 2002 and the Consumer Contracts Regulations 2013) requires an online
+        // trader to publish these, so the legal pages read them from here rather
+        // than hardcoding placeholders.
+        'company' => [
+            'legal_name' => 'Azuronn Ltd',
+            'company_number' => '',
+            'vat_number' => '',
+            'registered_address' => '123 Diamond Street, London, United Kingdom',
+            'trading_address' => '',
+            'support_hours' => 'Monday to Friday, 9am to 6pm (UK time)',
+        ],
         'social' => [
             'facebook' => '#',
             'twitter' => '#',

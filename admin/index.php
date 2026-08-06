@@ -6775,6 +6775,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
         <section class="admin-page-hero"><div><p class="admin-kicker">Advanced Site</p><h2>Brand, navigation, footer</h2><p>Keep the brand system structured by editing settings, navigation, and footer content in separate blocks.</p></div><div class="admin-mini-stats"><article><span>Nav Items</span><strong><?= count($content['navigation']['items'] ?? []) ?></strong></article><article><span>Footer Links</span><strong><?= count((array) ($content['footer']['information_links'] ?? [])) + count((array) ($content['footer']['account_links'] ?? [])) + count((array) ($content['footer']['bottom_links'] ?? [])) ?></strong></article></div></section>
         <section class="admin-anchor-nav">
           <a href="#site-brand">Brand</a>
+          <a href="#site-company">Trader Identity</a>
           <a href="#site-hero">Hero Section</a>
           <a href="#site-delivery">Delivery Timeline</a>
           <a href="#site-social-gallery">Social Gallery</a>
@@ -6793,6 +6794,23 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
             <?php admin_input('settings[top_bar_text]', 'Top Bar Text', $content['settings']['top_bar_text'] ?? ''); ?>
           </div>
           <div class="admin-actions"><button class="admin-primary" type="submit">Save Settings</button></div>
+          <?php admin_form_close(); ?>
+        </section>
+        <section class="admin-panel" id="site-company"><div class="admin-panel-head"><div><p class="admin-kicker">Legal</p><h3>Trader Identity</h3><p>UK law requires an online trader to publish these. They appear on the Privacy Policy, Terms, Delivery, Returns and Contact pages. Leave a registration number blank and the line is omitted rather than shown empty.</p></div></div>
+          <?php admin_form_open('site', 'save-settings'); ?>
+          <div class="admin-grid three-up">
+            <?php admin_input('settings[company][legal_name]', 'Registered Legal Name', $content['settings']['company']['legal_name'] ?? '', 'text', 'maxlength="120"', 'e.g. Azuronn Ltd'); ?>
+            <?php admin_input('settings[company][company_number]', 'Companies House Number', $content['settings']['company']['company_number'] ?? '', 'text', 'maxlength="40"', 'Required if you are a registered company.'); ?>
+            <?php admin_input('settings[company][vat_number]', 'VAT Registration Number', $content['settings']['company']['vat_number'] ?? '', 'text', 'maxlength="40"', 'Required if VAT registered.'); ?>
+          </div>
+          <div class="admin-grid two-up">
+            <?php admin_textarea('settings[company][registered_address]', 'Registered Office Address', $content['settings']['company']['registered_address'] ?? '', 3, 'The address on your Companies House record.'); ?>
+            <?php admin_textarea('settings[company][trading_address]', 'Trading / Returns Address', $content['settings']['company']['trading_address'] ?? '', 3, 'Leave blank if it is the same as the registered office.'); ?>
+          </div>
+          <div class="admin-grid two-up">
+            <?php admin_input('settings[company][support_hours]', 'Customer Support Hours', $content['settings']['company']['support_hours'] ?? '', 'text', 'maxlength="120"'); ?>
+          </div>
+          <div class="admin-actions"><button class="admin-primary" type="submit">Save Trader Identity</button></div>
           <?php admin_form_close(); ?>
         </section>
         <section class="admin-panel" id="site-delivery"><div class="admin-panel-head"><div><p class="admin-kicker">Storefront</p><h3>Delivery Timeline</h3></div></div>

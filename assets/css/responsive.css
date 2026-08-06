@@ -639,6 +639,17 @@
     flex: 0 0 auto;
   }
 
+  /* These rows use margin:0 -10px + padding:0 10px so their hover fill bleeds
+     past the column. The accordion panel clips at overflow:hidden, so on mobile
+     the bleed cuts the leading disc/thumbnail off. Drop both. */
+  nav.mnav .mega-col .mega-metal-link,
+  nav.mnav .mega-col .mega-link-with-image {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
   .mega-show-all-btn {
     justify-content: flex-start !important;
     margin-top: 4px;

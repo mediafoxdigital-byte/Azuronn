@@ -1620,6 +1620,22 @@ function normalize_site_content(array $candidate): array
                 'googleplus' => clean_link($settingsInput['social']['googleplus'] ?? $settingsDefault['social']['googleplus']),
                 'youtube' => clean_link($settingsInput['social']['youtube'] ?? $settingsDefault['social']['youtube']),
             ],
+            // Trader identity for the legal pages. Company and VAT numbers stay
+            // blank until a real one is entered — an invented registration number
+            // is worse than none, so the pages omit the line when it is empty.
+            'company' => [
+                'legal_name' => clean_string(
+                    ($settingsInput['company']['legal_name'] ?? '') !== ''
+                        ? $settingsInput['company']['legal_name']
+                        : $settingsDefault['company']['legal_name'],
+                    120
+                ),
+                'company_number' => clean_string($settingsInput['company']['company_number'] ?? $settingsDefault['company']['company_number'], 40),
+                'vat_number' => clean_string($settingsInput['company']['vat_number'] ?? $settingsDefault['company']['vat_number'], 40),
+                'registered_address' => clean_multiline($settingsInput['company']['registered_address'] ?? $settingsDefault['company']['registered_address'], 300),
+                'trading_address' => clean_multiline($settingsInput['company']['trading_address'] ?? $settingsDefault['company']['trading_address'], 300),
+                'support_hours' => clean_string($settingsInput['company']['support_hours'] ?? $settingsDefault['company']['support_hours'], 120),
+            ],
             // Global delivery timeline. Labels fall back to the defaults when an
             // admin blanks them, so a product page can never render a nameless
             // delivery card. The price is stored as a plain 2dp number and any

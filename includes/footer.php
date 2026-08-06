@@ -81,7 +81,7 @@
         <i class="far fa-gem"></i>
         <div>
           <strong>FREE UK DELIVERY</strong>
-          <span>On all orders over £100</span>
+          <span>On all orders, no minimum</span>
         </div>
       </div>
       <div class="feature-item">

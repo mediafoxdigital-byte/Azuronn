@@ -78,6 +78,45 @@ function site_delivery_options(): array
     ];
 }
 
+/**
+ * Trader identity for the legal pages. Optional registration numbers come back
+ * as empty strings so a page can omit the line entirely — publishing an invented
+ * company or VAT number would be worse than publishing none.
+ */
+function site_company_details(): array
+{
+    $company = (array) (site_content()['settings']['company'] ?? []);
+    $legalName = clean_string((string) ($company['legal_name'] ?? ''), 120);
+    $registered = clean_multiline((string) ($company['registered_address'] ?? ''), 300);
+    $trading = clean_multiline((string) ($company['trading_address'] ?? ''), 300);
+
+    return [
+        'legal_name' => $legalName !== '' ? $legalName : SITE_NAME,
+        'company_number' => clean_string((string) ($company['company_number'] ?? ''), 40),
+        'vat_number' => clean_string((string) ($company['vat_number'] ?? ''), 40),
+        'registered_address' => $registered !== '' ? $registered : clean_multiline((string) STORE_ADDRESS, 300),
+        'trading_address' => $trading,
+        'support_hours' => clean_string((string) ($company['support_hours'] ?? ''), 120),
+        'email' => (string) STORE_EMAIL,
+        'phone' => (string) STORE_PHONE,
+    ];
+}
+
+/**
+ * The legal pages every UK online trader has to publish, in one list so the
+ * footer and the pages themselves cannot drift out of sync.
+ */
+function site_legal_pages(): array
+{
+    return [
+        ['label' => 'Privacy Policy', 'url' => '/privacy-policy/'],
+        ['label' => 'Terms & Conditions', 'url' => '/terms/'],
+        ['label' => 'Delivery Information', 'url' => '/delivery/'],
+        ['label' => 'Returns & Refunds', 'url' => '/returns/'],
+        ['label' => 'Cookie Policy', 'url' => '/cookie-policy/'],
+    ];
+}
+
 function current_customer(): ?array
 {
     $customerId = clean_string($_SESSION['customer_auth']['customer_id'] ?? '', 80);
@@ -2072,7 +2111,9 @@ function cart_state(): array
     }
 
     $discount = (float) ($couponData['discount'] ?? 0.0);
-    $shipping = $subtotal >= 500 || $subtotal === 0.0 ? 0.0 : 25.0;
+    // Shipping is free on every order regardless of value. Express Delivery is a
+    // separate per-item surcharge and still applies.
+    $shipping = 0.0;
     $total = max(0, $subtotal - $discount + $deliveryTotal + $shipping);
 
     return [
