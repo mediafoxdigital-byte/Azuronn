@@ -1615,10 +1615,13 @@ function normalize_site_content(array $candidate): array
             'cart_total' => clean_string($settingsInput['cart_total'] ?? $settingsDefault['cart_total'], 40),
             'social' => [
                 'facebook' => clean_link($settingsInput['social']['facebook'] ?? $settingsDefault['social']['facebook']),
+                'instagram' => clean_link($settingsInput['social']['instagram'] ?? $settingsDefault['social']['instagram']),
+                'pinterest' => clean_link($settingsInput['social']['pinterest'] ?? $settingsDefault['social']['pinterest']),
                 'twitter' => clean_link($settingsInput['social']['twitter'] ?? $settingsDefault['social']['twitter']),
+                'youtube' => clean_link($settingsInput['social']['youtube'] ?? $settingsDefault['social']['youtube']),
+                'tiktok' => clean_link($settingsInput['social']['tiktok'] ?? $settingsDefault['social']['tiktok']),
                 'rss' => clean_link($settingsInput['social']['rss'] ?? $settingsDefault['social']['rss']),
                 'googleplus' => clean_link($settingsInput['social']['googleplus'] ?? $settingsDefault['social']['googleplus']),
-                'youtube' => clean_link($settingsInput['social']['youtube'] ?? $settingsDefault['social']['youtube']),
             ],
             // Trader identity for the legal pages. Company and VAT numbers stay
             // blank until a real one is entered — an invented registration number
@@ -1778,20 +1781,9 @@ function normalize_site_content(array $candidate): array
             'information_links' => clean_items($candidate['footer']['information_links'] ?? $defaults['footer']['information_links'], 'clean_link_item'),
             'account_title' => clean_string($candidate['footer']['account_title'] ?? $defaults['footer']['account_title'], 80),
             'account_links' => clean_items($candidate['footer']['account_links'] ?? $defaults['footer']['account_links'], 'clean_link_item'),
-            'top_rated_title' => clean_string($candidate['footer']['top_rated_title'] ?? $defaults['footer']['top_rated_title'], 80),
-            'top_rated_products' => clean_items($candidate['footer']['top_rated_products'] ?? $defaults['footer']['top_rated_products'], static function (array $item): array {
-                return [
-                    'category' => clean_string($item['category'] ?? '', 120),
-                    'name' => clean_string($item['name'] ?? '', 120),
-                    'old_price' => clean_string($item['old_price'] ?? '', 40),
-                    'new_price' => clean_string($item['new_price'] ?? '', 40),
-                    'image' => clean_image($item['image'] ?? ''),
-                ];
-            }),
             'bottom_links' => clean_items($candidate['footer']['bottom_links'] ?? $defaults['footer']['bottom_links'], 'clean_link_item'),
             'copyright_year' => clean_string($candidate['footer']['copyright_year'] ?? $defaults['footer']['copyright_year'], 8),
             'copyright_brand' => clean_string($candidate['footer']['copyright_brand'] ?? $defaults['footer']['copyright_brand'], 80),
-            'copyright_author' => clean_string($candidate['footer']['copyright_author'] ?? $defaults['footer']['copyright_author'], 120),
             'payment_image' => clean_image($candidate['footer']['payment_image'] ?? $defaults['footer']['payment_image']),
             'payment_alt' => clean_string($candidate['footer']['payment_alt'] ?? $defaults['footer']['payment_alt'], 120),
         ],

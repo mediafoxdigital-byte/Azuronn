@@ -14,11 +14,14 @@
         "cart_count": 2,
         "cart_total": "£138.00",
         "social": {
-            "facebook": "#",
-            "twitter": "#",
-            "rss": "#",
-            "googleplus": "#",
-            "youtube": "#"
+            "facebook": "",
+            "instagram": "",
+            "pinterest": "",
+            "twitter": "",
+            "youtube": "",
+            "tiktok": "",
+            "rss": "",
+            "googleplus": ""
         },
         "delivery": {
             "basic_label": "Basic Delivery",
@@ -2002,107 +2005,81 @@
                 "url": "/about/"
             },
             {
-                "label": "Blog",
-                "url": "#"
+                "label": "Shop All Jewellery",
+                "url": "/shop/"
             },
             {
-                "label": "Contact",
-                "url": "#"
+                "label": "Engagement Rings",
+                "url": "/shop/?type=Ring&ring_category=engagement"
             },
             {
-                "label": "Services",
-                "url": "#"
+                "label": "Wedding Rings",
+                "url": "/shop/?type=Ring&ring_category=wedding"
             },
             {
-                "label": "Sample Page",
-                "url": "#"
+                "label": "Book a Consultation",
+                "url": "/appointment/"
             },
             {
-                "label": "Portfolio",
-                "url": "#"
+                "label": "Journal",
+                "url": "/news/"
             }
         ],
-        "account_title": "My Account",
+        "account_title": "Customer Care",
         "account_links": [
             {
                 "label": "My Account",
                 "url": "/account/"
             },
             {
-                "label": "Contact",
-                "url": "#"
+                "label": "Track My Order",
+                "url": "/account/order/"
+            },
+            {
+                "label": "Delivery Information",
+                "url": "/delivery/"
+            },
+            {
+                "label": "Returns & Refunds",
+                "url": "/returns/"
             },
             {
                 "label": "Wishlist",
-                "url": "#"
+                "url": "/wishlist/"
             },
             {
-                "label": "Portfolio",
-                "url": "#"
-            },
-            {
-                "label": "Checkout",
-                "url": "/checkout/"
-            },
-            {
-                "label": "Frequently Questions",
-                "url": "#"
-            }
-        ],
-        "top_rated_title": "Top Rated Products",
-        "top_rated_products": [
-            {
-                "category": "Clothing, Potato chips",
-                "name": "Donec eu animal",
-                "old_price": "£86.00",
-                "new_price": "£70.00",
-                "image": ""
-            },
-            {
-                "category": "Women",
-                "name": "Dummy animal",
-                "old_price": "£74.00",
-                "new_price": "£69.00",
-                "image": ""
+                "label": "FAQs",
+                "url": "/faq/"
             }
         ],
         "bottom_links": [
             {
-                "label": "Home",
-                "url": "/"
+                "label": "Privacy Policy",
+                "url": "/privacy-policy/"
             },
             {
-                "label": "Online Store",
-                "url": "/shop/"
-            },
-            {
-                "label": "Promotion",
-                "url": "#"
+                "label": "Terms & Conditions",
+                "url": "/terms/"
             },
             {
                 "label": "Cookie Policy",
                 "url": "/cookie-policy/"
             },
             {
-                "label": "Terms Of Use",
-                "url": "#"
+                "label": "Delivery",
+                "url": "/delivery/"
             },
             {
-                "label": "Sitemap",
-                "url": "#"
+                "label": "Returns",
+                "url": "/returns/"
             },
             {
-                "label": "Support",
-                "url": "#"
-            },
-            {
-                "label": "Contacts",
-                "url": "#"
+                "label": "Contact",
+                "url": "/contact/"
             }
         ],
-        "copyright_year": "2022",
+        "copyright_year": "2026",
         "copyright_brand": "AZURONN",
-        "copyright_author": "MediaFox Digital",
         "payment_image": "",
         "payment_alt": "Payment Methods"
     },

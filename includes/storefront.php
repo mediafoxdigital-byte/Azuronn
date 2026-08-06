@@ -103,18 +103,47 @@ function site_company_details(): array
 }
 
 /**
- * The legal pages every UK online trader has to publish, in one list so the
- * footer and the pages themselves cannot drift out of sync.
+ * The legal pages every UK online trader has to publish. The footer merges these
+ * into its editable link list so an admin cannot leave the site without them.
  */
 function site_legal_pages(): array
 {
     return [
         ['label' => 'Privacy Policy', 'url' => '/privacy-policy/'],
         ['label' => 'Terms & Conditions', 'url' => '/terms/'],
-        ['label' => 'Delivery Information', 'url' => '/delivery/'],
-        ['label' => 'Returns & Refunds', 'url' => '/returns/'],
         ['label' => 'Cookie Policy', 'url' => '/cookie-policy/'],
+        ['label' => 'Delivery', 'url' => '/delivery/'],
+        ['label' => 'Returns', 'url' => '/returns/'],
+        ['label' => 'Contact', 'url' => '/contact/'],
     ];
+}
+
+/**
+ * Social profiles that actually point somewhere. A placeholder '#' renders as a
+ * link that goes nowhere, so unset profiles are dropped rather than displayed.
+ */
+function site_social_links(): array
+{
+    $social = (array) (site_content()['settings']['social'] ?? []);
+    $profiles = [
+        ['key' => 'facebook', 'label' => 'Facebook', 'icon' => 'fab fa-facebook-f'],
+        ['key' => 'instagram', 'label' => 'Instagram', 'icon' => 'fab fa-instagram'],
+        ['key' => 'pinterest', 'label' => 'Pinterest', 'icon' => 'fab fa-pinterest-p'],
+        ['key' => 'twitter', 'label' => 'X (Twitter)', 'icon' => 'fab fa-x-twitter'],
+        ['key' => 'youtube', 'label' => 'YouTube', 'icon' => 'fab fa-youtube'],
+        ['key' => 'tiktok', 'label' => 'TikTok', 'icon' => 'fab fa-tiktok'],
+    ];
+
+    $links = [];
+    foreach ($profiles as $profile) {
+        $url = trim((string) ($social[$profile['key']] ?? ''));
+        // A '#' href is a link that goes nowhere. Profiles without a real URL
+        // still render their icon, just not as a clickable link.
+        $profile['url'] = $url === '#' ? '' : $url;
+        $links[] = $profile;
+    }
+
+    return $links;
 }
 
 function current_customer(): ?array

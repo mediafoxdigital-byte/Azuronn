@@ -1,4 +1,21 @@
-<?php $footer = site_content()['footer']; ?>
+<?php
+$footer = site_content()['footer'];
+$footerCompany = site_company_details();
+$footerReturnDays = order_return_window_days();
+
+// The legally required pages are merged in rather than read from the editable
+// list, so removing one in admin cannot take the site out of compliance.
+$footerBottomLinks = (array) ($footer['bottom_links'] ?? []);
+$footerBottomUrls = array_map(
+    static fn (array $link): string => rtrim((string) ($link['url'] ?? ''), '/'),
+    $footerBottomLinks
+);
+foreach (site_legal_pages() as $required) {
+    if (!in_array(rtrim($required['url'], '/'), $footerBottomUrls, true)) {
+        $footerBottomLinks[] = $required;
+    }
+}
+?>
 <footer class="footer-premium" style="background-image: url('<?php e(asset_url('assets/uploads/premium_footer_bg.png')); ?>');">
   <div class="footer-overlay"></div>
   <div class="container-fluid relative-z" style="padding: 0 4%;">
@@ -12,16 +29,22 @@
         <div class="footer-contact">
           <div class="contact-item">
             <i class="fas fa-map-marker-alt"></i>
-            <span>123 Diamond Street, London,<br>United Kingdom</span>
+            <span><?= nl2br(h($footerCompany['registered_address'])) ?></span>
           </div>
           <div class="contact-item">
             <i class="fas fa-phone-alt"></i>
-            <span><?php e(STORE_PHONE); ?></span>
+            <span><a href="tel:<?= h(preg_replace('/[^0-9+]/', '', $footerCompany['phone'])) ?>"><?php e(STORE_PHONE); ?></a></span>
           </div>
           <div class="contact-item">
             <i class="far fa-envelope"></i>
-            <span><?php e(STORE_EMAIL); ?></span>
+            <span><a href="mailto:<?= h($footerCompany['email']) ?>"><?php e(STORE_EMAIL); ?></a></span>
           </div>
+          <?php if ($footerCompany['support_hours'] !== ''): ?>
+            <div class="contact-item">
+              <i class="far fa-clock"></i>
+              <span><?= h($footerCompany['support_hours']) ?></span>
+            </div>
+          <?php endif; ?>
         </div>
       </div>
 
@@ -64,66 +87,85 @@
           <input type="email" name="email" placeholder="Your email address..." required>
           <button type="submit" aria-label="Subscribe"><i class="fas fa-paper-plane"></i></button>
         </form>
+        <p class="footer-nl-consent">
+          By subscribing you consent to receive marketing email from us. Unsubscribe at any time. See our
+          <a href="<?php e(resolve_link('/privacy-policy/')); ?>">Privacy Policy</a>.
+        </p>
 
-        <h5 class="footer-follow-title" style="margin-top: 26px; margin-bottom: 12px;">FOLLOW US</h5>
-        <div class="social-row">
-          <a href="<?php e(resolve_link(SOCIAL_FACEBOOK)); ?>" class="soc-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="<?php e(resolve_link(SOCIAL_TWITTER)); ?>" class="soc-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="<?php e(resolve_link(SOCIAL_RSS)); ?>" class="soc-btn" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
-          <a href="<?php e(resolve_link(SOCIAL_GOOGLEPLUS)); ?>" class="soc-btn" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-          <a href="<?php e(resolve_link(SOCIAL_YOUTUBE)); ?>" class="soc-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        </div>
+        <?php $footerSocial = site_social_links(); ?>
+        <?php if ($footerSocial !== []): ?>
+          <h5 class="footer-follow-title" style="margin-top: 26px; margin-bottom: 12px;">FOLLOW US</h5>
+          <div class="social-row">
+            <?php foreach ($footerSocial as $social): ?>
+              <?php if ($social['url'] !== ''): ?>
+                <a href="<?php e($social['url']); ?>" class="soc-btn" target="_blank" rel="noopener noreferrer" aria-label="<?php e($social['label']); ?>"><i class="<?php e($social['icon']); ?>"></i></a>
+              <?php else: ?>
+                <span class="soc-btn is-pending" aria-label="<?php e($social['label']); ?>" title="<?php e($social['label']); ?>"><i class="<?php e($social['icon']); ?>"></i></span>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
 
     <div class="footer-features-box">
-      <div class="feature-item">
+      <a class="feature-item" href="<?php e(resolve_link('/delivery/')); ?>">
         <i class="far fa-gem"></i>
         <div>
           <strong>FREE UK DELIVERY</strong>
           <span>On all orders, no minimum</span>
         </div>
-      </div>
-      <div class="feature-item">
+      </a>
+      <a class="feature-item" href="<?php e(resolve_link('/faq/')); ?>">
         <i class="fas fa-shield-alt"></i>
         <div>
           <strong>LIFETIME WARRANTY</strong>
           <span>On all fine jewellery</span>
         </div>
-      </div>
-      <div class="feature-item">
+      </a>
+      <a class="feature-item" href="<?php e(resolve_link('/returns/')); ?>">
         <i class="fas fa-sync-alt"></i>
         <div>
-          <strong>30 DAYS RETURNS</strong>
+          <strong><?= (int) $footerReturnDays ?> DAYS RETURNS</strong>
           <span>Hassle-free returns</span>
         </div>
-      </div>
-      <div class="feature-item">
+      </a>
+      <a class="feature-item" href="<?php e(resolve_link('/appointment/')); ?>">
         <i class="fas fa-gift"></i>
         <div>
           <strong>PREMIUM PACKAGING</strong>
           <span>Signature gift box</span>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="foot-btm-links">
-      <?php foreach ($footer['bottom_links'] as $index => $link): ?>
+      <?php foreach ($footerBottomLinks as $index => $link): ?>
         <a href="<?php e(resolve_link($link['url'])); ?>"><?php e($link['label']); ?></a>
-        <?php if ($index < count($footer['bottom_links']) - 1): ?>
+        <?php if ($index < count($footerBottomLinks) - 1): ?>
           <span class="sep">|</span>
         <?php endif; ?>
       <?php endforeach; ?>
-      <?php if (($footer['bottom_links'] ?? []) !== []): ?><span class="sep">|</span><?php endif; ?>
+      <?php if ($footerBottomLinks !== []): ?><span class="sep">|</span><?php endif; ?>
       <button type="button" class="footer-cookie-settings" data-cookie-preferences-trigger>Cookie Settings</button>
     </div>
     
     <div class="foot-copy">
-      © <?php e($footer['copyright_year']); ?> <span class="brand-name"><?php e($footer['copyright_brand']); ?>.</span> All Rights Reserved. Made with <i class="fas fa-heart" style="color: #c89d58;"></i> by <span class="author-name"><?php e($footer['copyright_author']); ?></span>
+      © <?php e($footer['copyright_year']); ?> <span class="brand-name"><?php e($footer['copyright_brand']); ?>.</span> All Rights Reserved.
+      <span class="foot-legal-line">
+        <?= h($footerCompany['legal_name']) ?><?php if ($footerCompany['company_number'] !== ''): ?>, registered in England &amp; Wales, company no. <?= h($footerCompany['company_number']) ?><?php endif; ?><?php if ($footerCompany['vat_number'] !== ''): ?>. VAT no. <?= h($footerCompany['vat_number']) ?><?php endif; ?>.
+        Registered office: <?= h(str_replace(["\r\n", "\n"], ', ', $footerCompany['registered_address'])) ?>.
+      </span>
     </div>
-    
+
     <div class="pay-row">
-      <img src="<?php e($footer['payment_image']); ?>" alt="<?php e($footer['payment_alt']); ?>">
+      <?php if (trim((string) $footer['payment_image']) !== ''): ?>
+        <img src="<?php e($footer['payment_image']); ?>" alt="<?php e($footer['payment_alt']); ?>">
+      <?php endif; ?>
+      <p class="pay-note">
+        <i class="fas fa-lock" aria-hidden="true"></i>
+        Secure payments by Stripe. Visa, Mastercard, American Express, Apple Pay and Google Pay accepted. Your card details never reach our servers.
+      </p>
     </div>
   </div>
 </footer>

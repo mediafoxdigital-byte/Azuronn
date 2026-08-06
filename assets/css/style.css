@@ -3430,6 +3430,16 @@ nav.mnav .d-flex-nav {
   text-align: center;
 }
 
+.footer-contact .contact-item a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.footer-contact .contact-item a:hover {
+  color: #c89d58;
+}
+
 .footer-follow-title {
   font-family: var(--sans);
   font-size: 13px;
@@ -3464,6 +3474,12 @@ nav.mnav .d-flex-nav {
   color: #c89d58;
 }
 
+/* Profile shown but no URL set yet — visible, not clickable. */
+.soc-btn.is-pending {
+  opacity: .45;
+  cursor: default;
+}
+
 .foot-col h4 {
   font-family: var(--sans);
   font-size: 13.5px;
@@ -3494,6 +3510,18 @@ nav.mnav .d-flex-nav {
 .footer-nl-form {
   display: flex;
   margin-top: 5px;
+}
+
+.footer-nl-consent {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.footer-nl-consent a {
+  color: #c89d58;
+  text-decoration: underline;
 }
 
 .footer-nl-form input[type="email"] {
@@ -3642,6 +3670,16 @@ nav.mnav .d-flex-nav {
   flex: 1;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0 25px;
+  text-decoration: none;
+  transition: .2s;
+}
+
+.feature-item:hover i {
+  color: #e0bc7c;
+}
+
+.feature-item:hover strong {
+  color: #e0bc7c;
 }
 
 .feature-item:first-child {
@@ -3727,10 +3765,35 @@ nav.mnav .d-flex-nav {
   font-weight: 500;
 }
 
+.foot-legal-line {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.7;
+}
+
 .pay-row {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   justify-content: center;
   padding-bottom: 28px;
+}
+
+.pay-note {
+  margin: 0;
+  max-width: 640px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pay-note i {
+  color: #c89d58;
+  margin-right: 6px;
 }
 
 .pay-row img {
@@ -9747,8 +9810,13 @@ nav.mnav .d-flex-nav {
   }
 
   .pay-row {
+    align-items: flex-start;
     justify-content: flex-start;
     padding-bottom: 20px;
+  }
+
+  .pay-note {
+    text-align: left;
   }
 
   .pay-row img {

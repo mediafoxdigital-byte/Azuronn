@@ -2561,7 +2561,12 @@ function admin_apply_request_payload(array &$content, array $request): string
             save_site_content($content);
             return 'Navigation updated.';
         case 'save-footer':
-            $content['footer'] = is_array($rawAfter) ? $rawAfter : (array) ($content['footer'] ?? []);
+            // The footer form posts only titles and the copyright line. Replacing
+            // the array outright would wipe the link lists it does not render.
+            $content['footer'] = array_replace_recursive(
+                (array) ($content['footer'] ?? []),
+                is_array($rawAfter) ? $rawAfter : []
+            );
             save_site_content($content);
             return 'Footer updated.';
         case 'create-product':
@@ -3486,7 +3491,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             break;
 
         case 'save-footer':
-            $content['footer'] = $_POST['footer'] ?? $content['footer'];
+            // The footer form posts only titles and the copyright line. Replacing
+            // the array outright would wipe the link lists it does not render.
+            $content['footer'] = array_replace_recursive(
+                (array) ($content['footer'] ?? []),
+                is_array($_POST['footer'] ?? null) ? $_POST['footer'] : []
+            );
             save_site_content($content);
             admin_set_flash('success', 'Footer updated.');
             admin_redirect($returnView);
@@ -6776,6 +6786,7 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
         <section class="admin-anchor-nav">
           <a href="#site-brand">Brand</a>
           <a href="#site-company">Trader Identity</a>
+          <a href="#site-social">Social Profiles</a>
           <a href="#site-hero">Hero Section</a>
           <a href="#site-delivery">Delivery Timeline</a>
           <a href="#site-social-gallery">Social Gallery</a>
@@ -6811,6 +6822,19 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
             <?php admin_input('settings[company][support_hours]', 'Customer Support Hours', $content['settings']['company']['support_hours'] ?? '', 'text', 'maxlength="120"'); ?>
           </div>
           <div class="admin-actions"><button class="admin-primary" type="submit">Save Trader Identity</button></div>
+          <?php admin_form_close(); ?>
+        </section>
+        <section class="admin-panel" id="site-social"><div class="admin-panel-head"><div><p class="admin-kicker">Footer</p><h3>Social Profiles</h3><p>Paste the full URL of each profile. Leave one blank and its icon is hidden from the footer rather than linking nowhere.</p></div></div>
+          <?php admin_form_open('site', 'save-settings'); ?>
+          <div class="admin-grid three-up">
+            <?php admin_input('settings[social][facebook]', 'Facebook URL', $content['settings']['social']['facebook'] ?? '', 'url', 'placeholder="https://www.facebook.com/yourpage"'); ?>
+            <?php admin_input('settings[social][instagram]', 'Instagram URL', $content['settings']['social']['instagram'] ?? '', 'url', 'placeholder="https://www.instagram.com/yourpage"'); ?>
+            <?php admin_input('settings[social][pinterest]', 'Pinterest URL', $content['settings']['social']['pinterest'] ?? '', 'url', 'placeholder="https://www.pinterest.co.uk/yourpage"'); ?>
+            <?php admin_input('settings[social][twitter]', 'X (Twitter) URL', $content['settings']['social']['twitter'] ?? '', 'url', 'placeholder="https://x.com/yourpage"'); ?>
+            <?php admin_input('settings[social][youtube]', 'YouTube URL', $content['settings']['social']['youtube'] ?? '', 'url', 'placeholder="https://www.youtube.com/@yourchannel"'); ?>
+            <?php admin_input('settings[social][tiktok]', 'TikTok URL', $content['settings']['social']['tiktok'] ?? '', 'url', 'placeholder="https://www.tiktok.com/@yourpage"'); ?>
+          </div>
+          <div class="admin-actions"><button class="admin-primary" type="submit">Save Social Profiles</button></div>
           <?php admin_form_close(); ?>
         </section>
         <section class="admin-panel" id="site-delivery"><div class="admin-panel-head"><div><p class="admin-kicker">Storefront</p><h3>Delivery Timeline</h3></div></div>
@@ -6970,16 +6994,14 @@ if (isset($_GET['download']) && $_GET['download'] === 'newsletter-subscribers' &
           <div class="admin-actions"><button class="admin-primary" type="submit">Save Navigation</button></div>
           <?php admin_form_close(); ?>
         </section>
-        <section class="admin-panel" id="site-footer"><div class="admin-panel-head"><div><p class="admin-kicker">Footer</p><h3>Footer content</h3></div></div>
+        <section class="admin-panel" id="site-footer"><div class="admin-panel-head"><div><p class="admin-kicker">Footer</p><h3>Footer content</h3><p>Column headings and the copyright line. The trader details beneath the copyright come from Trader Identity above, and the required legal links are always shown.</p></div></div>
           <?php admin_form_open('site', 'save-footer'); ?>
           <div class="admin-grid three-up">
             <?php admin_input('footer[information_title]', 'Information Title', $content['footer']['information_title']); ?>
             <?php admin_input('footer[account_title]', 'Account Title', $content['footer']['account_title']); ?>
-            <?php admin_input('footer[top_rated_title]', 'Top Rated Title', $content['footer']['top_rated_title']); ?>
             <?php admin_input('footer[copyright_year]', 'Copyright Year', $content['footer']['copyright_year']); ?>
             <?php admin_input('footer[copyright_brand]', 'Copyright Brand', $content['footer']['copyright_brand']); ?>
-            <?php admin_input('footer[copyright_author]', 'Copyright Author', $content['footer']['copyright_author']); ?>
-            <?php admin_input('footer[payment_image]', 'Payment Image', $content['footer']['payment_image']); ?>
+            <?php admin_input('footer[payment_image]', 'Payment Image', $content['footer']['payment_image'], 'text', '', 'Optional card-logo strip. Leave blank to show only the secure-payment note.'); ?>
             <?php admin_input('footer[payment_alt]', 'Payment Alt', $content['footer']['payment_alt']); ?>
           </div>
           <div class="admin-actions"><button class="admin-primary" type="submit">Save Footer</button></div>
